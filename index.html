@@ -8,13 +8,19 @@
 
 <style>
 *{box-sizing:border-box}
+
+html{scroll-behavior:smooth}
+
 body{
 margin:0;
 background:#070707;
 color:#fff;
 font-family:Arial,sans-serif
 }
+
 button,input,textarea,select{font:inherit}
+
+button{cursor:pointer}
 
 .top{
 background:#111;
@@ -35,7 +41,7 @@ position:sticky;
 top:0;
 background:#080808ee;
 backdrop-filter:blur(8px);
-z-index:20
+z-index:50
 }
 
 .logo{
@@ -46,7 +52,7 @@ letter-spacing:6px
 
 .links{
 display:flex;
-gap:22px
+gap:24px
 }
 
 .links a{
@@ -58,26 +64,24 @@ cursor:pointer
 
 .navActions{
 display:flex;
-gap:7px;
-align-items:center
-}
-
-.langBtn,
-.cartBtn{
-border:0;
-border-radius:24px;
-padding:10px 15px;
-cursor:pointer
+align-items:center;
+gap:7px
 }
 
 .langBtn{
 background:#222;
-color:#fff
+color:#fff;
+border:0;
+border-radius:24px;
+padding:10px 15px
 }
 
 .cartBtn{
 background:#fff;
-color:#111
+color:#111;
+border:0;
+border-radius:24px;
+padding:10px 17px
 }
 
 .hero{
@@ -112,7 +116,6 @@ border:0;
 border-radius:30px;
 padding:15px 35px;
 font-weight:bold;
-cursor:pointer;
 margin-top:18px
 }
 
@@ -137,15 +140,14 @@ gap:15px
 }
 
 .cat{
-height:190px;
+height:210px;
 border-radius:15px;
 padding:22px;
 display:flex;
 align-items:end;
 background:linear-gradient(145deg,#333,#111);
 font-size:21px;
-font-weight:800;
-cursor:pointer
+font-weight:800
 }
 
 .toolbar{
@@ -162,7 +164,8 @@ background:#111;
 color:#fff;
 border:1px solid #333;
 border-radius:25px;
-padding:11px 16px
+padding:11px 16px;
+outline:none
 }
 
 .products{
@@ -249,8 +252,7 @@ background:#111;
 color:#fff;
 border:0;
 padding:11px;
-border-radius:22px;
-cursor:pointer
+border-radius:22px
 }
 
 .add:disabled{
@@ -259,13 +261,12 @@ cursor:not-allowed
 }
 
 .offersBtn{
-margin-top:15px;
+margin-top:18px;
 background:#222;
 color:#fff;
 border:1px solid #444;
 border-radius:25px;
-padding:11px 20px;
-cursor:pointer
+padding:11px 20px
 }
 
 .banner{
@@ -314,7 +315,7 @@ font-weight:900;
 letter-spacing:5px
 }
 
-/* PRODUCT PAGE */
+/* PRODUCT */
 
 .productPage{
 padding:40px 5%;
@@ -327,7 +328,6 @@ color:#fff;
 border:0;
 border-radius:22px;
 padding:10px 18px;
-cursor:pointer;
 margin-bottom:25px
 }
 
@@ -410,8 +410,7 @@ background:#111;
 color:#fff;
 border:1px solid #444;
 border-radius:7px;
-padding:10px 18px;
-cursor:pointer
+padding:10px 18px
 }
 
 .optionBtn.selected{
@@ -432,8 +431,7 @@ height:38px;
 border:1px solid #555;
 background:#111;
 color:#fff;
-border-radius:7px;
-cursor:pointer
+border-radius:7px
 }
 
 .wide{
@@ -443,11 +441,10 @@ background:#fff;
 color:#111;
 border:0;
 border-radius:8px;
-font-weight:bold;
-cursor:pointer
+font-weight:bold
 }
 
-/* CART PAGE */
+/* CART */
 
 .cartPage{
 padding:40px 5%;
@@ -472,7 +469,7 @@ padding:20px
 
 .cartItem{
 display:grid;
-grid-template-columns:90px 1fr auto auto;
+grid-template-columns:80px 1fr auto auto;
 gap:15px;
 align-items:center;
 padding:15px 0;
@@ -480,8 +477,8 @@ border-bottom:1px solid #ddd
 }
 
 .cartImg{
-width:90px;
-height:90px;
+width:80px;
+height:80px;
 border-radius:8px;
 overflow:hidden;
 background:#222;
@@ -507,15 +504,13 @@ border:1px solid #ccc;
 background:#fff;
 border-radius:5px;
 width:30px;
-height:30px;
-cursor:pointer
+height:30px
 }
 
 .remove{
 border:0;
 background:none;
-color:#c00;
-cursor:pointer
+color:#c00
 }
 
 .checkoutBox input,
@@ -525,7 +520,8 @@ width:100%;
 margin:7px 0;
 padding:12px;
 border:1px solid #ccc;
-border-radius:7px
+border-radius:7px;
+outline:none
 }
 
 .dark{
@@ -534,8 +530,7 @@ padding:13px;
 background:#111;
 color:#fff;
 border:0;
-border-radius:7px;
-cursor:pointer
+border-radius:7px
 }
 
 .summaryLine{
@@ -567,8 +562,7 @@ border:0;
 background:#111;
 color:#fff;
 border-radius:7px;
-padding:0 15px;
-cursor:pointer
+padding:0 15px
 }
 
 .notice{
@@ -650,21 +644,6 @@ font-size:32px
 grid-template-columns:1fr
 }
 
-.cartItem{
-grid-template-columns:65px 1fr;
-gap:10px
-}
-
-.cartImg{
-width:65px;
-height:65px
-}
-
-.cartItem .qty,
-.cartItem .remove{
-grid-column:auto
-}
-
 }
 
 @media(max-width:480px){
@@ -695,7 +674,7 @@ font-size:11px
 }
 
 .hero h1{
-font-size:40px
+font-size:40px;
 letter-spacing:6px
 }
 
@@ -707,6 +686,16 @@ gap:9px
 height:145px;
 font-size:16px;
 padding:14px
+}
+
+.cartItem{
+grid-template-columns:65px 1fr;
+gap:10px
+}
+
+.cartImg{
+width:65px;
+height:65px
 }
 
 }
@@ -725,17 +714,9 @@ FREE SHIPPING FOR ORDERS OVER 1500 EGP 🚚
 
 <div class="links">
 
-<a onclick="goHome()">
-<span data-ar="الرئيسية" data-en="Home"></span>
-</a>
-
-<a onclick="goShop()">
-<span data-ar="المتجر" data-en="Shop"></span>
-</a>
-
-<a onclick="showOffers()">
-<span data-ar="🔥 العروض" data-en="🔥 Offers"></span>
-</a>
+<a onclick="goHome()">الرئيسية</a>
+<a onclick="goShop()">المتجر</a>
+<a onclick="showOffers()">🔥 العروض</a>
 
 </div>
 
@@ -763,9 +744,9 @@ onclick="openCartPage()">
 
 <script>
 
-/* =========================================
+/* =====================================
    SUPABASE
-========================================= */
+===================================== */
 
 const SUPABASE_URL =
 "https://jstcrfkjnmqegnzvwfyz.supabase.co";
@@ -781,9 +762,9 @@ Accept:"application/json",
 };
 
 
-/* =========================================
-   STATE
-========================================= */
+/* =====================================
+   DATA
+===================================== */
 
 let products=[];
 
@@ -795,22 +776,28 @@ let language=
 localStorage.getItem("vanta_lang")||"ar";
 
 let selectedProduct=null;
+
 let selectedSize="";
+
 let selectedColor="";
+
 let productQty=1;
+
 let appliedCoupon=null;
 
+let activeCategory="";
 
-/* =========================================
-   REFRESH = HOME
-========================================= */
 
-const navigation=
+/* =====================================
+   REFRESH => HOME
+===================================== */
+
+const navEntry=
 performance.getEntriesByType("navigation")[0];
 
 if(
-navigation &&
-navigation.type==="reload"
+navEntry &&
+navEntry.type==="reload"
 ){
 
 history.replaceState(
@@ -823,9 +810,9 @@ location.search
 }
 
 
-/* =========================================
+/* =====================================
    TEXT
-========================================= */
+===================================== */
 
 const TXT={
 
@@ -846,6 +833,7 @@ size:"اختر المقاس",
 color:"اختر اللون",
 quantity:"الكمية",
 back:"← العودة للمتجر",
+cart:"سلة المشتريات",
 empty:"السلة فاضية",
 remove:"حذف",
 order:"بيانات الطلب",
@@ -867,7 +855,8 @@ error:"حصل خطأ أثناء تسجيل الطلب ❌",
 required:"اكمل بيانات الطلب الأول",
 recommended:"منتجات مقترحة",
 sale:"خصم",
-noOffers:"لا توجد عروض حاليًا."
+noOffers:"لا توجد عروض حاليًا.",
+loading:"جاري تحميل المنتجات..."
 },
 
 en:{
@@ -887,6 +876,7 @@ size:"Choose size",
 color:"Choose color",
 quantity:"Quantity",
 back:"← Back to shop",
+cart:"Shopping Cart",
 empty:"Your cart is empty",
 remove:"Remove",
 order:"Order Details",
@@ -908,7 +898,8 @@ error:"There was an error placing the order ❌",
 required:"Please complete your details.",
 recommended:"Recommended Products",
 sale:"OFF",
-noOffers:"No offers available."
+noOffers:"No offers available.",
+loading:"Loading products..."
 }
 
 };
@@ -918,9 +909,9 @@ return TXT[language][key]||key;
 }
 
 
-/* =========================================
+/* =====================================
    LANGUAGE
-========================================= */
+===================================== */
 
 function applyLanguage(){
 
@@ -929,17 +920,15 @@ document.documentElement.lang=language;
 document.documentElement.dir=
 language==="ar"?"rtl":"ltr";
 
-document.getElementById("langBtn").textContent=
+const btn=
+document.getElementById("langBtn");
+
+if(btn){
+
+btn.textContent=
 language==="ar"?"EN":"AR";
 
-document.querySelectorAll("[data-ar]").forEach(
-el=>{
-el.textContent=
-language==="ar"
-?el.dataset.ar
-:el.dataset.en;
 }
-);
 
 }
 
@@ -958,9 +947,9 @@ render();
 }
 
 
-/* =========================================
+/* =====================================
    HELPERS
-========================================= */
+===================================== */
 
 function esc(value){
 
@@ -980,6 +969,17 @@ return {
 }
 
 
+function jsEsc(value){
+
+return String(value??"")
+.replace(/\\/g,"\\\\")
+.replace(/'/g,"\\'")
+.replace(/\n/g,"\\n")
+.replace(/\r/g,"\\r");
+
+}
+
+
 function money(value){
 
 return "EGP "+
@@ -994,20 +994,29 @@ if(!product)return[];
 
 let arr=[];
 
-if(Array.isArray(product.image_urls)){
+const value=
+product.image_urls;
 
-arr=product.image_urls;
+
+/*
+jsonb array
+*/
+
+if(Array.isArray(value)){
+
+arr=value;
 
 }
 
+
+/*
+jsonb/string
+*/
+
 else if(
-typeof product.image_urls==="string"
+typeof value==="string" &&
+value.trim()
 ){
-
-const value=
-product.image_urls.trim();
-
-if(value){
 
 try{
 
@@ -1015,27 +1024,35 @@ const parsed=
 JSON.parse(value);
 
 if(Array.isArray(parsed)){
+
 arr=parsed;
+
 }
 
 }catch(e){
 
 arr=value
 .split(",")
-.map(x=>x.trim());
+.map(x=>x.trim())
+.filter(Boolean);
 
 }
 
 }
 
-}
+
+/*
+fallback image_url
+*/
 
 if(
 !arr.length &&
 product.image_url
 ){
 
-arr=[product.image_url];
+arr=[
+product.image_url
+];
 
 }
 
@@ -1044,17 +1061,22 @@ return arr.filter(Boolean);
 }
 
 
-function getSizes(product){
-
-if(!product)return[];
-
-const value=product.sizes;
+function getList(value){
 
 if(Array.isArray(value)){
 
 return value
 .map(x=>String(x).trim())
 .filter(Boolean);
+
+}
+
+if(
+value===null||
+value===undefined
+){
+
+return[];
 
 }
 
@@ -1091,50 +1113,30 @@ return[];
 }
 
 
+function getSizes(product){
+
+return getList(product?.sizes);
+
+}
+
+
 function getColors(product){
 
 if(!product)return[];
 
-if(product.colors){
+if(
+product.colors!==null &&
+product.colors!==undefined
+){
 
-if(Array.isArray(product.colors)){
+const colors=
+getList(product.colors);
 
-return product.colors;
-
-}
-
-if(typeof product.colors==="string"){
-
-try{
-
-const parsed=
-JSON.parse(product.colors);
-
-if(Array.isArray(parsed)){
-return parsed;
-}
-
-}catch(e){}
-
-return product.colors
-.split(",")
-.map(x=>x.trim())
-.filter(Boolean);
+if(colors.length)return colors;
 
 }
 
-}
-
-if(product.color){
-
-return String(product.color)
-.split(",")
-.map(x=>x.trim())
-.filter(Boolean);
-
-}
-
-return[];
+return getList(product.color);
 
 }
 
@@ -1142,10 +1144,10 @@ return[];
 function salePrice(product){
 
 const normal=
-Number(product.price||0);
+Number(product?.price||0);
 
 const sale=
-Number(product.sale_price||0);
+Number(product?.sale_price||0);
 
 if(
 sale>0 &&
@@ -1164,10 +1166,10 @@ return normal;
 function discount(product){
 
 const normal=
-Number(product.price||0);
+Number(product?.price||0);
 
 const sale=
-Number(product.sale_price||0);
+Number(product?.sale_price||0);
 
 if(
 normal>0 &&
@@ -1186,9 +1188,9 @@ return 0;
 }
 
 
-/* =========================================
+/* =====================================
    HOME
-========================================= */
+===================================== */
 
 function homeHTML(){
 
@@ -1202,16 +1204,12 @@ return `
 
 <h1>VANTA</h1>
 
-<p>
-MODERN UNISEX WEAR
-</p>
+<p>MODERN UNISEX WEAR</p>
 
 <button
 class="cta"
 onclick="goShop()">
-
 ${t("shopNow")}
-
 </button>
 
 </div>
@@ -1295,6 +1293,7 @@ oninput="renderProducts()">
 <div
 id="products"
 class="products">
+${t("loading")}
 </div>
 
 </section>
@@ -1310,9 +1309,7 @@ class="products">
 ${t("collection")}
 </h2>
 
-<p>
-FALL / WINTER 2026
-</p>
+<p>FALL / WINTER 2026</p>
 
 <button
 class="cta"
@@ -1413,9 +1410,9 @@ Be first to know about new drops.
 }
 
 
-/* =========================================
-   PRODUCT CARDS
-========================================= */
+/* =====================================
+   PRODUCT CARD
+===================================== */
 
 function productCard(product){
 
@@ -1431,11 +1428,14 @@ discount(product);
 const stock=
 Number(product.stock||0);
 
+const name=
+jsEsc(product.name||"");
+
 return `
 
 <article
 class="card"
-onclick="openProduct('${product.id}')">
+onclick="openProduct('${jsEsc(product.id)}')">
 
 <div class="pic">
 
@@ -1444,7 +1444,7 @@ imgs[0]
 ?
 `<img
 src="${esc(imgs[0])}"
-alt="${esc(product.name)}">`
+alt="${esc(product.name||"")}">`
 :
 "V"
 }
@@ -1464,7 +1464,7 @@ d
 <div class="info">
 
 <h3>
-${esc(product.name||"")}
+${esc(product.name||"بدون اسم")}
 </h3>
 
 <div>
@@ -1530,9 +1530,9 @@ ${stock<1?t("out"):t("add")}
 }
 
 
-/* =========================================
+/* =====================================
    LOAD PRODUCTS
-========================================= */
+===================================== */
 
 async function loadProducts(){
 
@@ -1587,11 +1587,9 @@ document.getElementById(
 }
 
 
-/* =========================================
-   PRODUCT LIST
-========================================= */
-
-let activeCategory="";
+/* =====================================
+   PRODUCTS
+===================================== */
 
 function renderProducts(){
 
@@ -1626,16 +1624,11 @@ String(p.name||"")
 
 }
 
-/*
-لو جدول products عندك فيه category
-هيشتغل التصنيف تلقائيًا.
-لو العمود غير موجود، لن يخفي المنتجات.
-*/
-
 if(
 activeCategory &&
 products.some(
-p=>Object.prototype.hasOwnProperty.call(
+p=>
+Object.prototype.hasOwnProperty.call(
 p,
 "category"
 )
@@ -1671,10 +1664,6 @@ list.map(productCard).join("");
 }
 
 
-/* =========================================
-   CATEGORIES
-========================================= */
-
 function filterCategory(value){
 
 activeCategory=value;
@@ -1684,13 +1673,19 @@ goShop();
 }
 
 
-/* =========================================
+/* =====================================
    OFFERS
-========================================= */
+===================================== */
 
 function showOffers(){
 
-location.hash="offers";
+history.pushState(
+null,
+"",
+location.pathname+
+location.search+
+"#offers"
+);
 
 render();
 
@@ -1732,15 +1727,22 @@ offers.map(productCard).join("");
 }
 
 
-/* =========================================
+/* =====================================
    PRODUCT PAGE
-========================================= */
+===================================== */
 
 function openProduct(id){
 
-location.hash=
-"product?id="+
-encodeURIComponent(id);
+history.pushState(
+null,
+"",
+location.pathname+
+location.search+
+"#product?id="+
+encodeURIComponent(id)
+);
+
+render();
 
 window.scrollTo(0,0);
 
@@ -1760,10 +1762,10 @@ productQty=1;
 const imgs=
 getImages(product);
 
-const ss=
+const sizes=
 getSizes(product);
 
-const cs=
+const colors=
 getColors(product);
 
 const d=
@@ -1795,7 +1797,7 @@ imgs.length
 `<img
 id="mainImage"
 src="${esc(imgs[0])}"
-alt="${esc(product.name)}">`
+alt="${esc(product.name||"")}">`
 :
 "<div>VANTA</div>"
 }
@@ -1836,8 +1838,7 @@ ${esc(product.name||"")}
 ${
 d
 ?
-`<span
-class="badge"
+`<span class="badge"
 style="position:static;display:inline-block">
 -${d}%
 </span>`
@@ -1880,7 +1881,7 @@ ${esc(product.description||"")}
 
 
 ${
-ss.length
+sizes.length
 ?
 `
 
@@ -1891,11 +1892,12 @@ ${t("size")}
 <div class="options">
 
 ${
-ss.map(s=>`
+sizes.map(s=>`
 
 <button
-class="optionBtn"
-onclick="selectSize(this,'${esc(s)}')">
+class="optionBtn sizeBtn"
+data-value="${esc(s)}"
+onclick="selectSize('${jsEsc(s)}')">
 
 ${esc(s)}
 
@@ -1913,7 +1915,7 @@ ${esc(s)}
 
 
 ${
-cs.length
+colors.length
 ?
 `
 
@@ -1924,11 +1926,12 @@ ${t("color")}
 <div class="options">
 
 ${
-cs.map(c=>`
+colors.map(c=>`
 
 <button
-class="optionBtn"
-onclick="selectColor(this,'${esc(c)}')">
+class="optionBtn colorBtn"
+data-value="${esc(c)}"
+onclick="selectColor('${jsEsc(c)}')">
 
 ${esc(c)}
 
@@ -1999,51 +2002,38 @@ class="products">
 }
 
 
-function selectSize(button,value){
+function selectSize(value){
 
 selectedSize=value;
 
 document
-.querySelectorAll(".optionBtn")
-.forEach(
-x=>{
-if(
-x.textContent.trim()===
-value
-){
-x.classList.add("selected");
-}else{
-x.classList.remove("selected");
-}
-}
+.querySelectorAll(".sizeBtn")
+.forEach(btn=>{
+
+btn.classList.toggle(
+"selected",
+btn.dataset.value===value
 );
 
+});
+
 }
 
 
-function selectColor(button,value){
+function selectColor(value){
 
 selectedColor=value;
 
-const buttons=
-document.querySelectorAll(
-".optionBtn"
+document
+.querySelectorAll(".colorBtn")
+.forEach(btn=>{
+
+btn.classList.toggle(
+"selected",
+btn.dataset.value===value
 );
 
-buttons.forEach(
-x=>{
-
-if(
-x.textContent.trim()===
-value
-){
-
-x.classList.add("selected");
-
-}
-
-}
-);
+});
 
 }
 
@@ -2053,9 +2043,7 @@ function productQtyChange(amount){
 if(!selectedProduct)return;
 
 const max=
-Number(
-selectedProduct.stock||1
-);
+Number(selectedProduct.stock||1);
 
 productQty=
 Math.max(
@@ -2066,10 +2054,17 @@ productQty+amount
 )
 );
 
+const el=
 document.getElementById(
 "productQty"
-).textContent=
+);
+
+if(el){
+
+el.textContent=
 productQty;
+
+}
 
 }
 
@@ -2079,21 +2074,73 @@ function addProductToCart(){
 if(!selectedProduct)return;
 
 const stock=
-Number(
-selectedProduct.stock||0
-);
+Number(selectedProduct.stock||0);
 
 if(stock<1)return;
 
+const sizes=
+getSizes(selectedProduct);
+
+const colors=
+getColors(selectedProduct);
+
+
+/*
+لو المنتج عنده مقاسات
+لازم العميل يختار
+*/
+
+if(
+sizes.length &&
+!selectedSize
+){
+
+alert(
+language==="ar"
+?
+"اختار المقاس أولًا"
+:
+"Please choose a size first"
+);
+
+return;
+
+}
+
+
+/*
+لو المنتج عنده ألوان
+لازم العميل يختار
+*/
+
+if(
+colors.length &&
+!selectedColor
+){
+
+alert(
+language==="ar"
+?
+"اختار اللون أولًا"
+:
+"Please choose a color first"
+);
+
+return;
+
+}
+
+
 const existing=
-cart.find(x=>
-String(x.product_id)===
+cart.find(item=>
+String(item.product_id)===
 String(selectedProduct.id)&&
-String(x.size||"")===
+String(item.size||"")===
 String(selectedSize||"")&&
-String(x.color||"")===
+String(item.color||"")===
 String(selectedColor||"")
 );
+
 
 if(existing){
 
@@ -2107,7 +2154,7 @@ Number(existing.qty||1)+productQty
 
 cart.push({
 
-id:
+cart_id:
 crypto.randomUUID(),
 
 product_id:
@@ -2129,10 +2176,10 @@ qty:
 productQty,
 
 size:
-selectedSize,
+selectedSize||"",
 
 color:
-selectedColor
+selectedColor||""
 
 });
 
@@ -2145,9 +2192,9 @@ openCartPage();
 }
 
 
-/* =========================================
+/* =====================================
    RECOMMENDED
-========================================= */
+===================================== */
 
 function renderRecommended(){
 
@@ -2156,7 +2203,10 @@ document.getElementById(
 "recommendedProducts"
 );
 
-if(!box||!selectedProduct)return;
+if(
+!box||
+!selectedProduct
+)return;
 
 const list=
 products
@@ -2174,9 +2224,9 @@ list.map(productCard).join("");
 }
 
 
-/* =========================================
+/* =====================================
    CART
-========================================= */
+===================================== */
 
 function saveCart(){
 
@@ -2278,9 +2328,9 @@ subtotal()-couponDiscount()
 }
 
 
-/* =========================================
+/* =====================================
    CART PAGE
-========================================= */
+===================================== */
 
 function cartHTML(){
 
@@ -2568,7 +2618,13 @@ ${t("remove")}
 
 function openCartPage(){
 
-location.hash="cart";
+history.pushState(
+null,
+"",
+location.pathname+
+location.search+
+"#cart"
+);
 
 render();
 
@@ -2579,7 +2635,8 @@ window.scrollTo(0,0);
 
 function changeQty(index,amount){
 
-const item=cart[index];
+const item=
+cart[index];
 
 if(!item)return;
 
@@ -2615,9 +2672,9 @@ render();
 }
 
 
-/* =========================================
+/* =====================================
    COUPON
-========================================= */
+===================================== */
 
 async function applyCoupon(){
 
@@ -2686,7 +2743,13 @@ throw new Error(
 
 }
 
-const coupon=data[0];
+const coupon=
+data[0];
+
+
+/*
+expiry
+*/
 
 if(coupon.expires_at){
 
@@ -2708,6 +2771,11 @@ throw new Error(
 
 }
 
+
+/*
+max uses
+*/
+
 if(
 coupon.max_uses!==null&&
 coupon.max_uses!==undefined&&
@@ -2722,6 +2790,11 @@ throw new Error(
 
 }
 
+
+/*
+minimum order
+*/
+
 if(
 subtotal()<
 Number(coupon.min_order||0)
@@ -2732,6 +2805,7 @@ throw new Error(
 );
 
 }
+
 
 const type=
 String(
@@ -2760,15 +2834,20 @@ throw new Error(
 
 }
 
+
 appliedCoupon={
+
 ...coupon,
+
 discount_type:
 type==="percentage"
 ?
 "percent"
 :
 type
+
 };
+
 
 msg.className=
 "notice ok";
@@ -2800,9 +2879,9 @@ refreshTotals();
 }
 
 
-/* =========================================
+/* =====================================
    TOTALS
-========================================= */
+===================================== */
 
 function refreshTotals(){
 
@@ -2815,21 +2894,24 @@ document.getElementById("discount");
 const tt=
 document.getElementById("total");
 
-if(s)s.textContent=
+if(s)
+s.textContent=
 money(subtotal());
 
-if(d)d.textContent=
+if(d)
+d.textContent=
 "-"+money(couponDiscount());
 
-if(tt)tt.textContent=
+if(tt)
+tt.textContent=
 money(total());
 
 }
 
 
-/* =========================================
-   ORDER
-========================================= */
+/* =====================================
+   PLACE ORDER
+===================================== */
 
 async function placeOrder(){
 
@@ -2851,6 +2933,7 @@ t("empty");
 return;
 
 }
+
 
 const name=
 document.getElementById(
@@ -2877,6 +2960,7 @@ document.getElementById(
 "address"
 ).value.trim();
 
+
 if(
 !name||
 !phone||
@@ -2895,6 +2979,7 @@ return;
 
 }
 
+
 msg.className=
 "notice";
 
@@ -2905,6 +2990,11 @@ language==="ar"
 :
 "Placing order...";
 
+
+/*
+نفس شكل البيانات
+الذي نجح عندك في Supabase
+*/
 
 const order={
 
@@ -2922,7 +3012,7 @@ payment_method:"cod",
 
 payment_status:"pending",
 
-status:"pending",
+status:"new",
 
 total:total(),
 
@@ -2962,9 +3052,15 @@ couponDiscount()
 };
 
 
+console.log(
+"ORDER DATA:",
+order
+);
+
+
 try{
 
-let response=
+const response=
 await fetch(
 SUPABASE_URL+
 "/rest/v1/orders",
@@ -2974,8 +3070,7 @@ method:"POST",
 
 headers:{
 ...HEADERS,
-Prefer:
-"return=representation"
+Prefer:"return=representation"
 },
 
 body:
@@ -2983,6 +3078,7 @@ JSON.stringify(order)
 
 }
 );
+
 
 if(!response.ok){
 
@@ -3000,6 +3096,7 @@ errorText
 
 }
 
+
 const result=
 await response.json();
 
@@ -3009,7 +3106,9 @@ result
 );
 
 
-/* تحديث الكوبون */
+/*
+تحديث عدد استخدام الكوبون
+*/
 
 if(appliedCoupon){
 
@@ -3052,18 +3151,40 @@ e
 }
 
 
-/* النجاح */
+/*
+النجاح
+*/
+
+let orderNumber="";
+
+if(
+Array.isArray(result)&&
+result[0]&&
+result[0].order_number
+){
+
+orderNumber=
+result[0].order_number;
+
+}
+
 
 msg.className=
 "notice ok";
 
 msg.textContent=
+orderNumber
+?
+t("success")+
+" رقم الطلب: "+
+orderNumber
+:
 t("success");
 
 
 /*
-المهم:
-السلة تتمسح فقط بعد نجاح الطلب
+السلة تتمسح فقط
+بعد نجاح الطلب
 */
 
 cart=[];
@@ -3097,13 +3218,16 @@ document.getElementById(
 "address"
 ).value="";
 
+
 const couponInput=
 document.getElementById(
 "couponInput"
 );
 
 if(couponInput){
+
 couponInput.value="";
+
 }
 
 renderCartItems();
@@ -3125,7 +3249,9 @@ msg.textContent=
 t("error");
 
 /*
-السلة لا تتمسح عند الخطأ
+مهم:
+السلة تفضل موجودة
+لو الطلب فشل
 */
 
 }
@@ -3133,9 +3259,9 @@ t("error");
 }
 
 
-/* =========================================
+/* =====================================
    QUICK ADD
-========================================= */
+===================================== */
 
 function quickAdd(index){
 
@@ -3150,11 +3276,11 @@ Number(product.stock||0);
 if(stock<1)return;
 
 const existing=
-cart.find(x=>
-String(x.product_id)===
+cart.find(item=>
+String(item.product_id)===
 String(product.id)&&
-!x.size&&
-!x.color
+!item.size&&
+!item.color
 );
 
 if(existing){
@@ -3169,7 +3295,7 @@ Number(existing.qty||1)+1
 
 cart.push({
 
-id:
+cart_id:
 crypto.randomUUID(),
 
 product_id:
@@ -3204,13 +3330,13 @@ openCartPage();
 }
 
 
-/* =========================================
+/* =====================================
    NAVIGATION
-========================================= */
+===================================== */
 
 function goHome(){
 
-history.pushState(
+history.replaceState(
 null,
 "",
 location.pathname+
@@ -3226,12 +3352,14 @@ window.scrollTo(0,0);
 
 function goShop(){
 
-history.pushState(
+history.replaceState(
 null,
 "",
 location.pathname+
 location.search
 );
+
+activeCategory="";
 
 render();
 
@@ -3253,9 +3381,9 @@ behavior:"smooth"
 }
 
 
-/* =========================================
+/* =====================================
    MAIN RENDER
-========================================= */
+===================================== */
 
 function render(){
 
@@ -3265,7 +3393,9 @@ const hash=
 location.hash;
 
 
-/* CART */
+/*
+CART
+*/
 
 if(hash==="#cart"){
 
@@ -3283,7 +3413,9 @@ return;
 }
 
 
-/* OFFERS */
+/*
+OFFERS
+*/
 
 if(hash==="#offers"){
 
@@ -3299,11 +3431,15 @@ return;
 }
 
 
-/* PRODUCT */
+/*
+PRODUCT
+*/
 
-if(hash.startsWith(
+if(
+hash.startsWith(
 "#product?"
-)){
+)
+){
 
 const query=
 hash.split("?")[1];
@@ -3336,7 +3472,9 @@ return;
 }
 
 
-/* HOME */
+/*
+HOME
+*/
 
 document.getElementById(
 "app"
@@ -3348,6 +3486,21 @@ renderProducts();
 }
 
 
+/* =====================================
+   BROWSER BACK / FORWARD
+===================================== */
+
+window.addEventListener(
+"popstate",
+function(){
+
+render();
+
+window.scrollTo(0,0);
+
+});
+
+
 window.addEventListener(
 "hashchange",
 function(){
@@ -3356,13 +3509,12 @@ render();
 
 window.scrollTo(0,0);
 
-}
-);
+});
 
 
-/* =========================================
+/* =====================================
    START
-========================================= */
+===================================== */
 
 updateCount();
 
