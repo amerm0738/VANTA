@@ -7,213 +7,447 @@
 
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#070707;color:#fff;font-family:Arial,sans-serif}
+body{
+margin:0;
+background:#070707;
+color:#fff;
+font-family:Arial,sans-serif
+}
 button,input,textarea,select{font:inherit}
 
-.top{background:#111;text-align:center;padding:8px;font-size:11px;color:#ddd}
+.top{
+background:#111;
+text-align:center;
+padding:8px;
+font-size:11px;
+color:#ddd
+}
 
 nav{
-height:70px;padding:0 5%;display:flex;align-items:center;
-justify-content:space-between;border-bottom:1px solid #222;
-position:sticky;top:0;background:#080808ee;
-backdrop-filter:blur(8px);z-index:20
+height:70px;
+padding:0 5%;
+display:flex;
+align-items:center;
+justify-content:space-between;
+border-bottom:1px solid #222;
+position:sticky;
+top:0;
+background:#080808ee;
+backdrop-filter:blur(8px);
+z-index:20
 }
 
-.logo{font-size:29px;font-weight:900;letter-spacing:6px}
-.links{display:flex;gap:24px}
-.links a{color:#aaa;text-decoration:none;font-size:13px}
-
-.navActions{display:flex;gap:8px;align-items:center}
-
-.langBtn,.cartBtn{
-border:0;border-radius:24px;padding:10px 15px;cursor:pointer
+.logo{
+font-size:29px;
+font-weight:900;
+letter-spacing:6px
 }
-.langBtn{background:#222;color:#fff}
-.cartBtn{background:#fff;color:#111}
+
+.links{
+display:flex;
+gap:24px
+}
+
+.links a{
+color:#aaa;
+text-decoration:none;
+font-size:13px
+}
+
+.navActions{
+display:flex;
+align-items:center;
+gap:8px
+}
+
+.langBtn,
+.cartBtn{
+border:0;
+border-radius:24px;
+padding:10px 15px;
+cursor:pointer
+}
+
+.langBtn{
+background:#222;
+color:#fff
+}
+
+.cartBtn{
+background:#fff;
+color:#111
+}
 
 .hero{
-min-height:550px;display:grid;place-items:center;text-align:center;
-background:radial-gradient(circle at 50% 35%,#555,#191919 48%,#070707 78%)
+min-height:550px;
+display:grid;
+place-items:center;
+text-align:center;
+background:
+radial-gradient(
+circle at 50% 35%,
+#555,
+#191919 48%,
+#070707 78%
+)
 }
 
-.v{font-size:65px;font-weight:900}
-.hero h1{font-size:75px;letter-spacing:9px;margin:0}
-.hero p{letter-spacing:5px;color:#ddd}
+.v{
+font-size:65px;
+font-weight:900
+}
+
+.hero h1{
+font-size:75px;
+letter-spacing:9px;
+margin:0
+}
+
+.hero p{
+letter-spacing:5px;
+color:#ddd
+}
 
 .cta{
-background:#fff;color:#111;border:0;border-radius:30px;
-padding:15px 35px;font-weight:bold;cursor:pointer;margin-top:18px
+background:#fff;
+color:#111;
+border:0;
+border-radius:30px;
+padding:15px 35px;
+font-weight:bold;
+cursor:pointer;
+margin-top:18px
 }
 
-section{padding:50px 5%}
-.title{font-size:27px;margin:0 0 8px}
-.muted{color:#777;margin:0 0 25px}
+section{
+padding:50px 5%
+}
+
+.title{
+font-size:27px;
+margin:0 0 8px
+}
+
+.muted{
+color:#777;
+margin:0 0 25px
+}
 
 .cats{
-display:grid;grid-template-columns:repeat(4,1fr);gap:15px
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:15px
 }
 
 .cat{
-height:210px;border-radius:15px;padding:22px;
-display:flex;align-items:end;
+height:210px;
+border-radius:15px;
+padding:22px;
+display:flex;
+align-items:end;
 background:linear-gradient(145deg,#333,#111);
-font-size:21px;font-weight:800;cursor:pointer
+font-size:21px;
+font-weight:800;
+cursor:pointer
 }
 
 .toolbar{
-display:flex;justify-content:space-between;
-align-items:end;gap:15px;margin-bottom:20px
+display:flex;
+justify-content:space-between;
+align-items:end;
+gap:15px;
+margin-bottom:20px
 }
 
 .search{
-width:260px;background:#111;color:#fff;
-border:1px solid #333;border-radius:25px;padding:11px 16px
+width:260px;
+background:#111;
+color:#fff;
+border:1px solid #333;
+border-radius:25px;
+padding:11px 16px
 }
 
 .products{
-display:grid;grid-template-columns:repeat(4,1fr);gap:15px
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:15px
 }
 
 .card{
-background:#f4f4f4;color:#111;border-radius:13px;
-overflow:hidden;cursor:pointer
+background:#f4f4f4;
+color:#111;
+border-radius:13px;
+overflow:hidden;
+cursor:pointer
 }
 
 .pic{
-height:245px;background:linear-gradient(145deg,#444,#111);
-display:grid;place-items:center;color:#fff;
-font-size:45px;font-weight:900;position:relative
+height:245px;
+background:linear-gradient(145deg,#444,#111);
+display:grid;
+place-items:center;
+color:#fff;
+font-size:45px;
+font-weight:900;
+position:relative
 }
 
-.pic img{width:100%;height:100%;object-fit:cover}
+.pic img{
+width:100%;
+height:100%;
+object-fit:cover
+}
 
 .badge{
-position:absolute;top:10px;right:10px;
-background:#111;color:#fff;border-radius:20px;
-padding:6px 10px;font-size:12px
+position:absolute;
+top:10px;
+right:10px;
+background:#111;
+color:#fff;
+border-radius:20px;
+padding:6px 10px;
+font-size:12px;
+font-weight:bold
 }
 
-.info{padding:14px}
-.info h3{margin:0 0 8px}
-.price{font-weight:800;margin:8px 0}
+.info{
+padding:14px
+}
+
+.info h3{
+margin:0 0 8px
+}
+
+.price{
+font-weight:800;
+margin:8px 0;
+font-size:18px
+}
 
 .oldPrice{
-text-decoration:line-through;color:#888;
-margin-left:7px;font-weight:normal
+text-decoration:line-through;
+color:#888;
+font-size:14px;
+margin-left:7px;
+font-weight:normal
 }
 
-.stock{font-size:12px;color:#777;margin-bottom:9px}
+.salePercent{
+color:#b00020;
+font-size:12px;
+font-weight:bold;
+margin-bottom:8px
+}
+
+.stock{
+font-size:12px;
+color:#777;
+margin-bottom:9px
+}
 
 .add{
-width:100%;background:#111;color:#fff;border:0;
-padding:11px;border-radius:22px;cursor:pointer
+width:100%;
+background:#111;
+color:#fff;
+border:0;
+padding:11px;
+border-radius:22px;
+cursor:pointer
 }
 
-.add:disabled{opacity:.4;cursor:not-allowed}
+.add:disabled{
+opacity:.4;
+cursor:not-allowed
+}
+
+.offersBtn{
+margin-top:12px;
+background:#222;
+color:#fff;
+border:1px solid #444;
+border-radius:22px;
+padding:10px 18px;
+cursor:pointer
+}
 
 .banner{
-min-height:270px;border-radius:16px;display:grid;
-place-items:center;text-align:center;
+min-height:270px;
+border-radius:16px;
+display:grid;
+place-items:center;
+text-align:center;
 background:linear-gradient(90deg,#111,#444,#111)
 }
 
-.banner h2{font-size:38px;letter-spacing:5px}
-
-.features{
-background:#eee;color:#111;border-radius:14px;
-display:grid;grid-template-columns:repeat(4,1fr);
-gap:10px;padding:22px;text-align:center
+.banner h2{
+font-size:38px;
+letter-spacing:5px
 }
 
-.features b{display:block;margin:5px}
+.features{
+background:#eee;
+color:#111;
+border-radius:14px;
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:10px;
+padding:22px;
+text-align:center
+}
+
+.features b{
+display:block;
+margin:5px
+}
 
 footer{
-padding:45px 5%;border-top:1px solid #222;color:#999;
-display:grid;grid-template-columns:2fr 1fr 1fr 2fr;gap:25px
+padding:45px 5%;
+border-top:1px solid #222;
+color:#999;
+display:grid;
+grid-template-columns:2fr 1fr 1fr 2fr;
+gap:25px
 }
 
 .flogo{
-font-size:28px;color:#fff;font-weight:900;letter-spacing:5px
+font-size:28px;
+color:#fff;
+font-weight:900;
+letter-spacing:5px
 }
 
-/* PRODUCT PAGE */
+/* PRODUCT */
 
-.productPage{padding:45px 5%;min-height:600px}
+.productPage{
+padding:45px 5%;
+min-height:650px
+}
 
 .back{
-background:#222;color:#fff;border:0;border-radius:22px;
-padding:10px 17px;cursor:pointer;margin-bottom:25px
+background:#222;
+color:#fff;
+border:0;
+border-radius:22px;
+padding:10px 17px;
+cursor:pointer;
+margin-bottom:25px
 }
 
 .productGrid{
-display:grid;grid-template-columns:1.1fr 1fr;
-gap:40px;max-width:1200px;margin:auto
+display:grid;
+grid-template-columns:1.1fr 1fr;
+gap:40px;
+max-width:1200px;
+margin:auto
 }
 
 .galleryMain{
-height:560px;border-radius:18px;background:#111;overflow:hidden
+height:560px;
+border-radius:18px;
+background:#111;
+overflow:hidden
 }
 
 .galleryMain img{
-width:100%;height:100%;object-fit:cover
+width:100%;
+height:100%;
+object-fit:cover
 }
 
 .thumbs{
-display:flex;gap:10px;overflow:auto;margin-top:12px
+display:flex;
+gap:10px;
+overflow:auto;
+margin-top:12px
 }
 
 .thumb{
-width:80px;height:80px;border:2px solid #333;
-border-radius:9px;overflow:hidden;cursor:pointer;flex:none
+width:80px;
+height:80px;
+border:2px solid #333;
+border-radius:9px;
+overflow:hidden;
+cursor:pointer;
+flex:none
 }
 
-.thumb img{width:100%;height:100%;object-fit:cover}
-
-.details h1{font-size:42px;margin:0 0 12px}
-
-.desc{color:#aaa;line-height:1.8;margin:20px 0}
-
-.bigPrice{font-size:28px;font-weight:900;margin:20px 0}
-
-.sizes{
-display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 20px
+.thumb img{
+width:100%;
+height:100%;
+object-fit:cover
 }
 
-.sizeBtn{
-background:#111;color:#fff;border:1px solid #444;
-border-radius:7px;padding:10px 18px;cursor:pointer
+.details h1{
+font-size:42px;
+margin:0 0 12px
 }
 
-.sizeBtn.selected{background:#fff;color:#111}
+.desc{
+color:#aaa;
+line-height:1.8;
+margin:20px 0
+}
 
+.bigPrice{
+font-size:28px;
+font-weight:900;
+margin:20px 0
+}
+
+.sizes,
 .colors{
-display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 20px
+display:flex;
+gap:8px;
+flex-wrap:wrap;
+margin:10px 0 20px
 }
 
+.sizeBtn,
 .colorBtn{
-background:#111;color:#fff;border:1px solid #444;
-border-radius:7px;padding:10px 18px;cursor:pointer
+background:#111;
+color:#fff;
+border:1px solid #444;
+border-radius:7px;
+padding:10px 18px;
+cursor:pointer
 }
 
-.colorBtn.selected{background:#fff;color:#111}
+.sizeBtn.selected,
+.colorBtn.selected{
+background:#fff;
+color:#111
+}
 
 .productQty{
-display:flex;align-items:center;gap:12px;margin:20px 0
+display:flex;
+align-items:center;
+gap:12px;
+margin:20px 0
 }
 
 .productQty button{
-width:38px;height:38px;border:1px solid #555;
-background:#111;color:#fff;border-radius:7px;cursor:pointer
+width:38px;
+height:38px;
+border:1px solid #555;
+background:#111;
+color:#fff;
+border-radius:7px;
+cursor:pointer
 }
 
 .wide{
-width:100%;padding:15px;background:#fff;color:#111;
-border:0;border-radius:8px;font-weight:bold;cursor:pointer
+width:100%;
+padding:15px;
+background:#fff;
+color:#111;
+border:0;
+border-radius:8px;
+font-weight:bold;
+cursor:pointer
 }
 
-.recommended{margin-top:60px}
-
-/* CART PAGE */
+/* CART */
 
 .cartPage{
 padding:45px 5%;
@@ -228,95 +462,150 @@ grid-template-columns:1.5fr .8fr;
 gap:25px
 }
 
-.cartBox,.checkoutBox{
-background:#fff;color:#111;
-border-radius:14px;padding:20px
+.cartBox,
+.checkoutBox{
+background:#fff;
+color:#111;
+border-radius:14px;
+padding:20px
 }
 
 .cartItem{
 display:grid;
 grid-template-columns:90px 1fr auto auto;
-gap:15px;align-items:center;
-padding:15px 0;border-bottom:1px solid #ddd
+gap:15px;
+align-items:center;
+padding:15px 0;
+border-bottom:1px solid #ddd
 }
 
 .cartImg{
-width:90px;height:90px;border-radius:8px;
-overflow:hidden;background:#222
+width:90px;
+height:90px;
+border-radius:8px;
+overflow:hidden;
+background:#222
 }
 
 .cartImg img{
-width:100%;height:100%;object-fit:cover
+width:100%;
+height:100%;
+object-fit:cover
 }
 
 .qty{
-display:flex;gap:7px;align-items:center
+display:flex;
+gap:7px;
+align-items:center
 }
 
 .qty button{
-border:1px solid #ccc;background:#fff;
-border-radius:5px;width:30px;height:30px;cursor:pointer
+border:1px solid #ccc;
+background:#fff;
+border-radius:5px;
+width:30px;
+height:30px;
+cursor:pointer
 }
 
 .remove{
-border:0;background:none;color:#c00;cursor:pointer
+border:0;
+background:none;
+color:#c00;
+cursor:pointer
 }
 
 .checkoutBox input,
 .checkoutBox textarea,
 .checkoutBox select{
-width:100%;margin:7px 0;padding:12px;
-border:1px solid #ccc;border-radius:7px
+width:100%;
+margin:7px 0;
+padding:12px;
+border:1px solid #ccc;
+border-radius:7px
 }
 
 .dark{
-width:100%;padding:13px;background:#111;
-color:#fff;border:0;border-radius:7px;cursor:pointer
+width:100%;
+padding:13px;
+background:#111;
+color:#fff;
+border:0;
+border-radius:7px;
+cursor:pointer
 }
 
 .summaryLine{
-display:flex;justify-content:space-between;
+display:flex;
+justify-content:space-between;
 padding:8px 0
 }
 
 .summaryTotal{
-font-size:21px;font-weight:bold;
+font-size:21px;
+font-weight:bold;
 border-top:1px solid #ddd;
 padding-top:12px
 }
 
 .couponRow{
-display:flex;gap:7px;margin:12px 0
+display:flex;
+gap:7px;
+margin:12px 0
 }
 
 .couponRow input{
-flex:1;margin:0
+flex:1;
+margin:0
 }
 
 .couponRow button{
-border:0;background:#111;color:#fff;
-border-radius:7px;padding:0 15px;cursor:pointer
+border:0;
+background:#111;
+color:#fff;
+border-radius:7px;
+padding:0 15px;
+cursor:pointer
 }
 
 .notice{
-padding:10px;border-radius:7px;
-background:#f2f2f2;margin:10px 0;font-size:13px
+padding:10px;
+border-radius:7px;
+background:#f2f2f2;
+margin:10px 0;
+font-size:13px
 }
 
-.ok{background:#e7f7e7}
-.err{background:#ffe9e9}
+.ok{
+background:#e7f7e7
+}
+
+.err{
+background:#ffe9e9
+}
 
 .empty{
-padding:50px;text-align:center;color:#777
+padding:50px;
+text-align:center;
+color:#777
+}
+
+.recommended{
+margin-top:60px
 }
 
 @media(max-width:800px){
 
-.links{display:none}
+.links{
+display:none
+}
 
-.hero h1{font-size:48px}
+.hero h1{
+font-size:48px
+}
 
-.cats,.products{
+.cats,
+.products{
 grid-template-columns:repeat(2,1fr)
 }
 
@@ -328,7 +617,9 @@ footer{
 grid-template-columns:1fr 1fr
 }
 
-.toolbar{display:block}
+.toolbar{
+display:block
+}
 
 .search{
 width:100%;
@@ -340,25 +631,25 @@ grid-template-columns:1fr;
 gap:25px
 }
 
-.galleryMain{height:420px}
+.galleryMain{
+height:420px
+}
 
-.details h1{font-size:32px}
+.details h1{
+font-size:32px
+}
 
 .cartLayout{
 grid-template-columns:1fr
 }
 
 .cartItem{
-grid-template-columns:65px 1fr;
+grid-template-columns:65px 1fr
 }
 
 .cartImg{
-width:65px;height:65px
-}
-
-.cartItem .qty,
-.cartItem .remove{
-grid-column:auto
+width:65px;
+height:65px
 }
 
 }
@@ -373,22 +664,42 @@ FREE SHIPPING FOR ORDERS OVER 1500 EGP 🚚
 
 <nav>
 
-<div class="logo">VANTA</div>
+<div class="logo">
+VANTA
+</div>
 
 <div class="links">
-<a href="#home" onclick="goHome()">Home</a>
-<a href="#shop" onclick="goHome()">Shop</a>
-<a href="#new" onclick="goHome()">New Arrivals</a>
-<a href="#about" onclick="goHome()">About</a>
+
+<a href="#" onclick="goHome();return false">
+Home
+</a>
+
+<a href="#shop" onclick="goShop();return false">
+Shop
+</a>
+
+<a href="#offers" onclick="showOffers();return false">
+🔥 Offers
+</a>
+
+<a href="#about">
+About
+</a>
+
 </div>
 
 <div class="navActions">
 
-<button class="langBtn" onclick="toggleLanguage()" id="langBtn">
+<button
+class="langBtn"
+onclick="toggleLanguage()"
+id="langBtn">
 EN
 </button>
 
-<button class="cartBtn" onclick="openCartPage()">
+<button
+class="cartBtn"
+onclick="openCartPage()">
 🛒 <span id="count">0</span>
 </button>
 
@@ -411,7 +722,6 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
 "sb_publishable_A8WKnbjf_YryRDolgIr1YA_SDDQcYWf";
 
-
 const HEADERS={
 apikey:SUPABASE_KEY,
 Authorization:"Bearer "+SUPABASE_KEY,
@@ -421,7 +731,7 @@ Accept:"application/json",
 
 
 /* =========================================
-   DATA
+   STATE
 ========================================= */
 
 let products=[];
@@ -436,8 +746,11 @@ localStorage.getItem("vanta_lang")||"ar";
 let category="";
 
 let selectedProduct=null;
+
 let selectedSize="";
+
 let selectedColor="";
+
 let productQty=1;
 
 let appliedCoupon=null;
@@ -452,7 +765,7 @@ const TXT={
 ar:{
 home:"الرئيسية",
 shop:"المتجر",
-new:"وصل حديثًا",
+offers:"العروض 🔥",
 about:"من نحن",
 cart:"السلة",
 category:"تسوق حسب الفئة",
@@ -483,18 +796,21 @@ total:"الإجمالي",
 coupon:"كود الخصم",
 apply:"تطبيق",
 couponOK:"تم تطبيق الكوبون ✅",
-couponBad:"كود الخصم غير صالح أو منتهي.",
+couponBad:"كود الخصم غير صالح أو منتهي ❌",
 success:"تم تسجيل طلبك بنجاح ✅",
-error:"حصل خطأ أثناء تسجيل الطلب.",
+error:"حصل خطأ أثناء تسجيل الطلب ❌",
 required:"اكمل بيانات الطلب الأول",
 recommended:"منتجات مقترحة",
-cod:"الدفع عند الاستلام"
+cod:"الدفع عند الاستلام",
+offersTitle:"العروض 🔥",
+noOffers:"لا توجد عروض حاليًا.",
+sale:"خصم"
 },
 
 en:{
 home:"Home",
 shop:"Shop",
-new:"New Arrivals",
+offers:"🔥 Offers",
 about:"About",
 cart:"Cart",
 category:"SHOP BY CATEGORY",
@@ -525,12 +841,15 @@ total:"Total",
 coupon:"Coupon code",
 apply:"Apply",
 couponOK:"Coupon applied ✅",
-couponBad:"Invalid or expired coupon.",
+couponBad:"Invalid or expired coupon ❌",
 success:"Order placed successfully ✅",
-error:"There was an error placing the order.",
+error:"There was an error placing the order ❌",
 required:"Please complete your details.",
 recommended:"Recommended Products",
-cod:"Cash on Delivery"
+cod:"Cash on Delivery",
+offersTitle:"🔥 Offers",
+noOffers:"No offers available.",
+sale:"OFF"
 }
 
 };
@@ -568,8 +887,6 @@ language
 
 render();
 
-saveLocalCart();
-
 }
 
 
@@ -606,8 +923,13 @@ arr=product.image_urls.filter(Boolean);
 else if(typeof product.image_urls==="string"){
 
 try{
-arr=JSON.parse(product.image_urls);
-if(!Array.isArray(arr))arr=[];
+
+const x=JSON.parse(product.image_urls);
+
+if(Array.isArray(x)){
+arr=x.filter(Boolean);
+}
+
 }catch(e){
 
 arr=product.image_urls
@@ -636,8 +958,13 @@ return product.sizes;
 if(typeof product.sizes==="string"){
 
 try{
+
 const x=JSON.parse(product.sizes);
-if(Array.isArray(x))return x;
+
+if(Array.isArray(x)){
+return x;
+}
+
 }catch(e){}
 
 return product.sizes
@@ -664,11 +991,14 @@ result=product.colors;
 else if(typeof product.colors==="string"){
 
 try{
+
 const x=JSON.parse(product.colors);
 
 if(Array.isArray(x)){
 result=x;
-}else{
+}
+
+else{
 result=product.colors
 .split(",")
 .map(x=>x.trim());
@@ -696,21 +1026,32 @@ return result.filter(Boolean);
 
 function salePrice(product){
 
-const normal=Number(product.price||0);
-const sale=Number(product.sale_price||0);
+const normal=
+Number(product.price||0);
+
+const sale=
+Number(product.sale_price||0);
 
 return sale>0&&sale<normal
 ?sale
 :normal;
+
 }
 
 
 function discount(product){
 
-const normal=Number(product.price||0);
-const sale=Number(product.sale_price||0);
+const normal=
+Number(product.price||0);
 
-if(sale>0&&sale<normal){
+const sale=
+Number(product.sale_price||0);
+
+if(
+normal>0 &&
+sale>0 &&
+sale<normal
+){
 
 return Math.round(
 ((normal-sale)/normal)*100
@@ -738,7 +1079,7 @@ function homeHTML(){
 
 return `
 
-<header class="hero" id="home">
+<header class="hero">
 
 <div>
 
@@ -746,10 +1087,16 @@ return `
 
 <h1>VANTA</h1>
 
-<p>MODERN UNISEX WEAR</p>
+<p>
+MODERN UNISEX WEAR
+</p>
 
-<button class="cta" onclick="goShop()">
+<button
+class="cta"
+onclick="goShop()">
+
 ${t("shopNow")}
+
 </button>
 
 </div>
@@ -769,27 +1116,39 @@ Find your style, wear it your way.
 
 <div class="cats">
 
-<div class="cat"
+<div
+class="cat"
 onclick="filterCategory('T-Shirts')">
 T-SHIRTS
 </div>
 
-<div class="cat"
+<div
+class="cat"
 onclick="filterCategory('Hoodies')">
 HOODIES
 </div>
 
-<div class="cat"
+<div
+class="cat"
 onclick="filterCategory('Pants')">
 PANTS
 </div>
 
-<div class="cat"
+<div
+class="cat"
 onclick="filterCategory('Accessories')">
 ACCESSORIES
 </div>
 
 </div>
+
+<button
+class="offersBtn"
+onclick="showOffers()">
+
+${t("offers")}
+
+</button>
 
 </section>
 
@@ -801,7 +1160,7 @@ ACCESSORIES
 <div>
 
 <h2 class="title">
-${t("new")}
+${t("shop")}
 </h2>
 
 <p class="muted">
@@ -818,7 +1177,8 @@ oninput="renderProducts()">
 
 </div>
 
-<div id="products"
+<div
+id="products"
 class="products">
 
 <p>جاري تحميل المنتجات...</p>
@@ -838,7 +1198,9 @@ class="products">
 ${t("collection")}
 </h2>
 
-<p>FALL / WINTER 2026</p>
+<p>
+FALL / WINTER 2026
+</p>
 
 <button
 class="cta"
@@ -891,27 +1253,45 @@ We're here for you
 <footer>
 
 <div>
-<div class="flogo">VANTA</div>
-<p>Style has no gender.</p>
+
+<div class="flogo">
+VANTA
+</div>
+
+<p>
+Style has no gender.
+</p>
+
 </div>
 
 <div>
+
 <b>Quick Links</b>
+
 <p>Home</p>
 <p>Shop</p>
-<p>New Arrivals</p>
+<p>Offers</p>
+
 </div>
 
 <div>
+
 <b>Customer Service</b>
+
 <p>Track Order</p>
 <p>Shipping</p>
 <p>Returns</p>
+
 </div>
 
 <div>
+
 <b>Subscribe</b>
-<p>Be first to know about new drops.</p>
+
+<p>
+Be first to know about new drops.
+</p>
+
 </div>
 
 </footer>
@@ -929,7 +1309,7 @@ async function loadProducts(){
 
 try{
 
-const r=await fetch(
+const response=await fetch(
 SUPABASE_URL+
 "/rest/v1/products?select=*",
 {
@@ -937,19 +1317,24 @@ headers:HEADERS
 }
 );
 
-if(!r.ok){
+if(!response.ok){
 
-throw new Error(await r.text());
+throw new Error(
+await response.text()
+);
 
 }
 
-products=await r.json();
+products=await response.json();
 
 render();
 
-}catch(e){
+}catch(error){
 
-console.error(e);
+console.error(
+"PRODUCT ERROR:",
+error
+);
 
 document.getElementById("app").innerHTML=`
 
@@ -970,20 +1355,24 @@ document.getElementById("app").innerHTML=`
 
 function renderProducts(){
 
-const box=document.getElementById("products");
+const box=
+document.getElementById("products");
 
 if(!box)return;
 
-const input=document.getElementById("search");
+const input=
+document.getElementById("search");
 
-const q=input?
-input.value.trim().toLowerCase():"";
+const q=input
+?
+input.value.trim().toLowerCase()
+:
+"";
 
-
-let list=products.filter(
+let list=
+products.filter(
 p=>p.active!==false
 );
-
 
 if(q){
 
@@ -996,7 +1385,6 @@ String(p.name||"")
 
 }
 
-
 if(category){
 
 list=list.filter(
@@ -1008,26 +1396,31 @@ category.toLowerCase()
 
 }
 
-
 if(!list.length){
 
 box.innerHTML=
-`<div class="empty">لا توجد منتجات.</div>`;
+`<div class="empty">
+لا توجد منتجات.
+</div>`;
 
 return;
 
 }
 
+box.innerHTML=
+list.map(p=>{
 
-box.innerHTML=list.map(p=>{
+const index=
+products.indexOf(p);
 
-const index=products.indexOf(p);
+const imgs=
+images(p);
 
-const imgs=images(p);
+const d=
+discount(p);
 
-const d=discount(p);
-
-const stock=Number(p.stock||0);
+const stock=
+Number(p.stock||0);
 
 return `
 
@@ -1050,7 +1443,9 @@ alt="${esc(p.name)}">`
 ${
 d
 ?
-`<span class="badge">-${d}%</span>`
+`<span class="badge">
+-${d}%
+</span>`
 :
 ""
 }
@@ -1059,7 +1454,9 @@ d
 
 <div class="info">
 
-<h3>${esc(p.name||"")}</h3>
+<h3>
+${esc(p.name||"")}
+</h3>
 
 <div>
 ${esc(p.color||"")}
@@ -1080,6 +1477,16 @@ ${money(p.price)}
 ${money(salePrice(p))}
 
 </div>
+
+${
+d
+?
+`<div class="salePercent">
+🔥 ${t("sale")} ${d}%
+</div>`
+:
+""
+}
 
 <div class="stock">
 
@@ -1116,6 +1523,121 @@ ${stock<1?t("out"):t("add")}
 }
 
 
+/* =========================================
+   OFFERS
+========================================= */
+
+function showOffers(){
+
+category="";
+
+location.hash="offers";
+
+render();
+
+setTimeout(()=>{
+
+const box=
+document.getElementById("products");
+
+if(!box)return;
+
+const offers=
+products.filter(
+p=>
+p.active!==false &&
+discount(p)>0
+);
+
+if(!offers.length){
+
+box.innerHTML=
+`<div class="empty">
+${t("noOffers")}
+</div>`;
+
+return;
+
+}
+
+box.innerHTML=
+offers.map(p=>{
+
+const index=
+products.indexOf(p);
+
+const imgs=
+images(p);
+
+const d=
+discount(p);
+
+return `
+
+<article
+class="card"
+onclick="openProduct('${p.id}')">
+
+<div class="pic">
+
+${
+imgs[0]
+?
+`<img src="${esc(imgs[0])}">`
+:
+"V"
+}
+
+<span class="badge">
+-${d}%
+</span>
+
+</div>
+
+<div class="info">
+
+<h3>
+${esc(p.name||"")}
+</h3>
+
+<div class="price">
+
+<span class="oldPrice">
+${money(p.price)}
+</span>
+
+${money(salePrice(p))}
+
+</div>
+
+<button
+class="add"
+onclick="
+event.stopPropagation();
+quickAdd(${index})
+">
+
+${t("add")}
+
+</button>
+
+</div>
+
+</article>
+
+`;
+
+}).join("");
+
+},50);
+
+}
+
+
+/* =========================================
+   QUICK ADD
+========================================= */
+
 function quickAdd(index){
 
 const p=products[index];
@@ -1126,7 +1648,8 @@ if(Number(p.stock||0)<1)return;
 
 const existing=cart.find(
 x=>
-String(x.product_id)===String(p.id)&&
+String(x.product_id)===
+String(p.id)&&
 (x.size||"")===""&&
 (x.color||"")===""
 );
@@ -1165,18 +1688,20 @@ color:""
 }
 
 saveLocalCart();
+
 openCartPage();
 
 }
 
 
 /* =========================================
-   PRODUCT PAGE
+   PRODUCT
 ========================================= */
 
 function openProduct(id){
 
-location.hash="product?id="+
+location.hash=
+"product?id="+
 encodeURIComponent(id);
 
 window.scrollTo(0,0);
@@ -1187,13 +1712,19 @@ window.scrollTo(0,0);
 function productHTML(p){
 
 selectedProduct=p;
+
 selectedSize="";
+
 selectedColor="";
+
 productQty=1;
 
 const imgs=images(p);
+
 const ss=sizes(p);
+
 const cs=colors(p);
+
 const d=discount(p);
 
 return `
@@ -1202,7 +1733,7 @@ return `
 
 <button
 class="back"
-onclick="goHome();goShop();">
+onclick="goHome();goShop()">
 
 ${t("back")}
 
@@ -1257,7 +1788,9 @@ document.getElementById('mainImage').src='${esc(im)}'
 
 <div class="details">
 
-<h1>${esc(p.name||"")}</h1>
+<h1>
+${esc(p.name||"")}
+</h1>
 
 
 ${
@@ -1289,6 +1822,17 @@ ${money(salePrice(p))}
 </div>
 
 
+${
+d
+?
+`<div class="salePercent">
+🔥 ${t("sale")} ${d}%
+</div>`
+:
+""
+}
+
+
 <div class="desc">
 ${esc(p.description||"")}
 </div>
@@ -1309,7 +1853,9 @@ s=>`
 
 <button
 class="sizeBtn"
-onclick="selectSize(this,'${esc(s)}')">
+onclick="
+selectSize(this,'${esc(s)}')
+">
 
 ${esc(s)}
 
@@ -1342,7 +1888,9 @@ c=>`
 
 <button
 class="colorBtn"
-onclick="selectColor(this,'${esc(c)}')">
+onclick="
+selectColor(this,'${esc(c)}')
+">
 
 ${esc(c)}
 
@@ -1364,13 +1912,17 @@ ${esc(c)}
 
 <b>${t("quantity")}</b>
 
-<button onclick="productQtyChange(-1)">
+<button
+onclick="productQtyChange(-1)">
 −
 </button>
 
-<b id="productQty">1</b>
+<b id="productQty">
+1
+</b>
 
-<button onclick="productQtyChange(1)">
+<button
+onclick="productQtyChange(1)">
 +
 </button>
 
@@ -1414,8 +1966,11 @@ function selectSize(btn,value){
 
 selectedSize=value;
 
-document.querySelectorAll(".sizeBtn")
-.forEach(x=>x.classList.remove("selected"));
+document
+.querySelectorAll(".sizeBtn")
+.forEach(
+x=>x.classList.remove("selected")
+);
 
 btn.classList.add("selected");
 
@@ -1426,8 +1981,11 @@ function selectColor(btn,value){
 
 selectedColor=value;
 
-document.querySelectorAll(".colorBtn")
-.forEach(x=>x.classList.remove("selected"));
+document
+.querySelectorAll(".colorBtn")
+.forEach(
+x=>x.classList.remove("selected")
+);
 
 btn.classList.add("selected");
 
@@ -1438,9 +1996,8 @@ function productQtyChange(n){
 
 if(!selectedProduct)return;
 
-const max=Number(
-selectedProduct.stock||1
-);
+const max=
+Number(selectedProduct.stock||1);
 
 productQty=Math.max(
 1,
@@ -1452,7 +2009,8 @@ productQty+n
 
 document.getElementById(
 "productQty"
-).textContent=productQty;
+).textContent=
+productQty;
 
 }
 
@@ -1475,7 +2033,8 @@ if(existing){
 
 existing.qty=Math.min(
 Number(selectedProduct.stock),
-Number(existing.qty||1)+productQty
+Number(existing.qty||1)+
+productQty
 );
 
 }else{
@@ -1492,7 +2051,9 @@ price:salePrice(selectedProduct),
 
 image_url:images(selectedProduct)[0]||"",
 
-stock:Number(selectedProduct.stock||0),
+stock:Number(
+selectedProduct.stock||0
+),
 
 qty:productQty,
 
@@ -1513,13 +2074,15 @@ openCartPage();
 
 function renderRecommended(){
 
-const box=document.getElementById(
+const box=
+document.getElementById(
 "recommendedProducts"
 );
 
 if(!box||!selectedProduct)return;
 
-const list=products
+const list=
+products
 .filter(
 p=>
 String(p.id)!==
@@ -1528,10 +2091,14 @@ p.active!==false
 )
 .slice(0,4);
 
-box.innerHTML=list.map(p=>{
+box.innerHTML=
+list.map(p=>{
 
-const im=images(p)[0]||"";
-const d=discount(p);
+const im=
+images(p)[0]||"";
+
+const d=
+discount(p);
 
 return `
 
@@ -1552,7 +2119,9 @@ im
 ${
 d
 ?
-`<span class="badge">-${d}%</span>`
+`<span class="badge">
+-${d}%
+</span>`
 :
 ""
 }
@@ -1561,7 +2130,9 @@ d
 
 <div class="info">
 
-<h3>${esc(p.name||"")}</h3>
+<h3>
+${esc(p.name||"")}
+</h3>
 
 <div class="price">
 
@@ -1608,11 +2179,19 @@ updateCount();
 
 function updateCount(){
 
-document.getElementById("count").textContent=
+const count=
+document.getElementById("count");
+
+if(count){
+
+count.textContent=
 cart.reduce(
-(s,x)=>s+Number(x.qty||1),
+(s,x)=>
+s+Number(x.qty||1),
 0
 );
+
+}
 
 }
 
@@ -1634,23 +2213,41 @@ function discountAmount(){
 
 if(!appliedCoupon)return 0;
 
-const sub=cartSubtotal();
+const sub=
+cartSubtotal();
 
-if(appliedCoupon.discount_type==="percent"){
+const value=
+Number(
+appliedCoupon.discount_value||0
+);
+
+const type=
+String(
+appliedCoupon.discount_type||""
+).toLowerCase();
+
+if(
+type==="percent"||
+type==="percentage"
+){
 
 return Math.min(
 sub,
-sub*
-Number(appliedCoupon.discount_value||0)/
-100
+sub*value/100
 );
 
 }
 
+if(type==="fixed"){
+
 return Math.min(
 sub,
-Number(appliedCoupon.discount_value||0)
+value
 );
+
+}
+
+return 0;
 
 }
 
@@ -1659,7 +2256,8 @@ function cartTotal(){
 
 return Math.max(
 0,
-cartSubtotal()-discountAmount()
+cartSubtotal()-
+discountAmount()
 );
 
 }
@@ -1671,22 +2269,34 @@ return `
 
 <section class="cartPage">
 
-<h1>${t("cart")}</h1>
+<h1>
+${t("cart")}
+</h1>
+
 
 ${
 !cart.length
+
 ?
 
 `
+
 <div class="cartBox empty">
+
 ${t("empty")}
+
 <br><br>
+
 <button
 class="dark"
 onclick="goHome();goShop()">
+
 ${t("shop")}
+
 </button>
+
 </div>
+
 `
 
 :
@@ -1705,12 +2315,16 @@ ${t("shop")}
 
 <div class="checkoutBox">
 
-<h2>${t("order")}</h2>
+<h2>
+${t("order")}
+</h2>
 
 
 <div class="summaryLine">
 
-<span>${t("subtotal")}</span>
+<span>
+${t("subtotal")}
+</span>
 
 <b id="cartSubtotal">
 ${money(cartSubtotal())}
@@ -1725,8 +2339,11 @@ ${money(cartSubtotal())}
 id="couponInput"
 placeholder="${t("coupon")}">
 
-<button onclick="applyCoupon()">
+<button
+onclick="applyCoupon()">
+
 ${t("apply")}
+
 </button>
 
 </div>
@@ -1737,7 +2354,9 @@ ${t("apply")}
 
 <div class="summaryLine">
 
-<span>${t("discount")}</span>
+<span>
+${t("discount")}
+</span>
 
 <b id="cartDiscount">
 -${money(discountAmount())}
@@ -1748,7 +2367,9 @@ ${t("apply")}
 
 <div class="summaryLine summaryTotal">
 
-<span>${t("total")}</span>
+<span>
+${t("total")}
+</span>
 
 <b id="cartTotal">
 ${money(cartTotal())}
@@ -1800,7 +2421,8 @@ ${t("city")}
 <textarea
 id="address"
 placeholder="${t("address")}"
-rows="4"></textarea>
+rows="4">
+</textarea>
 
 
 <button
@@ -1831,13 +2453,15 @@ ${t("confirm")}
 
 function renderCartItems(){
 
-const box=document.getElementById(
+const box=
+document.getElementById(
 "cartItems"
 );
 
 if(!box)return;
 
-box.innerHTML=cart.map(
+box.innerHTML=
+cart.map(
 (item,index)=>`
 
 <div class="cartItem">
@@ -1847,7 +2471,8 @@ box.innerHTML=cart.map(
 ${
 item.image_url
 ?
-`<img src="${esc(item.image_url)}">`
+`<img
+src="${esc(item.image_url)}">`
 :
 "V"
 }
@@ -1857,14 +2482,18 @@ item.image_url
 
 <div>
 
-<b>${esc(item.name)}</b>
+<b>
+${esc(item.name)}
+</b>
 
 <br>
 
 ${
 item.size
 ?
-"المقاس: "+esc(item.size)+"<br>"
+"المقاس: "+
+esc(item.size)+
+"<br>"
 :
 ""
 }
@@ -1872,7 +2501,8 @@ item.size
 ${
 item.color
 ?
-"اللون: "+esc(item.color)
+"اللون: "+
+esc(item.color)
 :
 ""
 }
@@ -1886,13 +2516,17 @@ ${money(item.price)}
 
 <div class="qty">
 
-<button onclick="changeCartQty(${index},-1)">
+<button
+onclick="changeCartQty(${index},-1)">
 −
 </button>
 
-<b>${item.qty||1}</b>
+<b>
+${item.qty||1}
+</b>
 
-<button onclick="changeCartQty(${index},1)">
+<button
+onclick="changeCartQty(${index},1)">
 +
 </button>
 
@@ -1932,9 +2566,8 @@ const item=cart[index];
 
 if(!item)return;
 
-const max=Number(
-item.stock||999999
-);
+const max=
+Number(item.stock||999999);
 
 item.qty=Math.max(
 1,
@@ -1964,56 +2597,38 @@ render();
 }
 
 
-function refreshCartTotals(){
-
-const sub=document.getElementById(
-"cartSubtotal"
-);
-
-const dis=document.getElementById(
-"cartDiscount"
-);
-
-const total=document.getElementById(
-"cartTotal"
-);
-
-if(sub)sub.textContent=money(
-cartSubtotal()
-);
-
-if(dis)dis.textContent="-"+
-money(discountAmount());
-
-if(total)total.textContent=money(
-cartTotal()
-);
-
-}
-
-
 /* =========================================
    COUPONS
 ========================================= */
 
 async function applyCoupon(){
 
-const input=document.getElementById(
+const input=
+document.getElementById(
 "couponInput"
 );
 
-const msg=document.getElementById(
+const msg=
+document.getElementById(
 "couponMsg"
 );
 
 if(!input||!msg)return;
 
-const code=input.value.trim().toUpperCase();
+const code=
+input.value.trim().toUpperCase();
 
 if(!code){
 
-msg.className="notice err";
-msg.textContent=t("couponBad");
+appliedCoupon=null;
+
+msg.className=
+"notice err";
+
+msg.textContent=
+t("couponBad");
+
+refreshCartTotals();
 
 return;
 
@@ -2021,90 +2636,157 @@ return;
 
 try{
 
-const r=await fetch(
+const url=
 SUPABASE_URL+
 "/rest/v1/coupons"+
 "?code=eq."+
 encodeURIComponent(code)+
 "&active=eq.true"+
-"&select=*",
+"&select=*";
+
+const response=
+await fetch(
+url,
 {
+method:"GET",
 headers:HEADERS
 }
 );
 
-if(!r.ok){
+if(!response.ok){
 
 throw new Error(
-await r.text()
+await response.text()
 );
 
 }
 
-const data=await r.json();
+const data=
+await response.json();
 
 if(!data.length){
 
-throw new Error("Coupon not found");
+throw new Error(
+"INVALID_COUPON"
+);
 
 }
 
 const coupon=data[0];
 
+if(coupon.expires_at){
 
-/* expiration */
+const expiry=
+new Date(
+coupon.expires_at
+);
 
 if(
-coupon.expires_at &&
-new Date(coupon.expires_at)<=new Date()
+isNaN(expiry.getTime())||
+expiry<=new Date()
 ){
 
-throw new Error("Expired");
+throw new Error(
+"EXPIRED"
+);
 
 }
 
-
-/* max uses */
+}
 
 if(
-coupon.max_uses!=null &&
+coupon.max_uses!==null&&
+coupon.max_uses!==undefined&&
+Number(coupon.max_uses)>0&&
 Number(coupon.used_count||0)>=
 Number(coupon.max_uses)
 ){
 
-throw new Error("Maximum uses reached");
+throw new Error(
+"MAX_USES"
+);
 
 }
 
-
-/* minimum order */
+const minimum=
+Number(
+coupon.min_order||0
+);
 
 if(
-coupon.min_order!=null &&
-cartSubtotal()<
-Number(coupon.min_order)
+cartSubtotal()<minimum
 ){
 
-throw new Error("Minimum order");
+throw new Error(
+"MIN_ORDER"
+);
 
 }
 
+const type=
+String(
+coupon.discount_type||""
+)
+.toLowerCase()
+.trim();
 
-appliedCoupon=coupon;
+const value=
+Number(
+coupon.discount_value||0
+);
 
-msg.className="notice ok";
-msg.textContent=t("couponOK");
+if(value<=0){
+
+throw new Error(
+"INVALID_VALUE"
+);
+
+}
+
+if(
+type!=="percent"&&
+type!=="percentage"&&
+type!=="fixed"
+){
+
+throw new Error(
+"INVALID_TYPE"
+);
+
+}
+
+appliedCoupon={
+...coupon,
+discount_type:
+type==="percentage"
+?
+"percent"
+:
+type
+};
+
+msg.className=
+"notice ok";
+
+msg.textContent=
+t("couponOK");
 
 refreshCartTotals();
 
-}catch(e){
+}catch(error){
 
-console.error("COUPON ERROR",e);
+console.error(
+"COUPON ERROR:",
+error
+);
 
 appliedCoupon=null;
 
-msg.className="notice err";
-msg.textContent=t("couponBad");
+msg.className=
+"notice err";
+
+msg.textContent=
+t("couponBad");
 
 refreshCartTotals();
 
@@ -2119,43 +2801,49 @@ refreshCartTotals();
 
 async function placeOrder(){
 
-const msg=document.getElementById(
+const msg=
+document.getElementById(
 "orderMsg"
 );
 
 if(!msg)return;
 
-
 if(!cart.length){
 
-msg.className="notice err";
-msg.textContent=t("empty");
+msg.className=
+"notice err";
+
+msg.textContent=
+t("empty");
 
 return;
 
 }
 
-
-const name=document.getElementById(
+const name=
+document.getElementById(
 "name"
 ).value.trim();
 
-const phone=document.getElementById(
+const phone=
+document.getElementById(
 "phone"
 ).value.trim();
 
-const whatsapp=document.getElementById(
+const whatsapp=
+document.getElementById(
 "whatsapp"
 ).value.trim();
 
-const city=document.getElementById(
+const city=
+document.getElementById(
 "city"
 ).value.trim();
 
-const address=document.getElementById(
+const address=
+document.getElementById(
 "address"
 ).value.trim();
-
 
 if(
 !name||
@@ -2165,15 +2853,19 @@ if(
 !address
 ){
 
-msg.className="notice err";
-msg.textContent=t("required");
+msg.className=
+"notice err";
+
+msg.textContent=
+t("required");
 
 return;
 
 }
 
+msg.className=
+"notice";
 
-msg.className="notice";
 msg.textContent=
 language==="ar"
 ?
@@ -2209,9 +2901,13 @@ product_id:item.product_id,
 
 name:item.name,
 
-price:Number(item.price||0),
+price:Number(
+item.price||0
+),
 
-qty:Number(item.qty||1),
+qty:Number(
+item.qty||1
+),
 
 size:item.size||"",
 
@@ -2235,7 +2931,8 @@ discountAmount()
 
 try{
 
-const r=await fetch(
+const response=
+await fetch(
 SUPABASE_URL+
 "/rest/v1/orders",
 {
@@ -2244,64 +2941,204 @@ method:"POST",
 
 headers:{
 ...HEADERS,
-Prefer:"return=minimal"
+Prefer:
+"return=representation"
 },
 
-body:JSON.stringify(order)
+body:
+JSON.stringify(order)
 
 }
 );
 
+if(!response.ok){
 
-if(!r.ok){
-
-const errorText=await r.text();
+const errorText=
+await response.text();
 
 console.error(
 "ORDER ERROR:",
 errorText
 );
 
-throw new Error(errorText);
+throw new Error(
+errorText
+);
+
+}
+
+const result=
+await response.json();
+
+console.log(
+"ORDER CREATED:",
+result
+);
+
+
+/* تحديث استعمال الكوبون */
+
+if(appliedCoupon){
+
+try{
+
+await fetch(
+SUPABASE_URL+
+"/rest/v1/coupons?id=eq."+
+encodeURIComponent(
+appliedCoupon.id
+),
+{
+
+method:"PATCH",
+
+headers:HEADERS,
+
+body:
+JSON.stringify({
+
+used_count:
+Number(
+appliedCoupon.used_count||0
+)+1
+
+})
+
+}
+
+);
+
+}catch(e){
+
+console.warn(
+"Coupon usage update failed:",
+e
+);
+
+}
 
 }
 
 
-msg.className="notice ok";
+msg.className=
+"notice ok";
 
-msg.textContent=t("success");
+msg.textContent=
+t("success");
 
+
+/*
+السلة تتمسح فقط
+بعد نجاح الطلب
+*/
 
 cart=[];
 
 appliedCoupon=null;
 
-saveLocalCart();
+localStorage.removeItem(
+"vanta_cart"
+);
+
+updateCount();
 
 
-document.getElementById("name").value="";
-document.getElementById("phone").value="";
-document.getElementById("whatsapp").value="";
-document.getElementById("city").value="";
-document.getElementById("address").value="";
-document.getElementById("couponInput").value="";
+document.getElementById(
+"name"
+).value="";
 
+document.getElementById(
+"phone"
+).value="";
+
+document.getElementById(
+"whatsapp"
+).value="";
+
+document.getElementById(
+"city"
+).value="";
+
+document.getElementById(
+"address"
+).value="";
+
+const couponInput=
+document.getElementById(
+"couponInput"
+);
+
+if(couponInput){
+couponInput.value="";
+}
 
 renderCartItems();
 
 refreshCartTotals();
 
 
-}catch(e){
+}catch(error){
 
 console.error(
 "ORDER ERROR:",
-e
+error
 );
 
-msg.className="notice err";
+msg.className=
+"notice err";
 
-msg.textContent=t("error");
+msg.textContent=
+t("error");
+
+/*
+مهم:
+السلة لا تتمسح لو الطلب فشل
+*/
+
+}
+
+}
+
+
+/* =========================================
+   TOTALS
+========================================= */
+
+function refreshCartTotals(){
+
+const sub=
+document.getElementById(
+"cartSubtotal"
+);
+
+const dis=
+document.getElementById(
+"cartDiscount"
+);
+
+const total=
+document.getElementById(
+"cartTotal"
+);
+
+if(sub){
+
+sub.textContent=
+money(cartSubtotal());
+
+}
+
+if(dis){
+
+dis.textContent=
+"-"+money(discountAmount());
+
+}
+
+if(total){
+
+total.textContent=
+money(cartTotal());
 
 }
 
@@ -2318,22 +3155,23 @@ location.hash="";
 
 render();
 
+window.scrollTo(0,0);
+
 }
 
 
 function goShop(){
 
-if(location.hash!==""){
+category="";
 
 location.hash="";
-
-}
 
 render();
 
 setTimeout(()=>{
 
-const shop=document.getElementById("shop");
+const shop=
+document.getElementById("shop");
 
 if(shop){
 
@@ -2352,12 +3190,24 @@ function filterCategory(value){
 
 category=value;
 
-goShop();
+location.hash="";
 
-setTimeout(
-renderProducts,
-150
-);
+render();
+
+setTimeout(()=>{
+
+const shop=
+document.getElementById("shop");
+
+if(shop){
+
+shop.scrollIntoView({
+behavior:"smooth"
+});
+
+}
+
+},100);
 
 }
 
@@ -2370,12 +3220,15 @@ function render(){
 
 setupLanguage();
 
-const hash=location.hash;
+const hash=
+location.hash;
 
 
 if(hash==="#cart"){
 
-document.getElementById("app").innerHTML=
+document.getElementById(
+"app"
+).innerHTML=
 cartHTML();
 
 renderCartItems();
@@ -2387,21 +3240,44 @@ return;
 }
 
 
-if(hash.startsWith("#product?")){
+if(hash==="#offers"){
 
-const query=hash.split("?")[1];
+document.getElementById(
+"app"
+).innerHTML=
+homeHTML();
 
-const params=new URLSearchParams(query);
+showOffers();
 
-const id=params.get("id");
+return;
 
-const p=products.find(
-x=>String(x.id)===String(id)
+}
+
+
+if(hash.startsWith(
+"#product?"
+)){
+
+const query=
+hash.split("?")[1];
+
+const params=
+new URLSearchParams(query);
+
+const id=
+params.get("id");
+
+const p=
+products.find(
+x=>String(x.id)===
+String(id)
 );
 
 if(p){
 
-document.getElementById("app").innerHTML=
+document.getElementById(
+"app"
+).innerHTML=
 productHTML(p);
 
 renderRecommended();
@@ -2413,7 +3289,9 @@ return;
 }
 
 
-document.getElementById("app").innerHTML=
+document.getElementById(
+"app"
+).innerHTML=
 homeHTML();
 
 renderProducts();
