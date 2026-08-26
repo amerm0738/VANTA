@@ -1,28 +1,97 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VANTA — Modern Unisex Wear</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VANTA | Modern Unisex Wear</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#050505;color:#fff;font-family:Arial,sans-serif}.top{height:28px;background:#111;text-align:center;font-size:10px;letter-spacing:2px;padding:8px;color:#ddd}
-nav{height:68px;display:flex;align-items:center;justify-content:space-between;padding:0 5%;border-bottom:1px solid #171717}.logo{font-size:30px;font-weight:900;letter-spacing:5px}.links{display:flex;gap:25px;color:#aaa;font-size:13px}.search{background:#eee;color:#333;border:0;border-radius:30px;padding:11px 18px;width:180px}
-.hero{min-height:500px;display:flex;align-items:center;justify-content:center;text-align:center;background:radial-gradient(circle at 50% 35%,#444,#171717 45%,#080808);position:relative;overflow:hidden}.hero:before,.hero:after{content:"";position:absolute;width:260px;height:390px;background:linear-gradient(145deg,#333,#111);border-radius:45% 45% 20% 20%;bottom:-80px;opacity:.9}.hero:before{left:8%;transform:rotate(8deg)}.hero:after{right:8%;transform:rotate(-8deg)}.hero-content{position:relative;z-index:2}.mark{font-size:62px;font-weight:900}.hero h1{font-size:68px;margin:0;letter-spacing:8px}.hero p{letter-spacing:5px;color:#ddd}.btn{display:inline-block;background:#fff;color:#111;padding:14px 32px;border-radius:30px;text-decoration:none;font-weight:bold;margin-top:18px}
-section{padding:42px 4%}.title{font-size:25px;margin-bottom:18px}.sub{color:#777;margin-top:-10px}.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}.cat{height:210px;border-radius:14px;background:linear-gradient(145deg,#292929,#101010);display:flex;align-items:end;padding:20px;font-size:21px;font-weight:bold}.products{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}.card{background:#f4f4f4;color:#111;border-radius:12px;overflow:hidden}.pic{height:220px;background:linear-gradient(145deg,#444,#151515);display:flex;align-items:center;justify-content:center;color:#fff;font-size:42px;font-weight:bold}.info{padding:13px}.price{font-weight:bold;margin:8px 0}.add{width:100%;border:0;background:#111;color:#fff;padding:10px;border-radius:20px}.banner{min-height:260px;border-radius:16px;background:linear-gradient(90deg,#111,#444,#151515);display:flex;align-items:center;justify-content:center;text-align:center}.banner h2{font-size:36px;letter-spacing:4px}.features{background:#eee;color:#111;border-radius:12px;display:grid;grid-template-columns:repeat(4,1fr);padding:20px;gap:15px}.feature{text-align:center}.feature b{display:block;margin:5px 0}footer{padding:42px 5%;border-top:1px solid #222;color:#aaa;display:grid;grid-template-columns:2fr 1fr 1fr 2fr;gap:25px}.footlogo{color:#fff;font-size:28px;font-weight:bold}
-@media(max-width:800px){.links{display:none}.hero h1{font-size:45px}.grid4{grid-template-columns:repeat(2,1fr)}.products{grid-template-columns:repeat(2,1fr)}.features{grid-template-columns:repeat(2,1fr)}footer{grid-template-columns:1fr 1fr}.search{display:none}}
-</style></head>
+*{box-sizing:border-box}body{margin:0;background:#070707;color:#fff;font-family:Arial,sans-serif}button,input,textarea{font:inherit}
+.top{background:#111;text-align:center;padding:8px;font-size:11px;letter-spacing:1.5px;color:#ddd}
+nav{height:70px;padding:0 5%;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #1c1c1c;position:sticky;top:0;background:#080808ee;backdrop-filter:blur(8px);z-index:10}
+.logo{font-weight:900;font-size:29px;letter-spacing:6px}.links{display:flex;gap:24px;color:#aaa;font-size:13px}.links a{color:inherit;text-decoration:none}
+.cartBtn{background:#fff;border:0;border-radius:25px;padding:10px 17px;cursor:pointer}
+.hero{min-height:560px;display:grid;place-items:center;text-align:center;position:relative;overflow:hidden;background:radial-gradient(circle at 50% 35%,#4b4b4b,#1a1a1a 45%,#070707 75%)}
+.hero:before,.hero:after{content:"";position:absolute;width:260px;height:410px;background:linear-gradient(145deg,#3d3d3d,#101010);bottom:-100px;border-radius:48% 48% 15% 15%;opacity:.9}.hero:before{left:8%;transform:rotate(8deg)}.hero:after{right:8%;transform:rotate(-8deg)}
+.heroIn{position:relative;z-index:2}.vmark{font-size:65px;font-weight:900}.hero h1{font-size:75px;letter-spacing:9px;margin:0}.hero p{letter-spacing:5px;color:#ddd}.cta{margin-top:20px;background:#fff;color:#111;padding:15px 36px;border-radius:30px;border:0;font-weight:bold;cursor:pointer}
+section{padding:50px 5%}.title{font-size:27px;margin:0 0 8px}.muted{color:#777;margin:0 0 25px}
+.cats{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}.cat{height:220px;border-radius:15px;padding:22px;display:flex;align-items:end;background:linear-gradient(145deg,#303030,#111);font-size:22px;font-weight:800}
+.toolbar{display:flex;align-items:end;justify-content:space-between;gap:15px;margin-bottom:20px}.search{width:260px;border:1px solid #333;background:#111;color:#fff;border-radius:25px;padding:11px 16px}
+.products{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}.card{background:#f4f4f4;color:#111;border-radius:13px;overflow:hidden}.pic{height:250px;background:linear-gradient(145deg,#444,#111);display:grid;place-items:center;color:#fff;font-size:45px;font-weight:900}.info{padding:14px}.info h3{margin:0 0 8px}.price{font-weight:800;margin:8px 0}.add{width:100%;background:#111;color:#fff;border:0;padding:11px;border-radius:22px;cursor:pointer}
+.banner{min-height:280px;border-radius:16px;display:grid;place-items:center;text-align:center;background:linear-gradient(90deg,#101010,#444,#111)}.banner h2{font-size:40px;letter-spacing:5px}
+.features{background:#eee;color:#111;border-radius:14px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:22px;text-align:center}.features b{display:block;margin:5px}
+footer{padding:45px 5%;border-top:1px solid #222;color:#999;display:grid;grid-template-columns:2fr 1fr 1fr 2fr;gap:25px}.flogo{font-size:28px;color:#fff;font-weight:900;letter-spacing:5px}
+.overlay{display:none;position:fixed;inset:0;background:#0009;z-index:20}.overlay.open{display:block}.drawer{position:absolute;right:0;top:0;height:100%;width:min(430px,94%);background:#fff;color:#111;padding:25px;overflow:auto}.close{float:left;border:0;background:none;font-size:28px;cursor:pointer}.cartItem{display:flex;justify-content:space-between;padding:13px 0;border-bottom:1px solid #ddd}.checkout input,.checkout textarea{width:100%;margin:7px 0;padding:12px;border:1px solid #ccc;border-radius:7px}.darkbtn{width:100%;padding:13px;background:#111;color:#fff;border:0;border-radius:7px;cursor:pointer}
+@media(max-width:800px){.links{display:none}.hero h1{font-size:48px}.cats{grid-template-columns:repeat(2,1fr)}.products{grid-template-columns:repeat(2,1fr)}.features{grid-template-columns:repeat(2,1fr)}footer{grid-template-columns:1fr 1fr}.toolbar{display:block}.search{width:100%;margin-top:10px}}
+</style>
+</head>
 <body>
 <div class="top">FREE SHIPPING FOR ORDERS OVER 1500 EGP 🚚</div>
-<nav><input class="search" placeholder="Search for products..."><div class="logo">VANTA</div><div class="links"><span>Home</span><span>Shop</span><span>New Arrivals</span><span>Collections</span><span>About</span><span>Contact</span></div></nav>
-<header class="hero"><div class="hero-content"><div class="mark">V</div><h1>VANTA</h1><p>MODERN UNISEX WEAR</p><a class="btn" href="#shop">SHOP NOW →</a></div></header>
-<section><h2 class="title">SHOP BY CATEGORY</h2><p class="sub">Find your style, wear it your way.</p><div class="grid4"><div class="cat">T-SHIRTS</div><div class="cat">HOODIES</div><div class="cat">PANTS</div><div class="cat">ACCESSORIES</div></div></section>
-<section id="shop"><h2 class="title">NEW ARRIVALS</h2><p class="sub">Fresh drops. Limited pieces.</p><div class="products">
-<div class="card"><div class="pic">V</div><div class="info">Essential Oversized Tee<div class="price">EGP 450</div><button class="add">Add to Cart</button></div></div>
-<div class="card"><div class="pic">V</div><div class="info">VANTA Signature Hoodie<div class="price">EGP 850</div><button class="add">Add to Cart</button></div></div>
-<div class="card"><div class="pic">V</div><div class="info">Cargo Pants<div class="price">EGP 790</div><button class="add">Add to Cart</button></div></div>
-<div class="card"><div class="pic">V</div><div class="info">VANTA Backprint Tee<div class="price">EGP 480</div><button class="add">Add to Cart</button></div></div>
-<div class="card"><div class="pic">V</div><div class="info">Minimal Hoodie<div class="price">EGP 820</div><button class="add">Add to Cart</button></div></div>
+<nav>
+<div class="logo">VANTA</div>
+<div class="links"><a href="#">Home</a><a href="#shop">Shop</a><a href="#new">New Arrivals</a><a href="#about">About</a></div>
+<button class="cartBtn" onclick="openCart()">🛒 <span id="count">0</span></button>
+</nav>
+
+<header class="hero"><div class="heroIn"><div class="vmark">V</div><h1>VANTA</h1><p>MODERN UNISEX WEAR</p><button class="cta" onclick="document.getElementById('shop').scrollIntoView()">SHOP NOW →</button></div></header>
+
+<section><h2 class="title">SHOP BY CATEGORY</h2><p class="muted">Find your style, wear it your way.</p><div class="cats">
+<div class="cat">T-SHIRTS</div><div class="cat">HOODIES</div><div class="cat">PANTS</div><div class="cat">ACCESSORIES</div>
 </div></section>
-<section><div class="banner"><div><h2>NEW COLLECTION</h2><p>FALL / WINTER 2026</p><a class="btn" href="#shop">EXPLORE NOW →</a></div></div></section>
-<section><div class="features"><div class="feature">🚚<b>Fast Delivery</b>All over Egypt</div><div class="feature">↩️<b>Easy Returns</b>7 Days Guarantee</div><div class="feature">💳<b>Secure Payment</b>100% Safe</div><div class="feature">🎧<b>24/7 Support</b>We're here for you</div></div></section>
-<footer><div><div class="footlogo">VANTA</div><p>Style has no gender.</p></div><div><b>Quick Links</b><p>Home</p><p>Shop</p><p>New Arrivals</p></div><div><b>Customer Service</b><p>Track Order</p><p>Shipping Policy</p><p>Returns</p></div><div><b>Subscribe</b><p>Be the first to know about new drops.</p></div></footer>
-</body></html>
+
+<section id="shop">
+<div class="toolbar"><div><h2 class="title">NEW ARRIVALS</h2><p class="muted">Fresh drops. Limited pieces.</p></div><input id="search" class="search" placeholder="ابحث عن منتج..." oninput="renderProducts()"></div>
+<div id="products" class="products"></div>
+</section>
+
+<section id="new"><div class="banner"><div><h2>NEW COLLECTION</h2><p>FALL / WINTER 2026</p><button class="cta" onclick="document.getElementById('shop').scrollIntoView()">EXPLORE NOW →</button></div></div></section>
+
+<section id="about"><div class="features">
+<div>🚚<b>Fast Delivery</b>All over Egypt</div><div>↩️<b>Easy Returns</b>7 Days Guarantee</div><div>💳<b>Secure Payment</b>Payment gateway ready</div><div>🎧<b>Support</b>We're here for you</div>
+</div></section>
+
+<footer><div><div class="flogo">VANTA</div><p>Style has no gender.</p></div><div><b>Quick Links</b><p>Home</p><p>Shop</p><p>New Arrivals</p></div><div><b>Customer Service</b><p>Track Order</p><p>Shipping</p><p>Returns</p></div><div><b>Subscribe</b><p>Be first to know about new drops.</p></div></footer>
+
+<div id="overlay" class="overlay" onclick="if(event.target.id==='overlay')closeCart()"><div class="drawer">
+<button class="close" onclick="closeCart()">×</button><h2>سلة المشتريات</h2><div id="cart"></div><h3 id="total">الإجمالي: EGP 0</h3>
+<div class="checkout"><h3>بيانات الطلب</h3><input id="name" placeholder="الاسم"><input id="phone" placeholder="رقم الهاتف"><input id="city" placeholder="المحافظة"><textarea id="address" placeholder="العنوان"></textarea><button class="darkbtn" onclick="placeOrder()">إتمام الطلب</button><p id="msg"></p></div>
+</div></div>
+
+<script>
+const products=[
+{name:'Essential Oversized Tee',price:450,color:'Black',stock:24},
+{name:'VANTA Signature Hoodie',price:850,color:'Grey',stock:11},
+{name:'Cargo Pants',price:790,color:'Black',stock:21},
+{name:'VANTA Backprint Tee',price:480,color:'White',stock:21},
+{name:'Minimal Hoodie',price:820,color:'Black',stock:12}
+];
+let cart=JSON.parse(localStorage.getItem('vanta_cart')||'[]');
+
+function renderProducts(){
+ const q=(document.getElementById('search').value||'').toLowerCase();
+ const p=products.filter(x=>x.name.toLowerCase().includes(q));
+ document.getElementById('products').innerHTML=p.map(x=>`
+ <article class="card"><div class="pic">V</div><div class="info">
+ <h3>${x.name}</h3><div>${x.color}</div><div class="price">EGP ${x.price}</div>
+ <button class="add" onclick="add('${x.name}')">ADD TO CART</button>
+ </div></article>`).join('');
+}
+function add(name){const p=products.find(x=>x.name===name);cart.push({...p,key:Date.now()+Math.random()});save();openCart()}
+function save(){localStorage.setItem('vanta_cart',JSON.stringify(cart));document.getElementById('count').textContent=cart.length;renderCart()}
+function renderCart(){
+ const box=document.getElementById('cart');
+ box.innerHTML=cart.length?cart.map((x,i)=>`<div class="cartItem"><div><b>${x.name}</b><br>EGP ${x.price}</div><button onclick="removeItem(${i})">حذف</button></div>`).join(''):'<p>السلة فاضية.</p>';
+ document.getElementById('total').textContent='الإجمالي: EGP '+cart.reduce((s,x)=>s+Number(x.price),0);
+}
+function removeItem(i){cart.splice(i,1);save()}
+function openCart(){document.getElementById('overlay').classList.add('open');renderCart()}
+function closeCart(){document.getElementById('overlay').classList.remove('open')}
+function placeOrder(){
+ if(!cart.length){document.getElementById('msg').textContent='السلة فاضية';return}
+ const n=document.getElementById('name').value.trim(),p=document.getElementById('phone').value.trim(),a=document.getElementById('address').value.trim(),c=document.getElementById('city').value.trim();
+ if(!n||!p||!a||!c){document.getElementById('msg').textContent='اكمل بيانات الطلب الأول';return}
+ document.getElementById('msg').textContent='تم تجهيز الطلب تجريبيًا. ربط قاعدة البيانات والدفع الحقيقي هو الخطوة التالية.';
+}
+renderProducts();save();
+</script>
+</body>
+</html>
