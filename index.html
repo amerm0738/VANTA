@@ -26,6 +26,77 @@ function add(i){const q=(document.getElementById("search").value||"").toLowerCas
 function save(){localStorage.setItem("vanta_cart",JSON.stringify(cart));document.getElementById("count").textContent=cart.length;renderCart()}
 function renderCart(){document.getElementById("cart").innerHTML=cart.length?cart.map((x,i)=>`<div class="cartItem"><div><b>${x.name}</b><br>EGP ${x.price}</div><button onclick="removeItem(${i})">حذف</button></div>`).join(""):"<p>السلة فاضية.</p>";document.getElementById("total").textContent="الإجمالي: EGP "+cart.reduce((s,x)=>s+Number(x.price||0),0)}
 function removeItem(i){cart.splice(i,1);save()}function openCart(){document.getElementById("overlay").classList.add("open");renderCart()}function closeCart(){document.getElementById("overlay").classList.remove("open")}
-function placeOrder(){if(!cart.length){document.getElementById("msg").textContent="السلة فاضية";return}if(!document.getElementById("name").value.trim()||!document.getElementById("phone").value.trim()||!document.getElementById("city").value.trim()||!document.getElementById("address").value.trim()){document.getElementById("msg").textContent="اكمل بيانات الطلب الأول";return}document.getElementById("msg").textContent="تم تجهيز الطلب. حفظ الطلبات والدفع الحقيقي يحتاجان إعدادًا إضافيًا."}
+
+ async function placeOrder(){
+  const msg = document.getElementById("msg");
+  msg.className = "notice";
+  msg.textContent = "";
+
+  if (!cart.length) {
+    msg.textContent = "السلة فاضية";
+    return;
+  }
+
+  const name = document.getElementById("name").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  const city = document.getElementById("city").value.trim();
+  const address = document.getElementById("address").value.trim();
+
+  if (!name || !phone || !city || !address) {
+    msg.textContent = "اكمل بيانات الطلب الأول";
+    return;
+  }
+
+  const total = cart.reduce(
+    (sum, item) => sum + Number(item.price || 0) * (item.qty || 1),
+    0
+  );
+
+  const order = {
+    customer_name: name,
+    phone: phone,
+    city: city,
+    address: address,
+    total: total,
+    status: "pending",
+    items: cart.map(item => ({
+      product_id: item.id,
+      name: item.name,
+      price: item.price,
+      qty: item.qty || 1
+    }))
+  };
+
+  try {
+    const response = await fetch(
+      SUPABASE_URL + "/rest/v1/orders",
+      {
+        method: "POST",
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: "Bearer " + SUPABASE_KEY,
+          "Content-Type": "application/json",
+          Prefer: "return=representation"
+        },
+        body: JSON.stringify(order)
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(await response.text());
+    }
+
+    msg.className = "notice ok";
+    msg.textContent = "تم تسجيل طلبك بنجاح ✅";
+
+    cart = [];
+    save();
+
+  } catch (error) {
+    console.error(error);
+    msg.className = "notice err";
+    msg.textContent = "حصل خطأ أثناء تسجيل الطلب.";
+  }
+} if(!cart.length){document.getElementById("msg").textContent="السلة فاضية";return}if(!document.getElementById("name").value.trim()||!document.getElementById("phone").value.trim()||!document.getElementById("city").value.trim()||!document.getElementById("address").value.trim()){document.getElementById("msg").textContent="اكمل بيانات الطلب الأول";return}document.getElementById("msg").textContent="تم تجهيز الطلب. حفظ الطلبات والدفع الحقيقي يحتاجان إعدادًا إضافيًا."}
 save();loadProducts();
 </script></body></html>
