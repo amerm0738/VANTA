@@ -1,4 +1,3 @@
-```html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -19,7 +18,6 @@ font-family:Arial,sans-serif
 }
 
 button,input,textarea,select{font:inherit}
-
 button{cursor:pointer}
 
 .top{
@@ -385,7 +383,8 @@ margin:0 0 15px
 .desc{
 color:#aaa;
 line-height:1.8;
-margin:20px 0
+margin:20px 0;
+white-space:pre-line
 }
 
 .bigPrice{
@@ -442,6 +441,105 @@ color:#111;
 border:0;
 border-radius:8px;
 font-weight:bold
+}
+
+/* REVIEWS */
+
+.reviews{
+max-width:1200px;
+margin:60px auto 0
+}
+
+.reviewSummary{
+background:#111;
+border:1px solid #222;
+border-radius:14px;
+padding:20px;
+margin-bottom:20px
+}
+
+.reviewAverage{
+font-size:34px;
+font-weight:900
+}
+
+.stars{
+letter-spacing:2px;
+font-size:20px
+}
+
+.reviewForm{
+background:#fff;
+color:#111;
+border-radius:14px;
+padding:20px;
+margin-bottom:25px
+}
+
+.reviewForm input,
+.reviewForm textarea{
+width:100%;
+padding:12px;
+border:1px solid #ccc;
+border-radius:8px;
+margin:6px 0 10px;
+outline:none
+}
+
+.ratingButtons{
+display:flex;
+gap:5px;
+margin:10px 0
+}
+
+.starBtn{
+background:#eee;
+border:0;
+border-radius:7px;
+padding:8px 11px
+}
+
+.starBtn.selected{
+background:#111;
+color:#fff
+}
+
+.reviewSubmit{
+width:100%;
+padding:13px;
+background:#111;
+color:#fff;
+border:0;
+border-radius:8px
+}
+
+.reviewList{
+display:grid;
+gap:12px
+}
+
+.review{
+background:#111;
+border:1px solid #222;
+border-radius:12px;
+padding:16px
+}
+
+.reviewHead{
+display:flex;
+justify-content:space-between;
+gap:10px;
+margin-bottom:8px
+}
+
+.reviewDate{
+font-size:11px;
+color:#777
+}
+
+.reviewText{
+color:#ccc;
+line-height:1.7
 }
 
 /* CART */
@@ -591,6 +689,29 @@ color:#777
 margin-top:60px
 }
 
+/* OFFERS PAGE */
+
+.offersPage{
+min-height:700px;
+padding:45px 5%
+}
+
+.offersHeader{
+text-align:center;
+margin-bottom:35px
+}
+
+.offersHeader h1{
+font-size:42px;
+margin:0 0 10px
+}
+
+.offersHeader p{
+color:#777
+}
+
+/* MOBILE */
+
 @media(max-width:800px){
 
 .links{
@@ -698,6 +819,10 @@ width:65px;
 height:65px
 }
 
+.offersHeader h1{
+font-size:32px
+}
+
 }
 </style>
 </head>
@@ -714,9 +839,17 @@ FREE SHIPPING FOR ORDERS OVER 1500 EGP 🚚
 
 <div class="links">
 
-<a onclick="goHome()">الرئيسية</a>
-<a onclick="goShop()">المتجر</a>
-<a onclick="showOffers()">🔥 العروض</a>
+<a onclick="goHome()">
+الرئيسية
+</a>
+
+<a onclick="goShop()">
+المتجر
+</a>
+
+<a onclick="showOffers()">
+🔥 العروض
+</a>
 
 </div>
 
@@ -741,11 +874,10 @@ onclick="openCartPage()">
 
 <main id="app"></main>
 
-
 <script>
 
 /* =====================================
-   SUPABASE
+SUPABASE
 ===================================== */
 
 const SUPABASE_URL =
@@ -763,7 +895,7 @@ Accept:"application/json",
 
 
 /* =====================================
-   DATA
+DATA
 ===================================== */
 
 let products=[];
@@ -776,20 +908,16 @@ let language=
 localStorage.getItem("vanta_lang")||"ar";
 
 let selectedProduct=null;
-
 let selectedSize="";
-
 let selectedColor="";
-
 let productQty=1;
-
 let appliedCoupon=null;
-
 let activeCategory="";
+let selectedRating=5;
 
 
 /* =====================================
-   REFRESH => HOME
+REFRESH = HOME
 ===================================== */
 
 const navEntry=
@@ -811,7 +939,7 @@ location.search
 
 
 /* =====================================
-   TEXT
+TEXT
 ===================================== */
 
 const TXT={
@@ -856,7 +984,17 @@ required:"اكمل بيانات الطلب الأول",
 recommended:"منتجات مقترحة",
 sale:"خصم",
 noOffers:"لا توجد عروض حاليًا.",
-loading:"جاري تحميل المنتجات..."
+loading:"جاري تحميل المنتجات...",
+reviews:"آراء العملاء",
+writeReview:"اكتب رأيك في المنتج",
+reviewName:"اسمك",
+reviewComment:"اكتب تعليقك...",
+sendReview:"إرسال التقييم",
+chooseRating:"اختر تقييمك",
+noReviews:"لا توجد تقييمات حتى الآن.",
+reviewSuccess:"تم إرسال تقييمك بنجاح ✅",
+reviewError:"حدث خطأ أثناء إرسال التقييم ❌",
+rating:"التقييم"
 },
 
 en:{
@@ -899,7 +1037,17 @@ required:"Please complete your details.",
 recommended:"Recommended Products",
 sale:"OFF",
 noOffers:"No offers available.",
-loading:"Loading products..."
+loading:"Loading products...",
+reviews:"Customer Reviews",
+writeReview:"Write your review",
+reviewName:"Your name",
+reviewComment:"Write your comment...",
+sendReview:"Submit Review",
+chooseRating:"Choose your rating",
+noReviews:"No reviews yet.",
+reviewSuccess:"Review submitted successfully ✅",
+reviewError:"There was an error submitting the review ❌",
+rating:"Rating"
 }
 
 };
@@ -910,7 +1058,7 @@ return TXT[language][key]||key;
 
 
 /* =====================================
-   LANGUAGE
+LANGUAGE
 ===================================== */
 
 function applyLanguage(){
@@ -924,10 +1072,8 @@ const btn=
 document.getElementById("langBtn");
 
 if(btn){
-
 btn.textContent=
 language==="ar"?"EN":"AR";
-
 }
 
 }
@@ -948,7 +1094,7 @@ render();
 
 
 /* =====================================
-   HELPERS
+HELPERS
 ===================================== */
 
 function esc(value){
@@ -993,25 +1139,11 @@ function getImages(product){
 if(!product)return[];
 
 let arr=[];
-
-const value=
-product.image_urls;
-
-
-/*
-jsonb array
-*/
+const value=product.image_urls;
 
 if(Array.isArray(value)){
-
 arr=value;
-
 }
-
-
-/*
-jsonb/string
-*/
 
 else if(
 typeof value==="string" &&
@@ -1024,9 +1156,7 @@ const parsed=
 JSON.parse(value);
 
 if(Array.isArray(parsed)){
-
 arr=parsed;
-
 }
 
 }catch(e){
@@ -1040,19 +1170,12 @@ arr=value
 
 }
 
-
-/*
-fallback image_url
-*/
-
 if(
 !arr.length &&
 product.image_url
 ){
 
-arr=[
-product.image_url
-];
+arr=[product.image_url];
 
 }
 
@@ -1075,9 +1198,7 @@ if(
 value===null||
 value===undefined
 ){
-
 return[];
-
 }
 
 if(typeof value==="string"){
@@ -1114,9 +1235,7 @@ return[];
 
 
 function getSizes(product){
-
 return getList(product?.sizes);
-
 }
 
 
@@ -1188,8 +1307,19 @@ return 0;
 }
 
 
+function stars(value){
+
+const rating=
+Math.max(0,Math.min(5,Number(value||0)));
+
+return "★".repeat(rating)+
+"☆".repeat(5-rating);
+
+}
+
+
 /* =====================================
-   HOME
+HOME
 ===================================== */
 
 function homeHTML(){
@@ -1209,7 +1339,9 @@ return `
 <button
 class="cta"
 onclick="goShop()">
+
 ${t("shopNow")}
+
 </button>
 
 </div>
@@ -1411,13 +1543,10 @@ Be first to know about new drops.
 
 
 /* =====================================
-   PRODUCT CARD
+PRODUCT CARD
 ===================================== */
 
 function productCard(product){
-
-const index=
-products.indexOf(product);
 
 const imgs=
 getImages(product);
@@ -1427,9 +1556,6 @@ discount(product);
 
 const stock=
 Number(product.stock||0);
-
-const name=
-jsEsc(product.name||"");
 
 return `
 
@@ -1514,7 +1640,7 @@ class="add"
 ${stock<1?"disabled":""}
 onclick="
 event.stopPropagation();
-quickAdd(${index});
+quickAddById('${jsEsc(product.id)}');
 ">
 
 ${stock<1?t("out"):t("add")}
@@ -1531,7 +1657,7 @@ ${stock<1?t("out"):t("add")}
 
 
 /* =====================================
-   LOAD PRODUCTS
+LOAD PRODUCTS
 ===================================== */
 
 async function loadProducts(){
@@ -1588,7 +1714,7 @@ document.getElementById(
 
 
 /* =====================================
-   PRODUCTS
+MAIN PRODUCTS
 ===================================== */
 
 function renderProducts(){
@@ -1624,16 +1750,7 @@ String(p.name||"")
 
 }
 
-if(
-activeCategory &&
-products.some(
-p=>
-Object.prototype.hasOwnProperty.call(
-p,
-"category"
-)
-)
-){
+if(activeCategory){
 
 list=
 list.filter(p=>
@@ -1674,8 +1791,41 @@ goShop();
 
 
 /* =====================================
-   OFFERS
+OFFERS PAGE
 ===================================== */
+
+function offersHTML(){
+
+return `
+
+<section class="offersPage">
+
+<div class="offersHeader">
+
+<h1>
+🔥 ${t("offers")}
+</h1>
+
+<p>
+${language==="ar"
+?"أفضل العروض والخصومات المتاحة حاليًا"
+:"Best offers and discounts available now"}
+</p>
+
+</div>
+
+<div
+id="offersProducts"
+class="products">
+${t("loading")}
+</div>
+
+</section>
+
+`;
+
+}
+
 
 function showOffers(){
 
@@ -1687,6 +1837,8 @@ location.search+
 "#offers"
 );
 
+activeCategory="";
+
 render();
 
 window.scrollTo(0,0);
@@ -1697,7 +1849,9 @@ window.scrollTo(0,0);
 function renderOffers(){
 
 const box=
-document.getElementById("products");
+document.getElementById(
+"offersProducts"
+);
 
 if(!box)return;
 
@@ -1728,7 +1882,7 @@ offers.map(productCard).join("");
 
 
 /* =====================================
-   PRODUCT PAGE
+PRODUCT PAGE
 ===================================== */
 
 function openProduct(id){
@@ -1754,10 +1908,9 @@ function productHTML(product){
 selectedProduct=product;
 
 selectedSize="";
-
 selectedColor="";
-
 productQty=1;
+selectedRating=5;
 
 const imgs=
 getImages(product);
@@ -1812,11 +1965,10 @@ imgs.map(im=>`
 
 <div
 class="thumb"
-onclick="
-document.getElementById('mainImage').src='${esc(im)}'
-">
+onclick="changeMainImage('${jsEsc(im)}')">
 
-<img src="${esc(im)}">
+<img
+src="${esc(im)}">
 
 </div>
 
@@ -1982,6 +2134,24 @@ ${t("add")}
 </div>
 
 
+<div class="reviews">
+
+<h2 class="title">
+⭐ ${t("reviews")}
+</h2>
+
+<div
+id="reviewArea">
+
+<div class="notice">
+${t("loading")}
+</div>
+
+</div>
+
+</div>
+
+
 <div class="recommended">
 
 <h2 class="title">
@@ -1998,6 +2168,18 @@ class="products">
 </section>
 
 `;
+
+}
+
+
+function changeMainImage(url){
+
+const img=
+document.getElementById("mainImage");
+
+if(img){
+img.src=url;
+}
 
 }
 
@@ -2060,14 +2242,16 @@ document.getElementById(
 );
 
 if(el){
-
 el.textContent=
 productQty;
-
 }
 
 }
 
+
+/* =====================================
+ADD PRODUCT
+===================================== */
 
 function addProductToCart(){
 
@@ -2083,12 +2267,6 @@ getSizes(selectedProduct);
 
 const colors=
 getColors(selectedProduct);
-
-
-/*
-لو المنتج عنده مقاسات
-لازم العميل يختار
-*/
 
 if(
 sizes.length &&
@@ -2107,12 +2285,6 @@ return;
 
 }
 
-
-/*
-لو المنتج عنده ألوان
-لازم العميل يختار
-*/
-
 if(
 colors.length &&
 !selectedColor
@@ -2130,24 +2302,44 @@ return;
 
 }
 
+addToCart(
+selectedProduct,
+productQty,
+selectedSize,
+selectedColor
+);
+
+openCartPage();
+
+}
+
+
+function addToCart(
+product,
+qty,
+size="",
+color=""
+){
+
+const stock=
+Number(product.stock||0);
 
 const existing=
 cart.find(item=>
 String(item.product_id)===
-String(selectedProduct.id)&&
+String(product.id)&&
 String(item.size||"")===
-String(selectedSize||"")&&
+String(size||"")&&
 String(item.color||"")===
-String(selectedColor||"")
+String(color||"")
 );
-
 
 if(existing){
 
 existing.qty=
 Math.min(
 stock,
-Number(existing.qty||1)+productQty
+Number(existing.qty||1)+Number(qty||1)
 );
 
 }else{
@@ -2158,28 +2350,24 @@ cart_id:
 crypto.randomUUID(),
 
 product_id:
-selectedProduct.id,
+product.id,
 
 name:
-selectedProduct.name,
+product.name,
 
 price:
-salePrice(selectedProduct),
+salePrice(product),
 
 image_url:
-getImages(selectedProduct)[0]||"",
+getImages(product)[0]||"",
 
-stock:
-stock,
+stock:stock,
 
-qty:
-productQty,
+qty:Number(qty||1),
 
-size:
-selectedSize||"",
+size:size||"",
 
-color:
-selectedColor||""
+color:color||""
 
 });
 
@@ -2187,13 +2375,50 @@ selectedColor||""
 
 saveCart();
 
+}
+
+
+function quickAddById(id){
+
+const product=
+products.find(
+p=>String(p.id)===
+String(id)
+);
+
+if(!product)return;
+
+const stock=
+Number(product.stock||0);
+
+if(stock<1)return;
+
+const sizes=
+getSizes(product);
+
+const colors=
+getColors(product);
+
+if(
+sizes.length||
+colors.length
+){
+
+openProduct(id);
+
+return;
+
+}
+
+addToCart(product,1,"","");
+
 openCartPage();
 
 }
 
 
 /* =====================================
-   RECOMMENDED
+RECOMMENDED
 ===================================== */
 
 function renderRecommended(){
@@ -2225,7 +2450,7 @@ list.map(productCard).join("");
 
 
 /* =====================================
-   CART
+CART
 ===================================== */
 
 function saveCart(){
@@ -2329,7 +2554,7 @@ subtotal()-couponDiscount()
 
 
 /* =====================================
-   CART PAGE
+CART HTML
 ===================================== */
 
 function cartHTML(){
@@ -2673,7 +2898,7 @@ render();
 
 
 /* =====================================
-   COUPON
+COUPON
 ===================================== */
 
 async function applyCoupon(){
@@ -2737,44 +2962,28 @@ await response.json();
 
 if(!data.length){
 
-throw new Error(
-"INVALID"
-);
+throw new Error("INVALID");
 
 }
 
 const coupon=
 data[0];
 
-
-/*
-expiry
-*/
-
 if(coupon.expires_at){
 
 const expiry=
-new Date(
-coupon.expires_at
-);
+new Date(coupon.expires_at);
 
 if(
 isNaN(expiry.getTime())||
 expiry<=new Date()
 ){
 
-throw new Error(
-"EXPIRED"
-);
+throw new Error("EXPIRED");
 
 }
 
 }
-
-
-/*
-max uses
-*/
 
 if(
 coupon.max_uses!==null&&
@@ -2784,28 +2993,18 @@ Number(coupon.used_count||0)>=
 Number(coupon.max_uses)
 ){
 
-throw new Error(
-"MAX"
-);
+throw new Error("MAX");
 
 }
-
-
-/*
-minimum order
-*/
 
 if(
 subtotal()<
 Number(coupon.min_order||0)
 ){
 
-throw new Error(
-"MIN"
-);
+throw new Error("MIN");
 
 }
-
 
 const type=
 String(
@@ -2828,12 +3027,9 @@ type!=="fixed"
 )
 ){
 
-throw new Error(
-"INVALID"
-);
+throw new Error("INVALID");
 
 }
-
 
 appliedCoupon={
 
@@ -2847,7 +3043,6 @@ type==="percentage"
 type
 
 };
-
 
 msg.className=
 "notice ok";
@@ -2880,7 +3075,7 @@ refreshTotals();
 
 
 /* =====================================
-   TOTALS
+TOTALS
 ===================================== */
 
 function refreshTotals(){
@@ -2910,7 +3105,7 @@ money(total());
 
 
 /* =====================================
-   PLACE ORDER
+PLACE ORDER
 ===================================== */
 
 async function placeOrder(){
@@ -2934,32 +3129,20 @@ return;
 
 }
 
-
 const name=
-document.getElementById(
-"name"
-).value.trim();
+document.getElementById("name").value.trim();
 
 const phone=
-document.getElementById(
-"phone"
-).value.trim();
+document.getElementById("phone").value.trim();
 
 const whatsapp=
-document.getElementById(
-"whatsapp"
-).value.trim();
+document.getElementById("whatsapp").value.trim();
 
 const city=
-document.getElementById(
-"city"
-).value.trim();
+document.getElementById("city").value.trim();
 
 const address=
-document.getElementById(
-"address"
-).value.trim();
-
+document.getElementById("address").value.trim();
 
 if(
 !name||
@@ -2979,7 +3162,6 @@ return;
 
 }
 
-
 msg.className=
 "notice";
 
@@ -2989,12 +3171,6 @@ language==="ar"
 "جاري تسجيل الطلب..."
 :
 "Placing order...";
-
-
-/*
-نفس شكل البيانات
-الذي نجح عندك في Supabase
-*/
 
 const order={
 
@@ -3051,13 +3227,6 @@ couponDiscount()
 
 };
 
-
-console.log(
-"ORDER DATA:",
-order
-);
-
-
 try{
 
 const response=
@@ -3079,7 +3248,6 @@ JSON.stringify(order)
 }
 );
 
-
 if(!response.ok){
 
 const errorText=
@@ -3090,25 +3258,28 @@ console.error(
 errorText
 );
 
-throw new Error(
-errorText
-);
+throw new Error(errorText);
 
 }
-
 
 const result=
 await response.json();
 
-console.log(
-"ORDER CREATED:",
-result
-);
+let orderNumber="";
+
+if(
+Array.isArray(result)&&
+result[0]&&
+result[0].order_number
+){
+
+orderNumber=
+result[0].order_number;
+
+}
 
 
-/*
-تحديث عدد استخدام الكوبون
-*/
+/* UPDATE COUPON */
 
 if(appliedCoupon){
 
@@ -3151,23 +3322,7 @@ e
 }
 
 
-/*
-النجاح
-*/
-
-let orderNumber="";
-
-if(
-Array.isArray(result)&&
-result[0]&&
-result[0].order_number
-){
-
-orderNumber=
-result[0].order_number;
-
-}
-
+/* SUCCESS */
 
 msg.className=
 "notice ok";
@@ -3181,12 +3336,6 @@ orderNumber
 :
 t("success");
 
-
-/*
-السلة تتمسح فقط
-بعد نجاح الطلب
-*/
-
 cart=[];
 
 appliedCoupon=null;
@@ -3197,43 +3346,21 @@ localStorage.removeItem(
 
 updateCount();
 
-
-document.getElementById(
-"name"
-).value="";
-
-document.getElementById(
-"phone"
-).value="";
-
-document.getElementById(
-"whatsapp"
-).value="";
-
-document.getElementById(
-"city"
-).value="";
-
-document.getElementById(
-"address"
-).value="";
-
+document.getElementById("name").value="";
+document.getElementById("phone").value="";
+document.getElementById("whatsapp").value="";
+document.getElementById("city").value="";
+document.getElementById("address").value="";
 
 const couponInput=
-document.getElementById(
-"couponInput"
-);
+document.getElementById("couponInput");
 
 if(couponInput){
-
 couponInput.value="";
-
 }
 
 renderCartItems();
-
 refreshTotals();
-
 
 }catch(error){
 
@@ -3248,90 +3375,468 @@ msg.className=
 msg.textContent=
 t("error");
 
-/*
-مهم:
-السلة تفضل موجودة
-لو الطلب فشل
-*/
-
 }
 
 }
 
 
 /* =====================================
-   QUICK ADD
+REVIEWS
 ===================================== */
 
-function quickAdd(index){
+function reviewHTML(){
 
-const product=
-products[index];
+return `
 
-if(!product)return;
+<div class="reviewSummary">
 
-const stock=
-Number(product.stock||0);
+<div class="reviewAverage" id="reviewAverage">
+0.0 / 5
+</div>
 
-if(stock<1)return;
+<div
+class="stars"
+id="reviewStars">
+☆☆☆☆☆
+</div>
 
-const existing=
-cart.find(item=>
-String(item.product_id)===
-String(product.id)&&
-!item.size&&
-!item.color
+<div
+id="reviewCount">
+0 ${language==="ar"?"تقييم":"reviews"}
+</div>
+
+</div>
+
+
+<div class="reviewForm">
+
+<h3>
+${t("writeReview")}
+</h3>
+
+<input
+id="reviewName"
+placeholder="${t("reviewName")}">
+
+<div>
+${t("chooseRating")}
+</div>
+
+<div class="ratingButtons">
+
+${[1,2,3,4,5].map(n=>`
+
+<button
+class="starBtn ${n===5?"selected":""}"
+onclick="selectRating(${n})"
+id="rating-${n}">
+
+${n} ⭐
+
+</button>
+
+`).join("")}
+
+</div>
+
+<textarea
+id="reviewComment"
+rows="4"
+placeholder="${t("reviewComment")}"></textarea>
+
+<button
+class="reviewSubmit"
+onclick="submitReview()">
+
+${t("sendReview")}
+
+</button>
+
+<div id="reviewMsg"></div>
+
+</div>
+
+
+<div
+class="reviewList"
+id="reviewList">
+
+${t("loading")}
+
+</div>
+
+`;
+
+}
+
+
+function selectRating(value){
+
+selectedRating=value;
+
+document
+.querySelectorAll(".starBtn")
+.forEach(btn=>{
+
+const n=
+Number(
+btn.id.replace("rating-","")
 );
 
-if(existing){
-
-existing.qty=
-Math.min(
-stock,
-Number(existing.qty||1)+1
+btn.classList.toggle(
+"selected",
+n===value
 );
-
-}else{
-
-cart.push({
-
-cart_id:
-crypto.randomUUID(),
-
-product_id:
-product.id,
-
-name:
-product.name,
-
-price:
-salePrice(product),
-
-image_url:
-getImages(product)[0]||"",
-
-stock:
-stock,
-
-qty:1,
-
-size:"",
-
-color:""
 
 });
 
 }
 
-saveCart();
 
-openCartPage();
+async function loadReviews(){
+
+const area=
+document.getElementById("reviewArea");
+
+if(!area||!selectedProduct)return;
+
+area.innerHTML=
+reviewHTML();
+
+try{
+
+const response=
+await fetch(
+SUPABASE_URL+
+"/rest/v1/reviews"+
+"?product_id=eq."+
+encodeURIComponent(selectedProduct.id)+
+"&active=eq.true"+
+"&select=*"+
+"&order=created_at.desc",
+{
+headers:HEADERS
+}
+);
+
+if(!response.ok){
+
+throw new Error(
+await response.text()
+);
+
+}
+
+const reviews=
+await response.json();
+
+renderReviews(reviews);
+
+}catch(error){
+
+console.error(
+"REVIEWS ERROR:",
+error
+);
+
+const list=
+document.getElementById("reviewList");
+
+if(list){
+
+list.innerHTML=
+`<div class="notice err">
+${t("reviewError")}
+</div>`;
+
+}
+
+}
+
+}
+
+
+function renderReviews(reviews){
+
+const average=
+reviews.length
+?
+reviews.reduce(
+(sum,r)=>
+sum+Number(r.rating||0),
+0
+)/reviews.length
+:
+0;
+
+const avg=
+Math.round(average*10)/10;
+
+const avgEl=
+document.getElementById(
+"reviewAverage"
+);
+
+const starsEl=
+document.getElementById(
+"reviewStars"
+);
+
+const countEl=
+document.getElementById(
+"reviewCount"
+);
+
+const list=
+document.getElementById(
+"reviewList"
+);
+
+if(avgEl){
+
+avgEl.textContent=
+avg.toFixed(1)+
+" / 5";
+
+}
+
+if(starsEl){
+
+starsEl.textContent=
+stars(Math.round(avg));
+
+}
+
+if(countEl){
+
+countEl.textContent=
+reviews.length+
+" "+
+(
+language==="ar"
+?
+"تقييم"
+:
+"reviews"
+);
+
+}
+
+if(!list)return;
+
+if(!reviews.length){
+
+list.innerHTML=
+`<div class="empty">
+${t("noReviews")}
+</div>`;
+
+return;
+
+}
+
+list.innerHTML=
+reviews.map(review=>`
+
+<div class="review">
+
+<div class="reviewHead">
+
+<div>
+
+<b>
+${esc(review.customer_name)}
+</b>
+
+<br>
+
+<span class="stars">
+${stars(Number(review.rating))}
+</span>
+
+</div>
+
+<div class="reviewDate">
+${formatDate(review.created_at)}
+</div>
+
+</div>
+
+<div class="reviewText">
+${esc(review.comment)}
+</div>
+
+</div>
+
+`).join("");
+
+}
+
+
+function formatDate(value){
+
+if(!value)return"";
+
+const date=
+new Date(value);
+
+if(isNaN(date.getTime()))return"";
+
+return date.toLocaleDateString(
+language==="ar"
+?
+"ar-EG"
+:
+"en-US"
+);
+
+}
+
+
+async function submitReview(){
+
+if(!selectedProduct)return;
+
+const nameEl=
+document.getElementById(
+"reviewName"
+);
+
+const commentEl=
+document.getElementById(
+"reviewComment"
+);
+
+const msg=
+document.getElementById(
+"reviewMsg"
+);
+
+const name=
+nameEl
+?
+nameEl.value.trim()
+:
+"";
+
+const comment=
+commentEl
+?
+commentEl.value.trim()
+:
+"";
+
+if(!name||!comment){
+
+if(msg){
+
+msg.className=
+"notice err";
+
+msg.textContent=
+language==="ar"
+?
+"اكتب الاسم والتعليق أولًا"
+:
+"Please enter your name and comment.";
+
+}
+
+return;
+
+}
+
+try{
+
+const response=
+await fetch(
+SUPABASE_URL+
+"/rest/v1/reviews",
+{
+
+method:"POST",
+
+headers:{
+...HEADERS,
+Prefer:"return=minimal"
+},
+
+body:
+JSON.stringify({
+
+product_id:
+selectedProduct.id,
+
+customer_name:name,
+
+rating:selectedRating,
+
+comment:comment,
+
+active:true
+
+})
+
+}
+);
+
+if(!response.ok){
+
+const errorText=
+await response.text();
+
+console.error(
+"REVIEW INSERT ERROR:",
+errorText
+);
+
+throw new Error(errorText);
+
+}
+
+if(msg){
+
+msg.className=
+"notice ok";
+
+msg.textContent=
+t("reviewSuccess");
+
+}
+
+nameEl.value="";
+commentEl.value="";
+
+selectedRating=5;
+
+selectRating(5);
+
+loadReviews();
+
+}catch(error){
+
+console.error(
+"REVIEW ERROR:",
+error
+);
+
+if(msg){
+
+msg.className=
+"notice err";
+
+msg.textContent=
+t("reviewError");
+
+}
+
+}
 
 }
 
 
 /* =====================================
-   NAVIGATION
+NAVIGATION
 ===================================== */
 
 function goHome(){
@@ -3342,6 +3847,8 @@ null,
 location.pathname+
 location.search
 );
+
+activeCategory="";
 
 render();
 
@@ -3382,7 +3889,7 @@ behavior:"smooth"
 
 
 /* =====================================
-   MAIN RENDER
+MAIN RENDER
 ===================================== */
 
 function render(){
@@ -3393,9 +3900,7 @@ const hash=
 location.hash;
 
 
-/*
-CART
-*/
+/* CART */
 
 if(hash==="#cart"){
 
@@ -3413,16 +3918,14 @@ return;
 }
 
 
-/*
-OFFERS
-*/
+/* OFFERS */
 
 if(hash==="#offers"){
 
 document.getElementById(
 "app"
 ).innerHTML=
-homeHTML();
+offersHTML();
 
 renderOffers();
 
@@ -3431,14 +3934,10 @@ return;
 }
 
 
-/*
-PRODUCT
-*/
+/* PRODUCT */
 
 if(
-hash.startsWith(
-"#product?"
-)
+hash.startsWith("#product?")
 ){
 
 const query=
@@ -3465,6 +3964,8 @@ productHTML(product);
 
 renderRecommended();
 
+loadReviews();
+
 return;
 
 }
@@ -3472,9 +3973,7 @@ return;
 }
 
 
-/*
-HOME
-*/
+/* HOME */
 
 document.getElementById(
 "app"
@@ -3487,7 +3986,7 @@ renderProducts();
 
 
 /* =====================================
-   BROWSER BACK / FORWARD
+BACK / FORWARD
 ===================================== */
 
 window.addEventListener(
@@ -3513,7 +4012,7 @@ window.scrollTo(0,0);
 
 
 /* =====================================
-   START
+START
 ===================================== */
 
 updateCount();
@@ -3524,4 +4023,3 @@ loadProducts();
 
 </body>
 </html>
-```
