@@ -160,6 +160,25 @@ function renderReviews(rs){let avg=rs.length?Math.round(rs.reduce((s,r)=>s+Numbe
 function formatDate(v){let d=new Date(v);return isNaN(d.getTime())?"":d.toLocaleDateString(language==="ar"?"ar-EG":"en-US")}
 async function submitReview(){if(!selectedProduct)return;let n=document.getElementById("reviewName"),c=document.getElementById("reviewComment"),m=document.getElementById("reviewMsg"),name=n?.value.trim()||"",comment=c?.value.trim()||"";if(!name||!comment){if(m){m.className="notice err";m.textContent=language==="ar"?"اكتب الاسم والتعليق أولًا":"Please enter your name and comment."}return}try{let r=await fetch(SUPABASE_URL+"/rest/v1/reviews",{method:"POST",headers:{...HEADERS,Prefer:"return=minimal"},body:JSON.stringify({product_id:selectedProduct.id,customer_name:name,rating:selectedRating,comment,active:true})});if(!r.ok)throw Error(await r.text());if(m){m.className="notice ok";m.textContent=t("reviewSuccess")}n.value="";c.value="";selectedRating=5;selectRating(5);loadReviews()}catch(e){console.error(e);if(m){m.className="notice err";m.textContent=t("reviewError")}}}
 
+/* =====================================
+   REFRESH -> HOME
+   لو المستخدم عمل Refresh وهو داخل
+   المنتج / العروض / السلة، يرجعه للرئيسية.
+   الضغط على الروابط والتنقل العادي لا يتأثر.
+===================================== */
+
+(function handleRefresh(){
+  const navEntry = performance.getEntriesByType("navigation")[0];
+
+  if (navEntry && navEntry.type === "reload" && location.hash) {
+    history.replaceState(
+      null,
+      "",
+      location.pathname + location.search
+    );
+  }
+})();
+
 function goHome(){history.replaceState(null,"",location.pathname+location.search);activeCategory="";render();scrollTo(0,0)}
 function goShop(){history.replaceState(null,"",location.pathname+location.search);activeCategory="";render();setTimeout(()=>document.getElementById("shop")?.scrollIntoView({behavior:"smooth"}),100)}
 function render(){applyLanguage();let h=location.hash;if(h==="#cart"){document.getElementById("app").innerHTML=cartHTML();renderCartItems();refreshTotals();return}if(h==="#offers"){document.getElementById("app").innerHTML=offersHTML();renderOffers();return}if(h.startsWith("#product?")){let id=new URLSearchParams(h.split("?")[1]).get("id"),p=products.find(x=>String(x.id)===String(id));if(p){document.getElementById("app").innerHTML=productHTML(p);renderRecommended();loadReviews();return}}document.getElementById("app").innerHTML=homeHTML();renderProducts()}
