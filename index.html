@@ -1,4 +1,4 @@
-html = r'''<!doctype html>
+<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
@@ -27,7 +27,7 @@ section{padding:50px 5%}
 .title{font-size:27px;margin:0 0 8px}
 .muted{color:#777;margin:0 0 25px}
 .cats{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
-.cat{height:210px;border-radius:15px;padding:22px;display:flex;align-items:end;background:linear-gradient(145deg,#333,#111);font-size:21px;font-weight:800}
+.cat{height:210px;border-radius:15px;padding:22px;display:flex;align-items:end;background:linear-gradient(145deg,#333,#111);font-size:21px;font-weight:800;cursor:pointer}
 .toolbar{display:flex;justify-content:space-between;align-items:end;gap:15px;margin-bottom:20px}
 .search{width:260px;background:#111;color:#fff;border:1px solid #333;border-radius:25px;padding:11px 16px;outline:none}
 .products{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
@@ -97,17 +97,17 @@ footer{padding:45px 5%;border-top:1px solid #222;color:#999;display:grid;grid-te
 .cartImg img{width:100%;height:100%;object-fit:cover}
 .qty{display:flex;gap:7px;align-items:center}
 .qty button{border:1px solid #ccc;background:#fff;border-radius:5px;width:30px;height:30px}
-.remove{border:0;background:none;color:#c00}
+.remove{border:0;background:none;color:#c00;cursor:pointer}
 .checkoutBox input,.checkoutBox textarea,.checkoutBox select{width:100%;margin:7px 0;padding:12px;border:1px solid #ccc;border-radius:7px;outline:none}
-.dark{width:100%;padding:13px;background:#111;color:#fff;border:0;border-radius:7px}
+.dark{width:100%;padding:13px;background:#111;color:#fff;border:0;border-radius:7px;cursor:pointer}
 .summaryLine{display:flex;justify-content:space-between;padding:8px 0}
 .summaryTotal{font-size:21px;font-weight:bold;border-top:1px solid #ddd;padding-top:12px}
 .couponRow{display:flex;gap:7px;margin:12px 0}
 .couponRow input{flex:1;margin:0}
 .couponRow button{border:0;background:#111;color:#fff;border-radius:7px;padding:0 15px}
 .notice{padding:10px;border-radius:7px;background:#f2f2f2;margin:10px 0;font-size:13px}
-.ok{background:#e7f7e7}
-.err{background:#ffe9e9}
+.ok{background:#e7f7e7;color:#1b5e20}
+.err{background:#ffe9e9;color:#c62828}
 .empty{padding:50px;text-align:center;color:#777}
 .recommended{margin-top:60px}
 
@@ -189,8 +189,8 @@ let selectedRating=5;
 const TXT={
 ar:{
 home:"الرئيسية",shop:"المتجر",offers:"🔥 العروض",category:"تسوق حسب الفئة",
-fresh:"قطع جديدة. كميات محدودة.",search:"ابحث عن منتج...",shopNow:"تسوق الآن →",
-collection:"مجموعة جديدة",explore:"اكتشف الآن →",add:"أضف للسلة",out:"غير متوفر",
+fresh:"قطع جديدة. كميات محدودة.",search:"ابحث عن منتج...",shopNow:"تسوق الآن ←",
+collection:"مجموعة جديدة",explore:"اكتشف الآن ←",add:"أضف للسلة",out:"غير متوفر",
 available:"متوفر",size:"اختر المقاس",color:"اختر اللون",quantity:"الكمية",
 back:"← العودة للمتجر",cart:"سلة المشتريات",empty:"السلة فاضية",remove:"حذف",
 order:"بيانات الطلب",name:"الاسم",phone:"رقم الهاتف",whatsapp:"رقم الواتساب",
@@ -237,6 +237,7 @@ function applyLanguage(){
 function toggleLanguage(){
   language=language==="ar"?"en":"ar";
   localStorage.setItem("vanta_lang",language);
+  applyLanguage();
   render();
 }
 
@@ -314,8 +315,6 @@ function stars(v){
   return "★".repeat(r)+"☆".repeat(5-r);
 }
 
-/* مهم: الوصف يؤخذ من description أولًا ثم details.
-   ولو الاتنين فاضيين يظهر تنبيه بدل ما المساحة تختفي. */
 function productDescription(p){
   const description=String(p?.description??"").trim();
   const details=String(p?.details??"").trim();
@@ -574,7 +573,7 @@ ${esc(c)}
 
 <div class="reviews">
 <h2 class="title">⭐ ${t("reviews")}</h2>
-<div id="reviewArea"><div class="notice">${t("loading")}</div></div>
+<div id="reviewArea"><div class="notice">${t("noReviews")}</div></div>
 </div>
 
 <div class="recommended">
@@ -920,13 +919,6 @@ function refreshTotals(){
   if(tt)tt.textContent=money(total());
 }
 
-/*
- SECURITY:
- المتصفح لا يرسل السعر أو الخصم أو المخزون أو الإجمالي.
- يرسل فقط:
- customer data + product IDs + quantities + size/color + coupon.
- Supabase create_order يحسب السعر والخصم والمخزون والإجمالي.
-*/
 async function placeOrder(){
   const msg=document.getElementById("orderMsg");
 
@@ -1018,297 +1010,69 @@ async function placeOrder(){
 
 function mapOrderError(m){
   const map={
-    CUSTOMER_NAME_REQUIRED:"اكتب الاسم أولًا",
-    PHONE_REQUIRED:"اكتب رقم الهاتف",
-    WHATSAPP_REQUIRED:"اكتب رقم الواتساب",
-    CITY_REQUIRED:"اختار المحافظة",
-    ADDRESS_REQUIRED:"اكتب العنوان بالتفصيل",
-    EMPTY_CART:"السلة فاضية",
-    PRODUCT_NOT_FOUND:"أحد المنتجات غير موجود",
-    PRODUCT_INACTIVE:"أحد المنتجات غير متاح",
-    INSUFFICIENT_STOCK:"الكمية المطلوبة غير متوفرة",
-    INVALID_SIZE:"المقاس المختار غير متاح",
-    INVALID_COLOR:"اللون المختار غير متاح",
-    INVALID_COUPON:"كود الخصم غير صالح",
-    EXPIRED_COUPON:"الكوبون منتهي",
-    COUPON_LIMIT_REACHED:"الكوبون وصل للحد الأقصى من الاستخدام",
-    MIN_ORDER_NOT_REACHED:"الحد الأدنى للطلب لاستخدام الكوبون غير متحقق"
+    CUSTOMER_NAME_REQUIRED: language==="ar"?"اكتب الاسم أولًا":"Name is required",
+    PHONE_REQUIRED: language==="ar"?"اكتب رقم الهاتف":"Phone number is required",
+    WHATSAPP_REQUIRED: language==="ar"?"اكتب رقم الواتساب":"WhatsApp number is required",
+    CITY_REQUIRED: language==="ar"?"اختار المحافظة":"City is required",
+    ADDRESS_REQUIRED: language==="ar"?"اكتب العنوان بالتفصيل":"Detailed address is required",
+    EMPTY_CART: language==="ar"?"السلة فاضية":"Cart is empty",
+    PRODUCT_NOT_FOUND: language==="ar"?"أحد المنتجات غير موجود":"One of the products was not found",
+    PRODUCT_INACTIVE: language==="ar"?"أحد المنتجات غير متاح حاليًا":"One of the products is inactive",
+    OUT_OF_STOCK: language==="ar"?"عذرًا، أحد المنتجات نفذ من المخزون":"Sorry, an item is out of stock",
+    INVALID_COUPON: language==="ar"?"كود الخصم غير صالح":"Invalid coupon code",
+    EXPIRED_COUPON: language==="ar"?"كود الخصم منتهي الصلاحية":"Coupon code has expired"
   };
-
-  for(const k in map){
-    if(String(m).includes(k))return map[k];
-  }
-
-  return language==="ar"
-    ?"تعذر إنشاء الطلب. حاول مرة أخرى."
-    :"Could not place the order. Please try again.";
+  return map[m] || (language==="ar"?"حدث خطأ غير معروف":"An unknown error occurred");
 }
-
-function reviewHTML(){
-return `
-<div class="reviewSummary">
-<div class="reviewAverage" id="reviewAverage">0.0 / 5</div>
-<div class="stars" id="reviewStars">☆☆☆☆☆</div>
-<div id="reviewCount">0 ${language==="ar"?"تقييم":"reviews"}</div>
-</div>
-
-<div class="reviewForm">
-<h3>${t("writeReview")}</h3>
-<input id="reviewName" placeholder="${t("reviewName")}">
-<div>${t("chooseRating")}</div>
-
-<div class="ratingButtons">
-${[1,2,3,4,5].map(n=>`
-<button class="starBtn ${n===5?"selected":""}"
-onclick="selectRating(${n})"
-id="rating-${n}">
-${n} ⭐
-</button>`).join("")}
-</div>
-
-<textarea id="reviewComment" rows="4" placeholder="${t("reviewComment")}"></textarea>
-<button class="reviewSubmit" onclick="submitReview()">${t("sendReview")}</button>
-<div id="reviewMsg"></div>
-</div>
-
-<div class="reviewList" id="reviewList">${t("loading")}</div>`;
-}
-
-function selectRating(v){
-  selectedRating=v;
-  document.querySelectorAll(".starBtn").forEach(b=>
-    b.classList.toggle(
-      "selected",
-      Number(b.id.replace("rating-",""))===v
-    )
-  );
-}
-
-async function loadReviews(){
-  const area=document.getElementById("reviewArea");
-  if(!area||!selectedProduct)return;
-
-  area.innerHTML=reviewHTML();
-
-  try{
-    const r=await fetch(
-      SUPABASE_URL+
-      "/rest/v1/reviews?product_id=eq."+
-      encodeURIComponent(selectedProduct.id)+
-      "&active=eq.true&select=*&order=created_at.desc",
-      {headers:HEADERS}
-    );
-
-    if(!r.ok)throw Error(await r.text());
-
-    renderReviews(await r.json());
-
-  }catch(e){
-    console.error(e);
-    const l=document.getElementById("reviewList");
-    if(l)l.innerHTML=`<div class="notice err">${t("reviewError")}</div>`;
-  }
-}
-
-function renderReviews(rs){
-  const avg=rs.length
-    ?Math.round(
-      rs.reduce((s,r)=>s+Number(r.rating||0),0)/rs.length*10
-    )/10
-    :0;
-
-  const a=document.getElementById("reviewAverage");
-  const st=document.getElementById("reviewStars");
-  const c=document.getElementById("reviewCount");
-  const l=document.getElementById("reviewList");
-
-  if(a)a.textContent=avg.toFixed(1)+" / 5";
-  if(st)st.textContent=stars(Math.round(avg));
-  if(c)c.textContent=rs.length+" "+(language==="ar"?"تقييم":"reviews");
-
-  if(!l)return;
-
-  if(!rs.length){
-    l.innerHTML=`<div class="empty">${t("noReviews")}</div>`;
-    return;
-  }
-
-  l.innerHTML=rs.map(r=>`
-<div class="review">
-<div class="reviewHead">
-<div>
-<b>${esc(r.customer_name)}</b><br>
-<span class="stars">${stars(Number(r.rating))}</span>
-</div>
-<div class="reviewDate">${formatDate(r.created_at)}</div>
-</div>
-<div class="reviewText">${esc(r.comment)}</div>
-</div>
-`).join("");
-}
-
-function formatDate(v){
-  const d=new Date(v);
-  return isNaN(d.getTime())
-    ?""
-    :d.toLocaleDateString(language==="ar"?"ar-EG":"en-US");
-}
-
-async function submitReview(){
-  if(!selectedProduct)return;
-
-  const n=document.getElementById("reviewName");
-  const c=document.getElementById("reviewComment");
-  const m=document.getElementById("reviewMsg");
-
-  const name=n?.value.trim()||"";
-  const comment=c?.value.trim()||"";
-
-  if(!name||!comment){
-    if(m){
-      m.className="notice err";
-      m.textContent=language==="ar"
-        ?"اكتب الاسم والتعليق أولًا"
-        :"Please enter your name and comment.";
-    }
-    return;
-  }
-
-  try{
-    const r=await fetch(
-      SUPABASE_URL+"/rest/v1/reviews",
-      {
-        method:"POST",
-        headers:{...HEADERS,Prefer:"return=minimal"},
-        body:JSON.stringify({
-          product_id:selectedProduct.id,
-          customer_name:name,
-          rating:selectedRating,
-          comment,
-          active:true
-        })
-      }
-    );
-
-    if(!r.ok)throw Error(await r.text());
-
-    if(m){
-      m.className="notice ok";
-      m.textContent=t("reviewSuccess");
-    }
-
-    n.value="";
-    c.value="";
-    selectedRating=5;
-    selectRating(5);
-    loadReviews();
-
-  }catch(e){
-    console.error(e);
-
-    if(m){
-      m.className="notice err";
-      m.textContent=t("reviewError");
-    }
-  }
-}
-
-/*
- REFRESH -> HOME
- لو المستخدم عمل Refresh داخل:
- #product
- #offers
- #cart
- يرجعه للرئيسية.
-*/
-(function handleRefresh(){
-  try{
-    const navEntry=performance.getEntriesByType("navigation")[0];
-
-    if(navEntry&&navEntry.type==="reload"&&location.hash){
-      history.replaceState(
-        null,
-        "",
-        location.pathname+location.search
-      );
-    }
-  }catch(e){}
-}
-
-)();
 
 function goHome(){
-  history.replaceState(null,"",location.pathname+location.search);
+  history.pushState(null,"",location.pathname);
   activeCategory="";
   render();
   scrollTo(0,0);
 }
 
 function goShop(){
-  history.replaceState(null,"",location.pathname+location.search);
-  activeCategory="";
+  history.pushState(null,"",location.pathname+"#shop");
   render();
-
-  setTimeout(()=>{
-    document.getElementById("shop")?.scrollIntoView({
-      behavior:"smooth"
-    });
-  },100);
+  const el=document.getElementById("shop");
+  if(el)el.scrollIntoView({behavior:"smooth"});
 }
 
 function render(){
   applyLanguage();
+  updateCount();
+  const app=document.getElementById("app");
+  const hash=location.hash;
 
-  const h=location.hash;
-
-  if(h==="#cart"){
-    document.getElementById("app").innerHTML=cartHTML();
-    renderCartItems();
-    refreshTotals();
-    return;
-  }
-
-  if(h==="#offers"){
-    document.getElementById("app").innerHTML=offersHTML();
-    renderOffers();
-    return;
-  }
-
-  if(h.startsWith("#product?")){
-    const id=new URLSearchParams(h.split("?")[1]).get("id");
+  if(hash.startsWith("#product")){
+    const params=new URLSearchParams(hash.split("?")[1]);
+    const id=params.get("id");
     const p=products.find(x=>String(x.id)===String(id));
-
     if(p){
-      document.getElementById("app").innerHTML=productHTML(p);
+      app.innerHTML=productHTML(p);
       renderRecommended();
-      loadReviews();
-      return;
+    }else{
+      app.innerHTML=homeHTML();
+      renderProducts();
     }
+  }else if(hash==="#offers"){
+    app.innerHTML=offersHTML();
+    renderOffers();
+  }else if(hash==="#cart"){
+    app.innerHTML=cartHTML();
+    renderCartItems();
+  }else{
+    app.innerHTML=homeHTML();
+    renderProducts();
   }
-
-  document.getElementById("app").innerHTML=homeHTML();
-  renderProducts();
 }
 
-addEventListener("popstate",()=>{
-  render();
-  scrollTo(0,0);
+window.addEventListener("popstate",render);
+window.addEventListener("DOMContentLoaded",()=>{
+  applyLanguage();
+  loadProducts();
 });
-
-addEventListener("hashchange",()=>{
-  render();
-  scrollTo(0,0);
-});
-
-updateCount();
-loadProducts();
 </script>
 </body>
 </html>
-'''
-
-path="/mnt/data/VANTA_store_fixed.html"
-with open(path,"w",encoding="utf-8") as f:
-    f.write(html)
-
-print(path)
