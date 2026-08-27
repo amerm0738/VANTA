@@ -12,7 +12,7 @@ button,input,textarea,select{font:inherit}
 button{cursor:pointer}
 .top{background:#111;text-align:center;padding:8px;font-size:11px;color:#ddd}
 nav{height:70px;padding:0 5%;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #222;position:sticky;top:0;background:#080808ee;backdrop-filter:blur(8px);z-index:50}
-.logo{font-size:29px;font-weight:900;letter-spacing:6px}
+.logo{font-size:29px;font-weight:900;letter-spacing:6px;cursor:pointer}
 .links{display:flex;gap:24px}
 .links a{color:#aaa;text-decoration:none;font-size:13px;cursor:pointer}
 .navActions{display:flex;align-items:center;gap:7px}
@@ -74,15 +74,12 @@ footer{padding:45px 5%;border-top:1px solid #222;color:#999;display:grid;grid-te
 .wide{width:100%;padding:15px;background:#fff;color:#111;border:0;border-radius:8px;font-weight:bold}
 
 .reviews{max-width:1200px;margin:60px auto 0}
-.reviewSummary{background:#111;border:1px solid #222;border-radius:14px;padding:20px;margin-bottom:20px}
-.reviewAverage{font-size:34px;font-weight:900}
-.stars{letter-spacing:2px;font-size:20px}
-.reviewForm{background:#fff;color:#111;border-radius:14px;padding:20px;margin-bottom:25px}
-.reviewForm input,.reviewForm textarea{width:100%;padding:12px;border:1px solid #ccc;border-radius:8px;margin:6px 0 10px;outline:none}
-.ratingButtons{display:flex;gap:5px;margin:10px 0}
-.starBtn{background:#eee;border:0;border-radius:7px;padding:8px 11px}
-.starBtn.selected{background:#111;color:#fff}
-.reviewSubmit{width:100%;padding:13px;background:#111;color:#fff;border:0;border-radius:8px}
+.reviewForm{background:#111;border:1px solid #222;border-radius:14px;padding:20px;margin-bottom:25px}
+.reviewForm input,.reviewForm textarea{width:100%;padding:12px;background:#000;color:#fff;border:1px solid #333;border-radius:8px;margin:6px 0 10px;outline:none}
+.ratingButtons{display:flex;gap:8px;margin:10px 0;font-size:20px}
+.starBtn{background:#222;color:#777;border:0;border-radius:7px;padding:8px 12px;cursor:pointer}
+.starBtn.selected{background:#fff;color:#000}
+.reviewSubmit{width:100%;padding:13px;background:#fff;color:#111;border:0;border-radius:8px;font-weight:bold}
 .reviewList{display:grid;gap:12px}
 .review{background:#111;border:1px solid #222;border-radius:12px;padding:16px}
 .reviewHead{display:flex;justify-content:space-between;gap:10px;margin-bottom:8px}
@@ -100,6 +97,7 @@ footer{padding:45px 5%;border-top:1px solid #222;color:#999;display:grid;grid-te
 .remove{border:0;background:none;color:#c00;cursor:pointer}
 .checkoutBox input,.checkoutBox textarea,.checkoutBox select{width:100%;margin:7px 0;padding:12px;border:1px solid #ccc;border-radius:7px;outline:none}
 .dark{width:100%;padding:13px;background:#111;color:#fff;border:0;border-radius:7px;cursor:pointer}
+.dark:disabled{opacity:0.5;cursor:not-allowed}
 .summaryLine{display:flex;justify-content:space-between;padding:8px 0}
 .summaryTotal{font-size:21px;font-weight:bold;border-top:1px solid #ddd;padding-top:12px}
 .couponRow{display:flex;gap:7px;margin:12px 0}
@@ -110,6 +108,8 @@ footer{padding:45px 5%;border-top:1px solid #222;color:#999;display:grid;grid-te
 .err{background:#ffe9e9;color:#c62828}
 .empty{padding:50px;text-align:center;color:#777}
 .recommended{margin-top:60px}
+
+.whatsappFloat{position:fixed;bottom:25px;right:25px;background:#25d366;color:#fff;width:55px;height:55px;border-radius:50%;display:grid;place-items:center;font-size:30px;text-decoration:none;box-shadow:0 4px 10px rgba(0,0,0,0.3);z-index:99}
 
 .offersPage{min-height:700px;padding:45px 5%}
 .offersHeader{text-align:center;margin-bottom:35px}
@@ -151,7 +151,7 @@ footer{grid-template-columns:1fr 1fr}
 <div class="top">FREE SHIPPING FOR ORDERS OVER 1500 EGP 🚚</div>
 
 <nav>
-<div class="logo">VANTA</div>
+<div class="logo" onclick="goHome()">VANTA</div>
 <div class="links">
 <a onclick="goHome()">الرئيسية</a>
 <a onclick="goShop()">المتجر</a>
@@ -165,6 +165,8 @@ footer{grid-template-columns:1fr 1fr}
 
 <main id="app"></main>
 
+<a href="https://wa.me/201000000000" target="_blank" class="whatsappFloat" title="Contact Us">💬</a>
+
 <script>
 const SUPABASE_URL="https://jstcrfkjnmqegnzvwfyz.supabase.co";
 const SUPABASE_KEY="sb_publishable_A8WKnbjf_YryRDolgIr1YA_SDDQcYWf";
@@ -173,6 +175,14 @@ const HEADERS={
   Authorization:"Bearer "+SUPABASE_KEY,
   Accept:"application/json",
   "Content-Type":"application/json"
+};
+
+const SHIPPING_RATES = {
+  "القاهرة": 50, "الجيزة": 50, "القليوبية": 50,
+  "الإسكندرية": 60, "الشرقية": 65, "الدقهلية": 65,
+  "البحيرة": 65, "الغربية": 65, "المنوفية": 65,
+  "أسيوط": 80, "سوهاج": 80, "قنا": 80,
+  "الأقصر": 85, "أسوان": 85, "أخرى": 90
 };
 
 let products=[];
@@ -185,6 +195,7 @@ let productQty=1;
 let appliedCoupon=null;
 let activeCategory="";
 let selectedRating=5;
+let selectedShippingCost=0;
 
 const TXT={
 ar:{
@@ -195,7 +206,7 @@ available:"متوفر",size:"اختر المقاس",color:"اختر اللون",
 back:"← العودة للمتجر",cart:"سلة المشتريات",empty:"السلة فاضية",remove:"حذف",
 order:"بيانات الطلب",name:"الاسم",phone:"رقم الهاتف",whatsapp:"رقم الواتساب",
 city:"اختر المحافظة",address:"العنوان بالتفصيل",confirm:"تأكيد الطلب",
-subtotal:"المجموع",discount:"الخصم",total:"الإجمالي",coupon:"كود الخصم",apply:"تطبيق",
+subtotal:"المجموع",discount:"الخصم",shipping:"الشحن",total:"الإجمالي",coupon:"كود الخصم",apply:"تطبيق",
 couponOK:"تم تطبيق الكوبون ✅",couponBad:"كود الخصم غير صالح أو منتهي ❌",
 success:"تم تسجيل طلبك بنجاح ✅",error:"حصل خطأ أثناء تسجيل الطلب ❌",
 required:"اكمل بيانات الطلب الأول",recommended:"منتجات مقترحة",sale:"خصم",
@@ -214,7 +225,7 @@ available:"In stock",size:"Choose size",color:"Choose color",quantity:"Quantity"
 back:"← Back to shop",cart:"Shopping Cart",empty:"Your cart is empty",remove:"Remove",
 order:"Order Details",name:"Name",phone:"Phone number",whatsapp:"WhatsApp number",
 city:"Choose governorate",address:"Detailed address",confirm:"Place Order",
-subtotal:"Subtotal",discount:"Discount",total:"Total",coupon:"Coupon code",apply:"Apply",
+subtotal:"Subtotal",discount:"Discount",shipping:"Shipping",total:"Total",coupon:"Coupon code",apply:"Apply",
 couponOK:"Coupon applied ✅",couponBad:"Invalid or expired coupon ❌",
 success:"Order placed successfully ✅",error:"There was an error placing the order ❌",
 required:"Please complete your details.",recommended:"Recommended Products",sale:"OFF",
@@ -315,16 +326,6 @@ function stars(v){
   return "★".repeat(r)+"☆".repeat(5-r);
 }
 
-function productDescription(p){
-  const description=String(p?.description??"").trim();
-  const details=String(p?.details??"").trim();
-
-  if(description)return description;
-  if(details)return details;
-
-  return "";
-}
-
 function homeHTML(){
 return `
 <header class="hero">
@@ -421,8 +422,8 @@ async function loadProducts(){
     render();
   }catch(e){
     console.error(e);
-    document.getElementById("app").innerHTML=
-      `<section><div class="notice err">تعذر تحميل المنتجات من Supabase.</div></section>`;
+    const app = document.getElementById("app");
+    if(app) app.innerHTML=`<section><div class="notice err">تعذر تحميل المنتجات من Supabase.</div></section>`;
   }
 }
 
@@ -501,7 +502,7 @@ function productHTML(p){
   const sizes=getSizes(p);
   const colors=getColors(p);
   const d=discount(p);
-  const description=productDescription(p);
+  const description=p?.description||p?.details||"";
 
   return `
 <section class="productPage">
@@ -573,7 +574,26 @@ ${esc(c)}
 
 <div class="reviews">
 <h2 class="title">⭐ ${t("reviews")}</h2>
-<div id="reviewArea"><div class="notice">${t("noReviews")}</div></div>
+
+<div class="reviewForm">
+<h3>${t("writeReview")}</h3>
+<input id="reviewerName" placeholder="${t("reviewName")}">
+<textarea id="reviewerComment" rows="3" placeholder="${t("reviewComment")}"></textarea>
+
+<div>${t("chooseRating")}:</div>
+<div class="ratingButtons">
+<button class="starBtn selected" onclick="setRating(5, this)">5 ★</button>
+<button class="starBtn" onclick="setRating(4, this)">4 ★</button>
+<button class="starBtn" onclick="setRating(3, this)">3 ★</button>
+<button class="starBtn" onclick="setRating(2, this)">2 ★</button>
+<button class="starBtn" onclick="setRating(1, this)">1 ★</button>
+</div>
+
+<button class="reviewSubmit" onclick="submitReview()">${t("sendReview")}</button>
+<div id="reviewMsg"></div>
+</div>
+
+<div id="reviewArea"><div class="notice">${t("loading")}</div></div>
 </div>
 
 <div class="recommended">
@@ -608,6 +628,81 @@ function productQtyChange(a){
   productQty=Math.max(1,Math.min(max,productQty+a));
   const e=document.getElementById("productQty");
   if(e)e.textContent=productQty;
+}
+
+function setRating(val, btn){
+  selectedRating = val;
+  document.querySelectorAll(".starBtn").forEach(b => b.classList.remove("selected"));
+  btn.classList.add("selected");
+}
+
+async function loadReviews(productId){
+  const box = document.getElementById("reviewArea");
+  if(!box) return;
+
+  try {
+    const r = await fetch(SUPABASE_URL + "/rest/v1/reviews?product_id=eq." + encodeURIComponent(productId) + "&select=*", {headers: HEADERS});
+    if(!r.ok) throw Error();
+    const list = await r.json();
+
+    if(!list.length){
+      box.innerHTML = `<div class="notice">${t("noReviews")}</div>`;
+      return;
+    }
+
+    box.innerHTML = `<div class="reviewList">` + list.map(rev => `
+      <div class="review">
+        <div class="reviewHead">
+          <b>${esc(rev.customer_name || "عميل")}</b>
+          <span style="color:#fbc02d">${stars(rev.rating)}</span>
+        </div>
+        <div class="reviewText">${esc(rev.comment || "")}</div>
+        <div class="reviewDate">${new Date(rev.created_at).toLocaleDateString()}</div>
+      </div>
+    `).join("") + `</div>`;
+
+  } catch(e) {
+    box.innerHTML = `<div class="notice">${t("noReviews")}</div>`;
+  }
+}
+
+async function submitReview(){
+  const msg = document.getElementById("reviewMsg");
+  const name = document.getElementById("reviewerName").value.trim();
+  const comment = document.getElementById("reviewerComment").value.trim();
+
+  if(!name || !comment){
+    msg.className = "notice err";
+    msg.textContent = t("required");
+    return;
+  }
+
+  try {
+    const payload = {
+      product_id: selectedProduct.id,
+      customer_name: name,
+      comment: comment,
+      rating: selectedRating
+    };
+
+    const r = await fetch(SUPABASE_URL + "/rest/v1/reviews", {
+      method: "POST",
+      headers: HEADERS,
+      body: JSON.stringify(payload)
+    });
+
+    if(!r.ok) throw Error();
+
+    msg.className = "notice ok";
+    msg.textContent = t("reviewSuccess");
+    document.getElementById("reviewerName").value = "";
+    document.getElementById("reviewerComment").value = "";
+    loadReviews(selectedProduct.id);
+
+  } catch(e) {
+    msg.className = "notice err";
+    msg.textContent = t("reviewError");
+  }
 }
 
 function addProductToCart(){
@@ -710,7 +805,11 @@ function couponDiscount(){
 }
 
 function total(){
-  return Math.max(0,subtotal()-couponDiscount());
+  const sub = subtotal();
+  if (sub >= 1500) {
+    selectedShippingCost = 0; // شحن مجاني
+  }
+  return Math.max(0, sub - couponDiscount() + selectedShippingCost);
 }
 
 function cartHTML(){
@@ -751,6 +850,11 @@ ${t("empty")}<br><br>
 <b id="discount">-${money(couponDiscount())}</b>
 </div>
 
+<div class="summaryLine">
+<span>${t("shipping")}</span>
+<b id="shippingRate">${subtotal() >= 1500 ? "مجاناً 🚚" : money(selectedShippingCost)}</b>
+</div>
+
 <div class="summaryLine summaryTotal">
 <span>${t("total")}</span>
 <b id="total">${money(total())}</b>
@@ -762,33 +866,28 @@ ${t("empty")}<br><br>
 <input id="phone" placeholder="${t("phone")}">
 <input id="whatsapp" placeholder="${t("whatsapp")}">
 
-<select id="city">
+<select id="city" onchange="updateShipping(this.value)">
 <option value="">${t("city")}</option>
-<option>القاهرة</option>
-<option>الجيزة</option>
-<option>القليوبية</option>
-<option>الإسكندرية</option>
-<option>الشرقية</option>
-<option>الدقهلية</option>
-<option>البحيرة</option>
-<option>الغربية</option>
-<option>المنوفية</option>
-<option>أسيوط</option>
-<option>سوهاج</option>
-<option>قنا</option>
-<option>الأقصر</option>
-<option>أسوان</option>
-<option>أخرى</option>
+${Object.keys(SHIPPING_RATES).map(c=>`<option value="${c}">${c}</option>`).join("")}
 </select>
 
 <textarea id="address" placeholder="${t("address")}" rows="4"></textarea>
 
-<button class="dark" onclick="placeOrder()">${t("confirm")}</button>
+<button id="orderBtn" class="dark" onclick="placeOrder()">${t("confirm")}</button>
 <div id="orderMsg"></div>
 </div>
 </div>
 `}
 </section>`;
+}
+
+function updateShipping(city){
+  if(subtotal() >= 1500){
+    selectedShippingCost = 0;
+  } else {
+    selectedShippingCost = SHIPPING_RATES[city] || 0;
+  }
+  refreshTotals();
 }
 
 function renderCartItems(){
@@ -912,15 +1011,18 @@ async function applyCoupon(){
 function refreshTotals(){
   const s=document.getElementById("subtotal");
   const d=document.getElementById("discount");
+  const sh=document.getElementById("shippingRate");
   const tt=document.getElementById("total");
 
   if(s)s.textContent=money(subtotal());
   if(d)d.textContent="-"+money(couponDiscount());
+  if(sh)sh.textContent=subtotal() >= 1500 ? "مجاناً 🚚" : money(selectedShippingCost);
   if(tt)tt.textContent=money(total());
 }
 
 async function placeOrder(){
   const msg=document.getElementById("orderMsg");
+  const btn=document.getElementById("orderBtn");
 
   if(!msg)return;
 
@@ -942,6 +1044,7 @@ async function placeOrder(){
     return;
   }
 
+  btn.disabled = true;
   msg.className="notice";
   msg.textContent=language==="ar"?"جاري تسجيل الطلب...":"Placing order...";
 
@@ -972,8 +1075,6 @@ async function placeOrder(){
 
     if(!r.ok){
       const txt=await r.text();
-      console.error("CREATE_ORDER ERROR:",txt);
-
       let friendly=language==="ar"
         ?"تعذر إنشاء الطلب. تأكد من البيانات والمخزون والكوبون."
         :"Could not place the order. Please check the details, stock and coupon.";
@@ -996,15 +1097,17 @@ async function placeOrder(){
 
     cart=[];
     appliedCoupon=null;
+    selectedShippingCost=0;
     localStorage.removeItem("vanta_cart");
     updateCount();
     renderCartItems();
     refreshTotals();
 
   }catch(e){
-    console.error(e);
     msg.className="notice err";
     msg.textContent=e.message||t("error");
+  } finally {
+    btn.disabled = false;
   }
 }
 
@@ -1052,6 +1155,7 @@ function render(){
     if(p){
       app.innerHTML=productHTML(p);
       renderRecommended();
+      loadReviews(p.id);
     }else{
       app.innerHTML=homeHTML();
       renderProducts();
@@ -1070,6 +1174,10 @@ function render(){
 
 window.addEventListener("popstate",render);
 window.addEventListener("DOMContentLoaded",()=>{
+  if (location.hash) {
+    history.replaceState(null, "", location.pathname);
+  }
+  activeCategory = "";
   applyLanguage();
   loadProducts();
 });
