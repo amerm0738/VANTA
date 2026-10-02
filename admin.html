@@ -934,116 +934,50 @@ function loginPage(
 async function login(){
 
   const email =
-    document
-      .getElementById(
-        "loginEmail"
-      )
-      .value
-      .trim();
-
+    document.getElementById("loginEmail")?.value.trim() || "";
 
   const password =
-    document
-      .getElementById(
-        "loginPassword"
-      )
-      .value;
-
+    document.getElementById("loginPassword")?.value || "";
 
   if(!email || !password){
-
-    document
-      .getElementById("root")
-      .innerHTML =
-        loginPage(
-          t("invalid")
-        );
-
+    document.getElementById("root").innerHTML =
+      loginPage(t("invalid"));
     return;
-
   }
 
+  try{
+    const response = await fetch(
+      SUPABASE_URL + "/functions/v1/vanta-admin",
+      {
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+          action:"login",
+          username:email,
+          password
+        })
+      }
+    );
 
-  const {
-    data,
-    error
-  } =
-    await supabaseClient.auth
-      .signInWithPassword({
-        email,
-        password
-      });
+    const raw = await response.text();
+    let data = {};
+    try{ data = JSON.parse(raw); }catch(e){}
 
+    if(!response.ok || !data.token){
+      throw new Error(data.error || t("invalid"));
+    }
 
-  if(error){
+    session = {access_token:data.token};
+    adminUser = {username:email};
 
-    document
-      .getElementById("root")
-      .innerHTML =
-        loginPage(
-          t("invalid")
-        );
+    await render();
 
-    return;
-
+  }catch(error){
+    document.getElementById("root").innerHTML =
+      loginPage(t("invalid"));
   }
-
-
-  session =
-    data.session;
-
-
-  adminUser =
-    data.user;
-
-
-  /*
-    التأكد أن الحساب موجود
-    في جدول admins.
-  */
-
-  const {
-    data:admin,
-    error:adminError
-  } =
-    await supabaseClient
-      .from("admins")
-      .select("user_id")
-      .eq(
-        "user_id",
-        adminUser.id
-      )
-      .maybeSingle();
-
-
-  if(
-    adminError ||
-    !admin
-  ){
-
-    await supabaseClient
-      .auth
-      .signOut();
-
-
-    session = null;
-
-    adminUser = null;
-
-
-    document
-      .getElementById("root")
-      .innerHTML =
-        loginPage(
-          t("adminOnly")
-        );
-
-    return;
-
-  }
-
-
-  await render();
 
 }
 
@@ -1148,99 +1082,86 @@ async function checkSession(){
    API
 ===================================================== */
 
-async function api(
-  table,
-  options={}
-){
+async function api(table, options={}){
 
-  if(!session){
+  if(!session?.access_token)
+    throw new Error("NO_ADMIN_SESSION");
 
-    throw new Error(
-      "NO_ADMIN_SESSION"
-    );
+  const method = (options.method || "GET").toUpperCase();
+  const query = options.query || "";
 
+  let action = "";
+  let body = {};
+
+  if(table === "products"){
+    if(method === "GET") action = "products:list";
+    else if(method === "POST"){
+      action = "products:save";
+      body.product = options.body || {};
+    }
+  }else if(table.startsWith("products?id=eq.")){
+    const id = decodeURIComponent(table.split("eq.")[1] || "");
+    if(method === "PATCH"){
+      action = "products:save";
+      body.product = {...(options.body || {}),id};
+    }else if(method === "DELETE"){
+      action = "products:delete";
+      body.id = id;
+    }
+  }else if(table === "product_variants"){
+    if(method === "GET") action = "variants:list";
+    else if(method === "POST" || method === "PATCH"){
+      action = "variants:save";
+      body.variant = options.body || {};
+    }
+  }else if(table === "orders"){
+    if(method === "GET") action = "orders:list";
+  }else if(table === "custom_print_orders"){
+    if(method === "GET") action = "custom:list";
+  }else if(table === "site_settings"){
+    if(method === "GET") action = "settings:get";
+    else if(method === "PATCH"){
+      action = "settings:save";
+      const keyMatch = query.match(/key=eq\.([^&]+)/);
+      const key = keyMatch ? decodeURIComponent(keyMatch[1]) : null;
+      if(!key) throw new Error("SETTING_KEY_REQUIRED");
+      body.values = {[key]: options.body?.value};
+    }
   }
 
+  if(!action)
+    throw new Error("UNSUPPORTED_ADMIN_API:" + table + ":" + method);
 
-  const token =
-    session.access_token;
+  const response = await fetch(
+    SUPABASE_URL + "/functions/v1/vanta-admin",
+    {
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+        "Authorization":"Bearer " + session.access_token
+      },
+      body:JSON.stringify({action,...body})
+    }
+  );
 
-
-  const headers = {
-
-    apikey:
-      SUPABASE_KEY,
-
-    Authorization:
-      "Bearer " + token,
-
-    "Content-Type":
-      "application/json",
-
-    Accept:
-      "application/json"
-
-  };
-
-
-  const response =
-    await fetch(
-      SUPABASE_URL +
-      "/rest/v1/" +
-      table +
-      (
-        options.query
-        ?
-        "?" + options.query
-        :
-        ""
-      ),
-      {
-        method:
-          options.method || "GET",
-
-        headers,
-
-        body:
-          options.body
-          ?
-          JSON.stringify(
-            options.body
-          )
-          :
-          undefined
-      }
-    );
-
-
-  const text =
-    await response.text();
-
+  const raw = await response.text();
+  let data = null;
+  try{ data = JSON.parse(raw); }catch(e){ data = raw; }
 
   if(!response.ok){
-
-    throw new Error(
-      text ||
-      "API_ERROR"
-    );
-
+    if(response.status === 401){
+      session = null;
+      adminUser = null;
+      document.getElementById("root").innerHTML = loginPage(t("invalid"));
+      throw new Error("AUTH_EXPIRED");
+    }
+    throw new Error(data?.error || raw || "API_ERROR");
   }
 
+  if(action.endsWith(":list"))
+    return Array.isArray(data) ? data : (data?.data || []);
 
-  if(!text)
-    return null;
-
-
-  try{
-
-    return JSON.parse(text);
-
-  }catch(e){
-
-    return text;
-
-  }
-
+  return data;
 }
 
 
@@ -3812,66 +3733,13 @@ async function saveSettings(){
 */
 
 
-window.addEventListener(
-  "pageshow",
-  async function(){
-
-    /*
-      لو الصفحة اتجابت من Browser Back/Forward Cache
-      نعمل Sign Out برضه.
-    */
-
-    await supabaseClient
-      .auth
-      .signOut();
-
-
-    session = null;
-
-    adminUser = null;
-
-    products = [];
-
-    variants = [];
-
-    editId = null;
-
-
-    document
-      .getElementById("root")
-      .innerHTML =
-        loginPage();
-
-  }
-);
-
-
-/* =====================================================
-   INITIAL LOAD
-===================================================== */
-
 (async function(){
-
-  /*
-    أول ما admin.html يفتح:
-    لا نعتمد على أي Login محفوظ.
-  */
-
-  await supabaseClient
-    .auth
-    .signOut();
-
-
   session = null;
-
   adminUser = null;
-
-
-  document
-    .getElementById("root")
-    .innerHTML =
-      loginPage();
-
+  products = [];
+  variants = [];
+  editId = null;
+  document.getElementById("root").innerHTML = loginPage();
 })();
 
 </script>
