@@ -164,12 +164,10 @@ footer{grid-template-columns:1fr 1fr}
 <a onclick="goShop()" id="navShopText">${t("shop")}</a>
 <a onclick="showOffers()" id="navOffersText">${t("offers")}</a>
 <a onclick="showCustomPrint()">🖨️ <span id="customNavText">${t("customPrint")}</span></a>
-<a onclick="openAdmin()">⚙️ <span id="adminNavText">${t("admin")}</span></a>
 </div>
 <div class="navActions">
 <button class="langBtn" onclick="toggleLanguage()" id="langBtn">EN</button>
 <button class="cartBtn" onclick="openCartPage()">🛒 <span id="count">0</span></button>
-<button class="navMini notifBell" onclick="openAdmin()" title="Admin" id="adminGear">⚙️<span id="notifDot" class="notifDot"></span></button>
 </div>
 </nav>
 
@@ -261,7 +259,6 @@ function applyLanguage(){
   const nh=document.getElementById("navHomeText"); if(nh)nh.textContent=t("home");
   const ns=document.getElementById("navShopText"); if(ns)ns.textContent=t("shop");
   const no=document.getElementById("navOffersText"); if(no)no.textContent=t("offers");
-  const na=document.getElementById("adminNavText"); if(na)na.textContent=t("admin");
   const top=document.getElementById("topShippingText"); if(top)top.textContent=t("freeShippingTop");
   const wa=document.getElementById("waTitle"); if(wa)wa.title=language==="ar"?"تواصل معنا عبر واتساب":"Contact us on WhatsApp";
 }
@@ -973,7 +970,7 @@ ${t("empty")}<br><br>
 </div>
 
 <div class="checkoutBox">
-<div class="invoiceHead"><div style="display:flex;align-items:center;gap:14px"><img src="${VANTA_LOGO}" alt="VANTA" style="width:120px;height:74px;object-fit:cover;border-radius:8px"><div><div class="flogo">VANTA</div><div class="mutedSmall">Style has no gender.</div></div></div><div>🧾</div></div>
+<div class="invoiceHead"><div style="display:flex;align-items:center;gap:14px"><img src="${VANTA_LOGO}" alt="VANTA" class="logoPrint" style="width:150px;height:92px;object-fit:cover;border-radius:8px"><div><div class="flogo">VANTA</div><div class="mutedSmall">Style has no gender.</div></div></div><div>🧾</div></div>
 <h2>${t("order")}</h2>
 
 <div class="summaryLine">
@@ -1264,14 +1261,21 @@ function downloadInvoice(){
   let items=order.items;
   if(typeof items==="string")try{items=JSON.parse(items)}catch(e){}
   items=Array.isArray(items)?items:[];
-  const rows=items.map(it=>`<tr><td>${esc(it.name||it.name_ar||"")}</td><td>${esc(it.size||"-")}</td><td>${esc(it.color||"-")}</td><td>${Number(it.qty||1)}</td><td>${money(it.price||0)}</td><td>${money(it.line_total||0)}</td></tr>`).join("");
+  const getInvoiceName=(it)=>{
+    const p=products.find(x=>String(x.id)===String(it.product_id));
+    if(p)return localizedName(p);
+    return language==="ar"?(it.name_ar||it.name||it.name_en||""):(it.name_en||it.name_ar||it.name||"");
+  };
+  const rows=items.map(it=>`<tr><td>${esc(getInvoiceName(it))}</td><td>${esc(language==="ar"?(it.size||"-"):(localizedChoice(it.size)||"-"))}</td><td>${esc(language==="ar"?(it.color||"-"):(localizedChoice(it.color)||"-"))}</td><td>${Number(it.qty||1)}</td><td>${money(it.price||0)}</td><td>${money(it.line_total||0)}</td></tr>`).join("");
   const el=document.createElement("div");
-  el.style.cssText="position:fixed;left:-10000px;top:0;width:800px;background:#fff;color:#111;padding:28px;font-family:Arial,sans-serif;direction:rtl";
-  el.innerHTML=`<div class="invoiceBox" style="margin:0;max-width:none;border-radius:0"><div class="invoiceHead"><div style="display:flex;align-items:center;gap:14px"><img src="${VANTA_LOGO}" style="width:120px;height:74px;object-fit:cover;border-radius:8px"><div><div style="font-size:30px;font-weight:900;letter-spacing:6px">VANTA</div><div>Style has no gender.</div></div></div><div><b>${t("invoice")}</b><br>${esc(order.order_number||"")}</div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px"><div><b>${t("name")}:</b> ${esc(order.customer_name||"")}</div><div><b>${t("phone")}:</b> ${esc(order.phone||"")}</div><div><b>WhatsApp:</b> ${esc(order.whatsapp||"")}</div><div><b>${t("city")}:</b> ${esc(order.city||"")}</div><div style="grid-column:1/-1"><b>${t("address")}:</b> ${esc(order.address||"")}</div></div><table class="invoiceItems"><thead><tr><th>${t("product")}</th><th>${t("size")}</th><th>${t("color")}</th><th>${t("quantity")}</th><th>${t("price")}</th><th>${t("lineTotal")}</th></tr></thead><tbody>${rows}</tbody></table><div style="margin-top:18px;text-align:left"><div>${t("subtotal")}: <b>${money(order.subtotal||0)}</b></div><div>${t("discount")}: <b>${money(order.discount||0)}</b></div><div>${t("shipping")}: <b>${money(order.shipping_cost||0)}</b></div><div style="font-size:20px;margin-top:8px">${t("total")}: <b>${money(order.total||0)}</b></div></div></div>`;
+  el.style.cssText="position:absolute;left:0;top:0;width:794px;min-height:1123px;background:#fff;color:#111;padding:36px;box-sizing:border-box;font-family:Arial,sans-serif;direction:"+(language==="ar"?"rtl":"ltr")+";z-index:-1;opacity:1;";
+  el.innerHTML=`<div style="background:#fff;color:#111;padding:8px"><div style="display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #111;padding-bottom:18px;margin-bottom:22px"><div style="display:flex;align-items:center;gap:16px"><img src="${VANTA_LOGO}" style="width:150px;height:92px;object-fit:cover;border-radius:8px"><div><div style="font-size:34px;font-weight:900;letter-spacing:7px">VANTA</div><div style="font-size:13px;letter-spacing:3px;color:#666">MODERN UNISEX WEAR</div></div></div><div style="text-align:${language==='ar'?'left':'right'}"><div style="font-size:22px;font-weight:800">${t("invoice")}</div><div style="margin-top:6px">${esc(order.order_number||"")}</div><div style="margin-top:6px;color:#666">${new Date(order.created_at||Date.now()).toLocaleString(language==='ar'?'ar-EG':'en-US')}</div></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px;font-size:14px"><div><b>${t("name")}:</b> ${esc(order.customer_name||"")}</div><div><b>${t("phone")}:</b> ${esc(order.phone||"")}</div><div><b>WhatsApp:</b> ${esc(order.whatsapp||"")}</div><div><b>${t("city")}:</b> ${esc(localizedCity(order.city||""))}</div><div style="grid-column:1/-1"><b>${t("address")}:</b> ${esc(order.address||"")}</div></div><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr>${[t("product"),t("size"),t("color"),t("quantity"),t("price"),t("lineTotal")].map(x=>`<th style="padding:11px;background:#111;color:#fff;border:1px solid #111">${x}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table><div style="margin-top:26px;margin-left:auto;width:300px;font-size:15px;line-height:2"><div>${t("subtotal")}: <b>${money(order.subtotal||0)}</b></div><div>${t("discount")}: <b>${money(order.discount||0)}</b></div><div>${t("shipping")}: <b>${money(order.shipping_cost||0)}</b></div><div style="font-size:22px;border-top:2px solid #111;margin-top:8px;padding-top:8px">${t("total")}: <b>${money(order.total||0)}</b></div></div><div style="margin-top:55px;text-align:center;color:#777;font-size:12px">VANTA • Style has no gender.</div></div>`;
   document.body.appendChild(el);
   if(typeof html2pdf!=="function"){el.remove();alert(language==="ar"?t("pdfErrorAr"):t("pdfErrorEn"));return;}
-  html2pdf().set({margin:8,filename:`VANTA-${order.order_number||"order"}.pdf`,image:{type:"jpeg",quality:.98},html2canvas:{scale:2,useCORS:true},jsPDF:{unit:"mm",format:"a4",orientation:"portrait"}}).from(el).save().finally(()=>el.remove());
+  const opt={margin:0,filename:`VANTA-${order.order_number||"order"}.pdf`,image:{type:"jpeg",quality:.98},html2canvas:{scale:2,useCORS:true,backgroundColor:"#ffffff",logging:false},jsPDF:{unit:"mm",format:"a4",orientation:"portrait"}};
+  html2pdf().set(opt).from(el).save().catch(e=>{console.error("PDF",e);alert(language==="ar"?t("pdfErrorAr"):t("pdfErrorEn"));}).finally(()=>el.remove());
 }
+
 function showCustomPrint(){
   history.pushState(null,"",location.pathname+location.search+"#custom-print");render();scrollTo(0,0);
 }
@@ -1294,7 +1298,7 @@ async function submitCustomPrint(){
     msg.className="successBox";msg.innerHTML=`<b>${t("customSuccess")}</b><br><button class="dark" onclick="goHome()">${t("backHome")}</button>`;
   }catch(e){console.error(e);msg.className="notice err";msg.textContent=language==="ar"?t("customSendErrorAr"):t("customSendErrorEn")}
 }
-async function openAdmin(){history.pushState(null,"",location.pathname+location.search+"#admin");render();scrollTo(0,0);}
+async function openAdmin(){ window.location.href="admin.html"; }
 function adminHTML(){return `<section class="adminPage"><div class="backRow"><button class="back" onclick="goHome()">← ${t("home")}</button></div><h1>⚙️ ${t("admin")}</h1><div id="adminRoot"><div class="notice">${t("adminCheck")}</div></div></section>`}
 async function adminInit(){
   const root=document.getElementById("adminRoot");if(!root)return;
@@ -1460,7 +1464,7 @@ function render(){
   }else if(hash==="#custom-print"){
     app.innerHTML=customPrintHTML();
   }else if(hash==="#admin"){
-    app.innerHTML=adminHTML();adminInit();
+    window.location.href="admin.html"; return;
   }else{
     app.innerHTML=homeHTML();renderProducts();renderBestSelling();
   }
