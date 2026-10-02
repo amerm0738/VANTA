@@ -144,7 +144,14 @@ footer{grid-template-columns:1fr 1fr}
 .cartImg{width:65px;height:65px}
 .offersHeader h1{font-size:32px}
 }
+
+.backRow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:18px}.backRow button{border:0}
+.navMini{background:#222;color:#fff;border:1px solid #444;border-radius:20px;padding:9px 13px;cursor:pointer}
+.choiceError{color:#d00000;font-weight:800;font-size:14px;margin:-10px 0 12px;min-height:0}.choiceError:empty{display:none}
+.logoPrint{height:38px;width:auto;object-fit:contain}.invoiceHead{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #ddd;padding-bottom:14px;margin-bottom:18px}.invoiceBox{background:#fff;color:#111;border-radius:14px;padding:24px;max-width:900px;margin:20px auto}.invoiceItems{width:100%;border-collapse:collapse}.invoiceItems th,.invoiceItems td{padding:9px;border-bottom:1px solid #ddd;text-align:right}.successBox{background:#eaffea;color:#155724;border:1px solid #b7dfb7;border-radius:14px;padding:22px;margin:20px 0;line-height:1.9}.successActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.customPage,.adminPage{padding:35px 5%;min-height:750px;max-width:1300px;margin:auto}.formGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.formGrid .full{grid-column:1/-1}.fieldLabel{display:block;font-weight:bold;margin:6px 0}.customCard,.adminCard{background:#111;border:1px solid #222;border-radius:14px;padding:20px;margin-bottom:18px}.customCard input,.customCard textarea,.customCard select,.adminCard input,.adminCard textarea,.adminCard select{width:100%;padding:12px;background:#000;color:#fff;border:1px solid #333;border-radius:8px}.fileList{font-size:12px;color:#aaa;margin-top:8px}.adminTabs{display:flex;gap:8px;flex-wrap:wrap;margin:15px 0}.adminTabs button{background:#222;color:#fff;border:1px solid #444;border-radius:20px;padding:9px 14px}.adminTable{width:100%;border-collapse:collapse;background:#fff;color:#111;border-radius:10px;overflow:hidden}.adminTable th,.adminTable td{padding:10px;border-bottom:1px solid #ddd;text-align:right;vertical-align:top}.statusPill{display:inline-block;padding:4px 8px;border-radius:12px;background:#eee;font-size:12px}.adminActions{display:flex;gap:6px;flex-wrap:wrap}.adminActions button{border:0;border-radius:7px;padding:7px 10px;background:#111;color:#fff}.notifBell{position:relative}.notifDot{position:absolute;top:-3px;left:-3px;width:10px;height:10px;background:#d00000;border-radius:50%;display:none}.notifDot.on{display:block}.stockGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.stockVariant{background:#0b0b0b;border:1px solid #292929;border-radius:10px;padding:10px}.soldBadge{color:#d00000;font-weight:800}.availableBadge{color:#197d2a;font-weight:800}.printDeposit{font-size:18px;font-weight:900}.mutedSmall{color:#777;font-size:12px}@media(max-width:800px){.formGrid{grid-template-columns:1fr}.formGrid .full{grid-column:auto}.stockGrid{grid-template-columns:1fr 1fr}.adminTable{font-size:12px}.invoiceBox{padding:14px}}@media(max-width:480px){.stockGrid{grid-template-columns:1fr}.successActions{display:grid}}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 
 <body>
@@ -156,10 +163,13 @@ footer{grid-template-columns:1fr 1fr}
 <a onclick="goHome()">الرئيسية</a>
 <a onclick="goShop()">المتجر</a>
 <a onclick="showOffers()">🔥 العروض</a>
+<a onclick="showCustomPrint()">🖨️ <span id="customNavText">طباعة مخصصة</span></a>
+<a onclick="openAdmin()">⚙️ <span id="adminNavText">الإدارة</span></a>
 </div>
 <div class="navActions">
 <button class="langBtn" onclick="toggleLanguage()" id="langBtn">EN</button>
 <button class="cartBtn" onclick="openCartPage()">🛒 <span id="count">0</span></button>
+<button class="navMini notifBell" onclick="openAdmin()" title="Admin">⚙️<span id="notifDot" class="notifDot"></span></button>
 </div>
 </nav>
 
@@ -215,7 +225,7 @@ reviews:"آراء العملاء",writeReview:"اكتب رأيك في المنت
 reviewComment:"اكتب تعليقك...",sendReview:"إرسال التقييم",chooseRating:"اختر تقييمك",
 noReviews:"لا توجد تقييمات حتى الآن.",reviewSuccess:"تم إرسال تقييمك بنجاح ✅",
 reviewError:"حدث خطأ أثناء إرسال التقييم ❌",rating:"التقييم",description:"وصف المنتج",
-noDescription:"لا يوجد وصف لهذا المنتج حاليًا."
+noDescription:"لا يوجد وصف لهذا المنتج حاليًا.", customPrint:"طباعة مخصصة", customTitle:"طلب طباعة مخصصة", customIntro:"ارفع ملفات الطباعة واكتب تفاصيل المطلوب، وسيتم التواصل معك لتأكيد التصميم والدفع.", uploadFiles:"ملفات الطباعة", printDetails:"تفاصيل الطباعة", deposit:"العربون", sendCustom:"إرسال طلب الطباعة", customSuccess:"تم إرسال طلب الطباعة بنجاح وسنتواصل معك على واتساب.", backHome:"العودة للرئيسية", downloadInvoice:"تحميل الفاتورة PDF", orderThanks:"شكرًا لطلبك من VANTA ❤️", orderDelivery:"تم استلام طلبك، وسيتم توصيله في أسرع وقت.", orderWhatsApp:"سيتم تأكيد الأوردر والتواصل معك عبر WhatsApp.", selectSizeError:"اختار المقاس أولًا", selectColorError:"اختار اللون أولًا", admin:"لوحة التحكم", newOrder:"تم إضافة طلب جديد 🔔", soldOutVariant:"غير متوفر لهذا المقاس/اللون", topSelling:"الأكثر مبيعًا"
 },
 en:{
 home:"Home",shop:"Shop",offers:"🔥 Offers",category:"SHOP BY CATEGORY",
@@ -233,7 +243,7 @@ noOffers:"No offers available.",loading:"Loading products...",reviews:"Customer 
 writeReview:"Write your review",reviewName:"Your name",reviewComment:"Write your comment...",
 sendReview:"Submit Review",chooseRating:"Choose your rating",noReviews:"No reviews yet.",
 reviewSuccess:"Review submitted successfully ✅",reviewError:"There was an error submitting the review ❌",
-rating:"Rating",description:"Product Description",noDescription:"No description available."
+rating:"Rating",description:"Product Description",noDescription:"No description available.", customPrint:"Custom Printing", customTitle:"Custom Printing Request", customIntro:"Upload your print files and describe what you need. We will contact you to confirm the design and payment.", uploadFiles:"Print files", printDetails:"Print details", deposit:"Deposit", sendCustom:"Send Print Request", customSuccess:"Your custom print request was sent. We will contact you on WhatsApp.", backHome:"Back Home", downloadInvoice:"Download PDF Invoice", orderThanks:"Thank you for your VANTA order ❤️", orderDelivery:"Your order was received and will be delivered as soon as possible.", orderWhatsApp:"We will confirm your order and contact you via WhatsApp.", selectSizeError:"Please choose a size first", selectColorError:"Please choose a color first", admin:"Admin Panel", newOrder:"New order added 🔔", soldOutVariant:"Unavailable for this size/color", topSelling:"Best Sellers"
 }};
 
 function t(k){return TXT[language][k]||k}
@@ -243,6 +253,8 @@ function applyLanguage(){
   document.documentElement.dir=language==="ar"?"rtl":"ltr";
   const b=document.getElementById("langBtn");
   if(b)b.textContent=language==="ar"?"EN":"AR";
+  const cn=document.getElementById("customNavText");
+  if(cn)cn.textContent=t("customPrint");
 }
 
 function toggleLanguage(){
@@ -341,10 +353,10 @@ return `
 <h2 class="title">${t("category")}</h2>
 <p class="muted">Find your style, wear it your way.</p>
 <div class="cats">
-<div class="cat" onclick="filterCategory('T-Shirts')">T-SHIRTS</div>
-<div class="cat" onclick="filterCategory('Hoodies')">HOODIES</div>
-<div class="cat" onclick="filterCategory('Pants')">PANTS</div>
-<div class="cat" onclick="filterCategory('Accessories')">ACCESSORIES</div>
+<div class="cat" onclick="filterCategory('T-Shirts')">${localizedCategory('T-Shirts').toUpperCase()}</div>
+<div class="cat" onclick="filterCategory('Hoodies')">${localizedCategory('Hoodies').toUpperCase()}</div>
+<div class="cat" onclick="filterCategory('Pants')">${localizedCategory('Pants').toUpperCase()}</div>
+<div class="cat" onclick="filterCategory('Accessories')">${localizedCategory('Accessories').toUpperCase()}</div>
 </div>
 <button class="offersBtn" onclick="showOffers()">${t("offers")}</button>
 </section>
@@ -358,6 +370,10 @@ return `
 <input id="search" class="search" placeholder="${t("search")}" oninput="renderProducts()">
 </div>
 <div id="products" class="products">${t("loading")}</div>
+</section>
+
+<section>
+<div class="toolbar"><div><h2 class="title">🔥 ${t("topSelling")}</h2><p class="muted">${language==="ar"?"الأكثر طلبًا من عملائنا":"Most requested by our customers"}</p></div></div><div id="bestSelling" class="products"></div>
 </section>
 
 <section>
@@ -387,10 +403,62 @@ return `
 </footer>`;
 }
 
+
+const BRAND_LOGO_TEXT="VANTA";
+let variantInventory=[];
+let lastOrder=null;
+let pendingOrderInvoice=null;
+let adminUser=null;
+let adminTab="orders";
+let adminPollTimer=null;
+let lastSeenOrderId=localStorage.getItem("vanta_last_seen_order")||"";
+
+function localizedName(p){
+  if(language==="ar") return p.name_ar || p.name || p.name_en || "بدون اسم";
+  return p.name_en || p.name_ar || p.name || "Unnamed product";
+}
+function localizedCategory(c){
+  const map={"T-Shirts":language==="ar"?"تيشيرتات":"T-Shirts",Hoodies:language==="ar"?"هوديز":"Hoodies",Pants:language==="ar"?"بناطيل":"Pants",Accessories:language==="ar"?"إكسسوارات":"Accessories"};
+  return map[c]||c||"";
+}
+async function loadVariantInventory(){
+  try{
+    const r=await fetch(SUPABASE_URL+"/rest/v1/product_variants?select=*",{headers:HEADERS});
+    if(r.ok) variantInventory=await r.json();
+  }catch(e){ variantInventory=[]; }
+}
+function getVariant(p,size="",color=""){
+  if(!p||!variantInventory.length)return null;
+  return variantInventory.find(v=>String(v.product_id)===String(p.id)&&String(v.size||"")===String(size||"")&&String(v.color||"")===String(color||""))||null;
+}
+function variantStock(p,size="",color=""){
+  const vs=getSizes(p), vc=getColors(p);
+  if(!vs.length&&!vc.length)return Number(p?.stock||0);
+  const v=getVariant(p,size,color);
+  return v?Number(v.stock||0):0;
+}
+function availableSize(p,size){
+  const colors=getColors(p); if(!variantInventory.length||!colors.length)return true;
+  return colors.some(c=>variantStock(p,size,c)>0);
+}
+function availableColor(p,color){
+  const sizes=getSizes(p); if(!variantInventory.length||!sizes.length)return true;
+  return sizes.some(s=>variantStock(p,s,color)>0);
+}
+function totalProductStock(p){
+  if(variantInventory.length){
+    const rows=variantInventory.filter(v=>String(v.product_id)===String(p.id));
+    if(rows.length)return rows.reduce((a,v)=>a+Number(v.stock||0),0);
+  }
+  return Number(p.stock||0);
+}
+function showChoiceError(id,text){const e=document.getElementById(id);if(e)e.textContent=text;}
+function clearChoiceError(id){showChoiceError(id,"");}
+
 function productCard(p){
   const imgs=getImages(p);
   const d=discount(p);
-  const stock=Number(p.stock||0);
+  const stock=totalProductStock(p);
 
   return `
 <article class="card" onclick="openProduct('${jsEsc(p.id)}')">
@@ -399,8 +467,8 @@ ${imgs[0]?`<img src="${esc(imgs[0])}" alt="${esc(p.name||"")}">`:"V"}
 ${d?`<span class="badge">-${d}%</span>`:""}
 </div>
 <div class="info">
-<h3>${esc(p.name||"بدون اسم")}</h3>
-<div>${esc(p.color||"")}</div>
+<h3>${esc(localizedName(p))}</h3>
+<div>${esc((getColors(p)[0]||p.color||""))}</div>
 <div class="price">
 ${d?`<span class="oldPrice">${money(p.price)}</span>`:""}
 ${money(salePrice(p))}
@@ -426,6 +494,8 @@ async function loadProducts(){
     if(app) app.innerHTML=`<section><div class="notice err">تعذر تحميل المنتجات من Supabase.</div></section>`;
   }
 }
+
+function renderBestSelling(){const b=document.getElementById("bestSelling");if(!b)return;const list=[...products].filter(p=>p.active!==false).sort((a,c)=>Number(c.sales_count||0)-Number(a.sales_count||0)).slice(0,4);b.innerHTML=list.map(productCard).join("")||`<div class="empty">${t("noOffers")}</div>`;}
 
 function renderProducts(){
   const box=document.getElementById("products");
@@ -502,7 +572,7 @@ function productHTML(p){
   const sizes=getSizes(p);
   const colors=getColors(p);
   const d=discount(p);
-  const description=p?.description||p?.details||"";
+  const description=language==="ar" ? (p?.description_ar||p?.description||p?.details_ar||p?.details||"") : (p?.description_en||p?.description||p?.details_en||p?.details||"");
 
   return `
 <section class="productPage">
@@ -525,7 +595,7 @@ ${imgs.map(im=>`
 </div>
 
 <div class="details">
-<h1>${esc(p.name||"")}</h1>
+<h1>${esc(localizedName(p))}</h1>
 
 ${d?`<span class="badge" style="position:static;display:inline-block">-${d}%</span>`:""}
 
@@ -547,19 +617,19 @@ ${sizes.length?`
 <h3 class="optionTitle">${t("size")}</h3>
 <div class="options">
 ${sizes.map(s=>`
-<button class="optionBtn sizeBtn" data-value="${esc(s)}" onclick="selectSize('${jsEsc(s)}')">
-${esc(s)}
+<button class="optionBtn sizeBtn ${!availableSize(p,s)?"sold": ""}" data-value="${esc(s)}" onclick="selectSize('${jsEsc(s)}')" ${!availableSize(p,s)?"disabled":""}>
+${esc(s)}${!availableSize(p,s)?` <span class="soldBadge">(${t("out")})</span>`:""}
 </button>`).join("")}
-</div>`:""}
+</div><div id="sizeError" class="choiceError"></div>`:""}
 
 ${colors.length?`
 <h3 class="optionTitle">${t("color")}</h3>
 <div class="options">
 ${colors.map(c=>`
-<button class="optionBtn colorBtn" data-value="${esc(c)}" onclick="selectColor('${jsEsc(c)}')">
-${esc(c)}
+<button class="optionBtn colorBtn ${!availableColor(p,c)?"sold": ""}" data-value="${esc(c)}" onclick="selectColor('${jsEsc(c)}')" ${!availableColor(p,c)?"disabled":""}>
+${esc(c)}${!availableColor(p,c)?` <span class="soldBadge">(${t("out")})</span>`:""}
 </button>`).join("")}
-</div>`:""}
+</div><div id="colorError" class="choiceError"></div>`:""}
 
 <div class="productQty">
 <b>${t("quantity")}</b>
@@ -610,6 +680,7 @@ function changeMainImage(u){
 
 function selectSize(v){
   selectedSize=v;
+  clearChoiceError("sizeError");
   document.querySelectorAll(".sizeBtn").forEach(b=>
     b.classList.toggle("selected",b.dataset.value===v)
   );
@@ -617,6 +688,7 @@ function selectSize(v){
 
 function selectColor(v){
   selectedColor=v;
+  clearChoiceError("colorError");
   document.querySelectorAll(".colorBtn").forEach(b=>
     b.classList.toggle("selected",b.dataset.value===v)
   );
@@ -624,7 +696,7 @@ function selectColor(v){
 
 function productQtyChange(a){
   if(!selectedProduct)return;
-  const max=Math.max(1,Number(selectedProduct.stock||1));
+  const max=Math.max(1,variantStock(selectedProduct,selectedSize,selectedColor)||totalProductStock(selectedProduct)||1);
   productQty=Math.max(1,Math.min(max,productQty+a));
   const e=document.getElementById("productQty");
   if(e)e.textContent=productQty;
@@ -708,18 +780,23 @@ async function submitReview(){
 function addProductToCart(){
   if(!selectedProduct)return;
 
-  const stock=Number(selectedProduct.stock||0);
-  if(stock<1)return;
-
   const sizes=getSizes(selectedProduct);
   const colors=getColors(selectedProduct);
 
   if(sizes.length&&!selectedSize){
-    return alert(language==="ar"?"اختار المقاس أولًا":"Please choose a size first");
+    showChoiceError("sizeError",t("selectSizeError"));
+    return;
   }
 
   if(colors.length&&!selectedColor){
-    return alert(language==="ar"?"اختار اللون أولًا":"Please choose a color first");
+    showChoiceError("colorError",t("selectColorError"));
+    return;
+  }
+
+  const stock=variantStock(selectedProduct,selectedSize,selectedColor);
+  if(stock<1){
+    showChoiceError("sizeError",t("soldOutVariant"));
+    return;
   }
 
   addToCart(selectedProduct,productQty,selectedSize,selectedColor);
@@ -727,7 +804,8 @@ function addProductToCart(){
 }
 
 function addToCart(p,q,size="",color=""){
-  const stock=Number(p.stock||0);
+  const stock=variantStock(p,size,color);
+  if(stock<1)return false;
 
   const e=cart.find(i=>
     String(i.product_id)===String(p.id)&&
@@ -752,12 +830,13 @@ function addToCart(p,q,size="",color=""){
   }
 
   saveCart();
+  return true;
 }
 
 function quickAddById(id){
   const p=products.find(x=>String(x.id)===String(id));
   if(!p)return;
-  if(Number(p.stock||0)<1)return;
+  if(totalProductStock(p)<1)return;
 
   if(getSizes(p).length||getColors(p).length){
     return openProduct(id);
@@ -815,7 +894,7 @@ function total(){
 function cartHTML(){
 return `
 <section class="cartPage">
-<h1>${t("cart")}</h1>
+<div class="backRow"><button class="back" onclick="goHome()">${language==="ar"?"← ":"← "}${t("home")}</button><button class="back" onclick="goShop()">${t("back")}</button></div><h1>${t("cart")}</h1>
 
 ${!cart.length
 ?`
@@ -831,6 +910,7 @@ ${t("empty")}<br><br>
 </div>
 
 <div class="checkoutBox">
+<div class="invoiceHead"><div><div class="flogo">VANTA</div><div class="mutedSmall">Style has no gender.</div></div><div>🧾</div></div>
 <h2>${t("order")}</h2>
 
 <div class="summaryLine">
@@ -927,11 +1007,10 @@ function openCartPage(){
 function changeQty(i,a){
   const x=cart[i];
   if(!x)return;
-
-  x.qty=Math.max(
-    1,
-    Math.min(Number(x.stock||999999),Number(x.qty||1)+a)
-  );
+  const p=products.find(v=>String(v.id)===String(x.product_id));
+  const liveStock=p?variantStock(p,x.size||"",x.color||""):Number(x.stock||999999);
+  x.stock=liveStock;
+  x.qty=Math.max(1,Math.min(liveStock,Number(x.qty||1)+a));
 
   saveCart();
   renderCartItems();
@@ -1090,11 +1169,12 @@ async function placeOrder(){
     const result=await r.json();
     const order=Array.isArray(result)?result[0]:result;
 
-    msg.className="notice ok";
-    msg.textContent=order?.order_number
-      ?t("success")+" رقم الطلب: "+order.order_number
-      :t("success");
+    lastOrder=order;
+    pendingOrderInvoice=order;
+    msg.className="successBox";
+    msg.innerHTML=`<b>${t("orderThanks")}</b><br>${t("orderDelivery")}<br>${t("orderWhatsApp")}<br><b>${order?.order_number?((language==="ar"?"رقم الطلب: ":"Order #: ")+esc(order.order_number)):""}</b><div class="successActions"><button class="dark" onclick="downloadInvoice()">${t("downloadInvoice")}</button><button class="dark" onclick="goHome()">${t("backHome")}</button></div>`;
 
+    await createNotification(order);
     cart=[];
     appliedCoupon=null;
     selectedShippingCost=0;
@@ -1102,6 +1182,7 @@ async function placeOrder(){
     updateCount();
     renderCartItems();
     refreshTotals();
+    setTimeout(()=>goHome(),5000);
 
   }catch(e){
     msg.className="notice err";
@@ -1110,6 +1191,144 @@ async function placeOrder(){
     btn.disabled = false;
   }
 }
+
+
+async function createNotification(order){
+  try{
+    await fetch(SUPABASE_URL+"/rest/v1/notifications",{method:"POST",headers:{...HEADERS,Prefer:"return=minimal"},body:JSON.stringify({type:"order",message:t("newOrder"),order_id:order?.id||null,read:false})});
+  }catch(e){console.warn("notification",e)}
+}
+function downloadInvoice(){
+  const order=pendingOrderInvoice||lastOrder;
+  if(!order)return;
+  let items=order.items;
+  if(typeof items==="string")try{items=JSON.parse(items)}catch(e){}
+  items=Array.isArray(items)?items:[];
+  const rows=items.map(it=>`<tr><td>${esc(it.name||it.name_ar||"")}</td><td>${esc(it.size||"-")}</td><td>${esc(it.color||"-")}</td><td>${Number(it.qty||1)}</td><td>${money(it.price||0)}</td><td>${money(it.line_total||0)}</td></tr>`).join("");
+  const el=document.createElement("div");
+  el.style.cssText="position:fixed;left:-10000px;top:0;width:800px;background:#fff;color:#111;padding:28px;font-family:Arial,sans-serif;direction:rtl";
+  el.innerHTML=`<div class="invoiceBox" style="margin:0;max-width:none;border-radius:0"><div class="invoiceHead"><div><div style="font-size:30px;font-weight:900;letter-spacing:6px">VANTA</div><div>Style has no gender.</div></div><div><b>${language==="ar"?"فاتورة طلب":"Order Invoice"}</b><br>${esc(order.order_number||"")}</div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px"><div><b>${t("name")}:</b> ${esc(order.customer_name||"")}</div><div><b>${t("phone")}:</b> ${esc(order.phone||"")}</div><div><b>WhatsApp:</b> ${esc(order.whatsapp||"")}</div><div><b>${t("city")}:</b> ${esc(order.city||"")}</div><div style="grid-column:1/-1"><b>${t("address")}:</b> ${esc(order.address||"")}</div></div><table class="invoiceItems"><thead><tr><th>${language==="ar"?"المنتج":"Product"}</th><th>${t("size")}</th><th>${t("color")}</th><th>${t("quantity")}</th><th>${language==="ar"?"السعر":"Price"}</th><th>${language==="ar"?"الإجمالي":"Line total"}</th></tr></thead><tbody>${rows}</tbody></table><div style="margin-top:18px;text-align:left"><div>${t("subtotal")}: <b>${money(order.subtotal||0)}</b></div><div>${t("discount")}: <b>${money(order.discount||0)}</b></div><div>${t("shipping")}: <b>${money(order.shipping_cost||0)}</b></div><div style="font-size:20px;margin-top:8px">${t("total")}: <b>${money(order.total||0)}</b></div></div></div>`;
+  document.body.appendChild(el);
+  if(typeof html2pdf!=="function"){el.remove();alert(language==="ar"?"تعذر تحميل أداة PDF، جرّب مرة أخرى.":"PDF tool is unavailable. Please try again.");return;}
+  html2pdf().set({margin:8,filename:`VANTA-${order.order_number||"order"}.pdf`,image:{type:"jpeg",quality:.98},html2canvas:{scale:2,useCORS:true},jsPDF:{unit:"mm",format:"a4",orientation:"portrait"}}).from(el).save().finally(()=>el.remove());
+}
+function showCustomPrint(){
+  history.pushState(null,"",location.pathname+location.search+"#custom-print");render();scrollTo(0,0);
+}
+function customPrintHTML(){return `<section class="customPage"><div class="backRow"><button class="back" onclick="goHome()">← ${t("home")}</button></div><h1>${t("customTitle")}</h1><p class="muted">${t("customIntro")}</p><div class="customCard"><div class="formGrid"><div><label class="fieldLabel">${t("name")}</label><input id="cpName"></div><div><label class="fieldLabel">${t("phone")}</label><input id="cpPhone"></div><div><label class="fieldLabel">WhatsApp</label><input id="cpWhats"></div><div><label class="fieldLabel">${t("city")}</label><select id="cpCity"><option value="">${t("city")}</option>${Object.keys(SHIPPING_RATES).map(c=>`<option>${c}</option>`).join("")}</select></div><div class="full"><label class="fieldLabel">${t("address")}</label><textarea id="cpAddress" rows="3"></textarea></div><div class="full"><label class="fieldLabel">${t("printDetails")}</label><textarea id="cpDetails" rows="5" placeholder="${language==="ar"?"نوع الطباعة، اللون، المقاس، الكمية، أي ملاحظات...":"Printing type, color, size, quantity, notes..."}"></textarea></div><div><label class="fieldLabel">${t("deposit")}</label><input id="cpDeposit" type="number" min="0" value="0"></div><div><label class="fieldLabel">${t("uploadFiles")}</label><input id="cpFiles" type="file" multiple accept="image/*,.pdf,.ai,.psd,.eps,.svg,.zip"><div id="cpFileList" class="fileList"></div></div></div><button class="wide" onclick="submitCustomPrint()">${t("sendCustom")}</button><div id="cpMsg"></div></div></section>`}
+async function submitCustomPrint(){
+  const msg=document.getElementById("cpMsg"), files=document.getElementById("cpFiles")?.files||[];
+  const name=document.getElementById("cpName").value.trim(),phone=document.getElementById("cpPhone").value.trim(),wa=document.getElementById("cpWhats").value.trim(),city=document.getElementById("cpCity").value,address=document.getElementById("cpAddress").value.trim(),details=document.getElementById("cpDetails").value.trim(),deposit=Number(document.getElementById("cpDeposit").value||0);
+  if(!name||!phone||!wa||!city||!address||!details){msg.className="notice err";msg.textContent=t("required");return}
+  msg.className="notice";msg.textContent=language==="ar"?"جاري إرسال الطلب...":"Sending...";
+  try{
+    const fileUrls=[];
+    // Uploads require a public Supabase Storage bucket named print-files. If unavailable, keep file names and ask admin to configure bucket.
+    for(const f of files){
+      const path=`${Date.now()}-${crypto.randomUUID()}-${f.name.replace(/[^\w.\-]+/g,"_")}`;
+      const rr=await fetch(`${SUPABASE_URL}/storage/v1/object/print-files/${path}`,{method:"POST",headers:{apikey:SUPABASE_KEY,Authorization:"Bearer "+SUPABASE_KEY,"Content-Type":f.type||"application/octet-stream"},body:f});
+      if(rr.ok) fileUrls.push(`${SUPABASE_URL}/storage/v1/object/public/print-files/${path}`); else fileUrls.push("FILE:"+f.name);
+    }
+    const r=await fetch(SUPABASE_URL+"/rest/v1/custom_print_orders",{method:"POST",headers:{...HEADERS,Prefer:"return=representation"},body:JSON.stringify({customer_name:name,phone,whatsapp:wa,city,address,details,deposit,file_urls:fileUrls,status:"new"})});
+    if(!r.ok)throw Error(await r.text());
+    msg.className="successBox";msg.innerHTML=`<b>${t("customSuccess")}</b><br><button class="dark" onclick="goHome()">${t("backHome")}</button>`;
+  }catch(e){console.error(e);msg.className="notice err";msg.textContent=language==="ar"?"تعذر إرسال طلب الطباعة. تأكد من إعداد Storage والجدول في Supabase.":"Could not send print request. Check Supabase Storage/table setup."}
+}
+async function openAdmin(){history.pushState(null,"",location.pathname+location.search+"#admin");render();scrollTo(0,0);}
+function adminHTML(){return `<section class="adminPage"><div class="backRow"><button class="back" onclick="goHome()">← ${t("home")}</button></div><h1>⚙️ ${t("admin")}</h1><div id="adminRoot"><div class="notice">جاري التحقق...</div></div></section>`}
+async function adminInit(){
+  const root=document.getElementById("adminRoot");if(!root)return;
+  try{
+    const client=window.supabase?.createClient(SUPABASE_URL,SUPABASE_KEY);if(!client)throw Error("client");
+    const {data:{user}}=await client.auth.getUser();
+    if(!user){root.innerHTML=`<div class="adminCard"><h3>دخول لوحة التحكم</h3><input id="adminEmail" placeholder="Email"><input id="adminPass" type="password" placeholder="Password" style="margin-top:8px"><button class="wide" style="margin-top:10px" onclick="adminLogin()">دخول</button><div id="adminMsg"></div></div>`;return}
+    adminUser=user;renderAdminDashboard();startAdminNotifications();
+  }catch(e){root.innerHTML='<div class="notice err">تعذر فتح لوحة التحكم.</div>'}
+}
+async function adminLogin(){
+  const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY),email=document.getElementById("adminEmail").value.trim(),password=document.getElementById("adminPass").value;
+  const {error}=await client.auth.signInWithPassword({email,password});const m=document.getElementById("adminMsg");if(error){m.className="notice err";m.textContent=error.message;return}adminInit();
+}
+async function adminLogout(){clearInterval(adminPollTimer);const c=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);await c.auth.signOut();adminUser=null;adminInit();}
+function renderAdminDashboard(){const root=document.getElementById("adminRoot");if(!root)return;root.innerHTML=`<div class="adminTabs"><button onclick="adminTab='orders';renderAdminDashboard()">📦 الطلبات</button><button onclick="adminTab='products';renderAdminDashboard()">👕 المنتجات</button><button onclick="adminTab='inventory';renderAdminDashboard()">🏬 المستودع</button><button onclick="adminTab='custom';renderAdminDashboard()">🖨️ الطباعة</button><button onclick="adminTab='settings';renderAdminDashboard()">⚙️ الإعدادات</button><button onclick="adminLogout()">خروج</button></div><div id="adminPanel"><div class="notice">جاري التحميل...</div></div>`;if(adminTab==='orders')loadAdminOrders();else if(adminTab==='products')loadAdminProducts();else if(adminTab==='inventory')loadAdminInventory();else if(adminTab==='custom')loadAdminCustom();else loadAdminSettings();}
+async function adminFetch(path,opts={}){const c=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);const {data:{session}}=await c.auth.getSession();const h={...HEADERS,Authorization:`Bearer ${session?.access_token||SUPABASE_KEY}`};return fetch(SUPABASE_URL+"/rest/v1/"+path,{...opts,headers:{...h,...(opts.headers||{})}})}
+async function loadAdminOrders(){
+  const p=document.getElementById("adminPanel");
+  try{
+    const r=await adminFetch("orders?select=*&order=created_at.desc&limit=100");
+    const rows=await r.json();
+    const options=products.filter(x=>x.active!==false).map(x=>`<option value="${esc(x.id)}">${esc(localizedName(x))}</option>`).join("");
+    p.innerHTML=`<div class="adminCard"><h2>📦 الطلبات</h2>
+    <div class="notice">🔔 سيتم تحديث الإشعارات تلقائيًا، وأي أوردر جديد سيظهر لك فورًا.</div>
+    <table class="adminTable"><tr><th>رقم</th><th>العميل</th><th>الأصناف</th><th>الإجمالي</th><th>الحالة</th><th>التاريخ</th><th></th></tr>
+    ${rows.map(o=>{let its=o.items;try{if(typeof its==='string')its=JSON.parse(its)}catch(e){};its=Array.isArray(its)?its:[];return `<tr><td>${esc(o.order_number||o.id)}</td><td>${esc(o.customer_name)}<br>${esc(o.phone)}<br>${esc(o.whatsapp||'')}</td><td>${its.map(i=>`${esc(i.name||'')} × ${i.qty||1}`).join('<br>')}</td><td>${money(o.total)}</td><td><span class="statusPill">${esc(o.status||'new')}</span></td><td>${new Date(o.created_at).toLocaleString()}</td><td class="adminActions"><button onclick="setOrderStatus('${jsEsc(o.id)}','processing')">تجهيز</button><button onclick="setOrderStatus('${jsEsc(o.id)}','shipped')">شحن</button><button onclick="setOrderStatus('${jsEsc(o.id)}','delivered')">تم التسليم</button><button onclick="setOrderStatus('${jsEsc(o.id)}','cancelled')">إلغاء</button></td></tr>`}).join('')}</table></div>
+    <div class="adminCard"><h3>➕ إضافة أوردر يدوي</h3><div class="formGrid">
+      <div><label class="fieldLabel">العميل</label><input id="mName"></div><div><label class="fieldLabel">الهاتف</label><input id="mPhone"></div>
+      <div><label class="fieldLabel">واتساب</label><input id="mWhats"></div><div><label class="fieldLabel">المحافظة</label><select id="mCity">${Object.keys(SHIPPING_RATES).map(c=>`<option>${esc(c)}</option>`).join('')}</select></div>
+      <div class="full"><label class="fieldLabel">العنوان</label><textarea id="mAddress" rows="2"></textarea></div>
+      <div><label class="fieldLabel">المنتج</label><select id="mProduct">${options}</select></div>
+      <div><label class="fieldLabel">المقاس</label><input id="mSize" placeholder="M"></div>
+      <div><label class="fieldLabel">اللون</label><input id="mColor" placeholder="Black"></div>
+      <div><label class="fieldLabel">الكمية</label><input id="mQty" type="number" min="1" value="1"></div>
+    </div><button class="wide" style="margin-top:12px" onclick="createManualOrder()">حفظ الأوردر</button><div id="manualMsg"></div></div>`;
+  }catch(e){p.innerHTML='<div class="notice err">تعذر تحميل الطلبات. تأكد من صلاحيات admin.</div>'}
+}
+async function createManualOrder(){
+  const m=document.getElementById('manualMsg');
+  try{
+    const payload={p_customer_name:document.getElementById('mName').value.trim(),p_phone:document.getElementById('mPhone').value.trim(),p_whatsapp:document.getElementById('mWhats').value.trim(),p_city:document.getElementById('mCity').value,p_address:document.getElementById('mAddress').value.trim(),p_items:[{product_id:document.getElementById('mProduct').value,qty:Number(document.getElementById('mQty').value||1),size:document.getElementById('mSize').value.trim(),color:document.getElementById('mColor').value.trim()}],p_coupon_code:null};
+    const r=await adminFetch('rpc/admin_create_order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    if(!r.ok)throw Error(await r.text());
+    m.className='notice ok';m.textContent='تم إضافة الأوردر بنجاح';
+    loadVariantInventory();loadAdminOrders();
+  }catch(e){m.className='notice err';m.textContent='تعذر إضافة الأوردر: '+(e.message||'');}
+}
+async function startAdminNotifications(){
+  clearInterval(adminPollTimer);
+  try{const r=await adminFetch('notifications?select=id&order=created_at.desc&limit=1');const a=await r.json();if(a[0]){lastSeenOrderId=a[0].id;localStorage.setItem('vanta_last_seen_order',a[0].id);}}catch(e){}
+  adminPollTimer=setInterval(async()=>{
+    try{
+      const r=await adminFetch('notifications?select=*&order=created_at.desc&limit=1');
+      if(!r.ok)return;
+      const a=await r.json();const n=a[0];if(!n||String(n.id)===String(lastSeenOrderId))return;
+      lastSeenOrderId=n.id;localStorage.setItem('vanta_last_seen_order',n.id);
+      if('Notification' in window){if(Notification.permission==='default')await Notification.requestPermission();if(Notification.permission==='granted')new Notification('VANTA',{body:'تم إضافة طلب جديد 🔔'});}
+      const root=document.getElementById('adminRoot');if(root){const note=document.createElement('div');note.className='notice ok';note.textContent='🔔 تم إضافة طلب جديد';root.prepend(note);setTimeout(()=>note.remove(),7000);}
+      if(adminTab==='orders')loadAdminOrders();
+    }catch(e){}
+  },10000);
+}
+async function setOrderStatus(id,status){await adminFetch(`orders?id=eq.${encodeURIComponent(id)}`,{method:"PATCH",headers:{Prefer:"return=minimal"},body:JSON.stringify({status})});loadAdminOrders();}
+async function loadAdminProducts(){const p=document.getElementById("adminPanel");p.innerHTML=`<div class="adminCard"><h2>👕 المنتجات</h2><p class="mutedSmall">إدارة الأسعار والمخزون الأساسي من Supabase. المقاسات والألوان التفصيلية من تبويب المستودع.</p><table class="adminTable"><tr><th>المنتج</th><th>السعر</th><th>المخزون</th><th>الحالة</th></tr>${products.map(x=>`<tr><td>${esc(localizedName(x))}</td><td>${money(salePrice(x))}</td><td>${totalProductStock(x)}</td><td>${x.active===false?'مخفي':'نشط'}</td></tr>`).join("")}</table></div>`}
+async function loadAdminInventory(){
+  const p=document.getElementById("adminPanel");
+  try{
+    const r=await adminFetch("product_variants?select=*&order=product_id");
+    const rows=await r.json();
+    const options=products.filter(x=>x.active!==false).map(x=>`<option value="${esc(x.id)}">${esc(localizedName(x))}</option>`).join("");
+    p.innerHTML=`<div class="adminCard"><h2>🏬 المستودع حسب المقاس واللون</h2>
+    <div class="formGrid"><div><label class="fieldLabel">المنتج</label><select id="vProduct">${options}</select></div><div><label class="fieldLabel">المقاس</label><input id="vSize" placeholder="M"></div><div><label class="fieldLabel">اللون</label><input id="vColor" placeholder="Black"></div><div><label class="fieldLabel">الكمية</label><input id="vStock" type="number" min="0" value="0"></div></div><button class="wide" style="margin-top:12px" onclick="addVariantStock()">إضافة/تحديث المقاس واللون</button><div id="variantMsg"></div></div>
+    <div class="adminCard"><div class="stockGrid">${rows.map(v=>{const pr=products.find(x=>String(x.id)===String(v.product_id));return `<div class="stockVariant"><b>${esc(localizedName(pr)||v.product_id)}</b><br>المقاس: ${esc(v.size||'-')}<br>اللون: ${esc(v.color||'-')}<br><b class="${Number(v.stock)>0?'availableBadge':'soldBadge'}">${Number(v.stock)>0?v.stock:t('out')}</b><br><button class="navMini" onclick="editVariantStock('${jsEsc(v.id)}',${Number(v.stock||0)})">تعديل</button></div>`}).join("")}</div></div>`;
+  }catch(e){p.innerHTML='<div class="notice err">أنشئ جدول product_variants من ملف SQL المرفق أولًا.</div>'}
+}
+async function addVariantStock(){
+  const m=document.getElementById('variantMsg');
+  try{
+    const payload={product_id:document.getElementById('vProduct').value,size:document.getElementById('vSize').value.trim(),color:document.getElementById('vColor').value.trim(),stock:Math.max(0,parseInt(document.getElementById('vStock').value||0))};
+    const check=await adminFetch(`product_variants?product_id=eq.${encodeURIComponent(payload.product_id)}&size=eq.${encodeURIComponent(payload.size)}&color=eq.${encodeURIComponent(payload.color)}&select=id`);
+    const existing=await check.json();
+    let r;
+    if(existing.length) r=await adminFetch(`product_variants?id=eq.${existing[0].id}`,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({stock:payload.stock})});
+    else r=await adminFetch('product_variants',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify(payload)});
+    if(!r.ok)throw Error(await r.text());
+    m.className='notice ok';m.textContent='تم حفظ مخزون المقاس واللون';loadVariantInventory();loadAdminInventory();
+  }catch(e){m.className='notice err';m.textContent='تعذر حفظ المخزون: '+(e.message||'')}
+}
+async function editVariantStock(id,current){const n=prompt('الكمية الجديدة',current);if(n===null)return;const val=Math.max(0,parseInt(n||0));await adminFetch(`product_variants?id=eq.${encodeURIComponent(id)}`,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({stock:val})});loadVariantInventory();loadAdminInventory();}
+async function loadAdminCustom(){const p=document.getElementById("adminPanel");try{const r=await adminFetch("custom_print_orders?select=*&order=created_at.desc&limit=100");const rows=await r.json();p.innerHTML=`<div class="adminCard"><h2>🖨️ طلبات الطباعة</h2><table class="adminTable"><tr><th>العميل</th><th>التفاصيل</th><th>العربون</th><th>الملفات</th><th>الحالة</th></tr>${rows.map(o=>`<tr><td>${esc(o.customer_name)}<br>${esc(o.phone)}<br>${esc(o.whatsapp)}</td><td>${esc(o.details)}</td><td>${money(o.deposit)}</td><td>${(Array.isArray(o.file_urls)?o.file_urls:[]).map(u=>u.startsWith('http')?`<a href="${esc(u)}" target="_blank">ملف</a>`:esc(u)).join('<br>')}</td><td>${esc(o.status||'new')}</td></tr>`).join("")}</table></div>`}catch(e){p.innerHTML='<div class="notice err">تعذر تحميل طلبات الطباعة.</div>'}}
+async function loadAdminSettings(){const p=document.getElementById("adminPanel");p.innerHTML=`<div class="adminCard"><h2>⚙️ الإعدادات</h2><label class="fieldLabel">حد الشحن المجاني</label><input id="setFree" type="number" value="1500"><label class="fieldLabel">رقم واتساب</label><input id="setWhats" value="201000000000"><button class="wide" style="margin-top:12px" onclick="saveBasicSettings()">حفظ</button><div id="setMsg"></div></div>`}
+async function saveBasicSettings(){const m=document.getElementById('setMsg');try{let rates;try{rates=JSON.parse(document.getElementById('setRates').value)}catch(e){throw Error('JSON غير صحيح')} const val={free_shipping_min:Number(document.getElementById('setFree').value||1500),whatsapp:document.getElementById('setWhats').value.trim(),shipping_rates:rates};for(const [key,value] of Object.entries(val)){await adminFetch(`site_settings?key=eq.${encodeURIComponent(key)}`,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({value})})}m.className='notice ok';m.textContent='تم حفظ الإعدادات';}catch(e){m.className='notice err';m.textContent='تعذر حفظ الإعدادات';}}
+async function loadBestSellers(){return []}
 
 function mapOrderError(m){
   const map={
@@ -1147,39 +1366,30 @@ function render(){
   updateCount();
   const app=document.getElementById("app");
   const hash=location.hash;
-
   if(hash.startsWith("#product")){
     const params=new URLSearchParams(hash.split("?")[1]);
     const id=params.get("id");
     const p=products.find(x=>String(x.id)===String(id));
-    if(p){
-      app.innerHTML=productHTML(p);
-      renderRecommended();
-      loadReviews(p.id);
-    }else{
-      app.innerHTML=homeHTML();
-      renderProducts();
-    }
+    if(p){app.innerHTML=productHTML(p);renderRecommended();loadReviews(p.id);}
+    else {app.innerHTML=homeHTML();renderProducts();renderBestSelling();}
   }else if(hash==="#offers"){
-    app.innerHTML=offersHTML();
-    renderOffers();
+    app.innerHTML=offersHTML();renderOffers();
   }else if(hash==="#cart"){
-    app.innerHTML=cartHTML();
-    renderCartItems();
+    app.innerHTML=cartHTML();renderCartItems();
+  }else if(hash==="#custom-print"){
+    app.innerHTML=customPrintHTML();
+  }else if(hash==="#admin"){
+    app.innerHTML=adminHTML();adminInit();
   }else{
-    app.innerHTML=homeHTML();
-    renderProducts();
+    app.innerHTML=homeHTML();renderProducts();renderBestSelling();
   }
 }
-
 window.addEventListener("popstate",render);
-window.addEventListener("DOMContentLoaded",()=>{
-  if (location.hash) {
-    history.replaceState(null, "", location.pathname);
-  }
+window.addEventListener("DOMContentLoaded",async()=>{
   activeCategory = "";
   applyLanguage();
-  loadProducts();
+  await Promise.all([loadVariantInventory(),loadProducts()]);
+  render();
 });
 </script>
 </body>
