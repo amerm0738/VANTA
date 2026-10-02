@@ -1,51 +1,3881 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
+
 <head>
+
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1"
+>
+
 <title>VANTA — Admin</title>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
-:root{--bg:#080808;--panel:#101010;--panel2:#151515;--line:#272727;--text:#f7f7f7;--muted:#969696;--gold:#d9c38a;--danger:#ff5d5d;--ok:#6ed69a}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 80% 0,#202020 0,#080808 38%,#050505 100%);color:var(--text);font-family:Arial,Tahoma,sans-serif;min-height:100vh}button,input,textarea,select{font:inherit}button{cursor:pointer}.shell{display:grid;grid-template-columns:250px 1fr;min-height:100vh}.side{border-left:1px solid var(--line);background:rgba(7,7,7,.94);padding:25px 18px;position:sticky;top:0;height:100vh}.brand{text-align:center;padding:12px 0 28px;border-bottom:1px solid var(--line);margin-bottom:20px}.brand b{font-size:34px;letter-spacing:8px}.brand span{display:block;color:#888;letter-spacing:3px;font-size:10px;margin-top:7px}.nav button{display:block;width:100%;background:transparent;color:#bbb;border:0;border-radius:12px;text-align:right;padding:13px 14px;margin:5px 0}.nav button.active,.nav button:hover{background:#191919;color:#fff}.sideBottom{position:absolute;bottom:20px;right:18px;left:18px}.lang{width:100%;background:#fff;color:#000;border:0;border-radius:10px;padding:11px;margin-top:8px}.main{padding:32px 38px;max-width:1500px;width:100%;margin:auto}.topbar{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:28px}.eyebrow{color:var(--gold);letter-spacing:4px;font-size:11px}.title{font-size:34px;margin:6px 0}.sub{color:var(--muted);font-size:13px}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}.stat{background:linear-gradient(145deg,#161616,#0e0e0e);border:1px solid var(--line);border-radius:18px;padding:20px}.stat .n{font-size:30px;font-weight:800;margin-top:8px}.panel{background:rgba(16,16,16,.92);border:1px solid var(--line);border-radius:20px;padding:22px;margin-bottom:18px;box-shadow:0 20px 60px rgba(0,0,0,.2)}.panel h2{margin:0 0 16px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.field label{display:block;color:#cfcfcf;font-size:12px;margin-bottom:7px}.field input,.field textarea,.field select{width:100%;background:#090909;color:#fff;border:1px solid #303030;border-radius:11px;padding:12px;outline:none}.field input:focus,.field textarea:focus,.field select:focus{border-color:#777}.wide{width:100%}.btn{border:1px solid #333;background:#191919;color:#fff;border-radius:11px;padding:11px 15px}.btn.primary{background:#fff;color:#000;border-color:#fff}.btn.gold{background:var(--gold);color:#111;border-color:var(--gold)}.btn.danger{background:#2a1111;color:#ffb1b1;border-color:#4b1e1e}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.notice{padding:12px;border-radius:12px;margin-top:12px;background:#171717;border:1px solid #292929}.notice.ok{color:var(--ok);border-color:#1f5b3b}.notice.err{color:#ff9b9b;border-color:#5b1f1f}.tableWrap{overflow:auto;border:1px solid var(--line);border-radius:14px}.table{width:100%;border-collapse:collapse;min-width:800px}.table th,.table td{padding:12px;border-bottom:1px solid #252525;text-align:right;vertical-align:top}.table th{color:#aaa;font-size:12px;background:#0c0c0c}.thumb{width:58px;height:58px;border-radius:10px;object-fit:cover;border:1px solid #333;background:#0b0b0b}.productRow{display:flex;gap:10px;align-items:center}.pill{display:inline-block;border:1px solid #333;border-radius:30px;padding:4px 9px;font-size:11px;color:#bbb}.login{max-width:430px;margin:12vh auto;padding:30px}.loginLogo{text-align:center;margin-bottom:25px}.loginLogo b{font-size:46px;letter-spacing:10px}.drop{border:1px dashed #444;border-radius:15px;padding:18px;text-align:center;color:#999}.drop input{margin-top:10px}.preview{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.preview img{width:80px;height:80px;object-fit:cover;border-radius:12px;border:1px solid #333}.hidden{display:none!important}.rtl{text-align:right}.ltr{direction:ltr;text-align:left}@media(max-width:1050px){.shell{grid-template-columns:1fr}.side{position:relative;height:auto;border-left:0;border-bottom:1px solid var(--line)}.nav{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}.sideBottom{position:static;margin-top:15px}.cards{grid-template-columns:repeat(2,1fr)}}@media(max-width:700px){.main{padding:20px 14px}.grid2,.grid3{grid-template-columns:1fr}.cards{grid-template-columns:1fr 1fr}.title{font-size:27px}.nav{grid-template-columns:1fr 1fr}}@media(max-width:430px){.cards{grid-template-columns:1fr}}
+
+:root{
+  --bg:#070707;
+  --panel:#101010;
+  --panel2:#151515;
+  --line:#292929;
+  --text:#fff;
+  --muted:#999;
+  --gold:#d8c28b;
+  --danger:#ff6262;
+  --ok:#70d99c;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  min-height:100vh;
+  background:
+    radial-gradient(
+      circle at top right,
+      #222,
+      #080808 42%,
+      #050505
+    );
+  color:var(--text);
+  font-family:
+    Arial,
+    Tahoma,
+    sans-serif;
+}
+
+button,
+input,
+textarea,
+select{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+.hidden{
+  display:none!important;
+}
+
+
+/* LOGIN */
+
+.loginPage{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+.loginBox{
+  width:100%;
+  max-width:420px;
+  padding:35px;
+  background:
+    linear-gradient(
+      145deg,
+      #161616,
+      #0b0b0b
+    );
+  border:1px solid var(--line);
+  border-radius:24px;
+  box-shadow:
+    0 30px 100px rgba(0,0,0,.5);
+}
+
+.logo{
+  text-align:center;
+  margin-bottom:30px;
+}
+
+.logoTitle{
+  font-size:48px;
+  letter-spacing:10px;
+  font-weight:900;
+}
+
+.logoSub{
+  color:var(--gold);
+  font-size:10px;
+  letter-spacing:4px;
+  margin-top:8px;
+}
+
+.field{
+  margin-bottom:15px;
+}
+
+.field label{
+  display:block;
+  margin-bottom:7px;
+  color:#ccc;
+  font-size:13px;
+}
+
+.field input,
+.field textarea,
+.field select{
+  width:100%;
+  padding:13px;
+  border-radius:12px;
+  border:1px solid #333;
+  outline:none;
+  background:#080808;
+  color:#fff;
+}
+
+.field input:focus,
+.field textarea:focus,
+.field select:focus{
+  border-color:#777;
+}
+
+.btn{
+  border:1px solid #333;
+  background:#181818;
+  color:#fff;
+  padding:11px 16px;
+  border-radius:11px;
+}
+
+.btn:hover{
+  transform:translateY(-1px);
+}
+
+.btnPrimary{
+  background:#fff;
+  color:#000;
+  border-color:#fff;
+}
+
+.btnGold{
+  background:var(--gold);
+  color:#111;
+  border-color:var(--gold);
+}
+
+.btnDanger{
+  background:#291111;
+  color:#ffb1b1;
+  border-color:#512020;
+}
+
+.full{
+  width:100%;
+}
+
+.error{
+  margin-top:15px;
+  padding:12px;
+  border-radius:12px;
+  color:#ffabab;
+  background:#211010;
+  border:1px solid #552323;
+}
+
+
+/* APP */
+
+.app{
+  display:grid;
+  grid-template-columns:250px 1fr;
+  min-height:100vh;
+}
+
+.sidebar{
+  position:sticky;
+  top:0;
+  height:100vh;
+  padding:22px 17px;
+  background:#080808;
+  border-left:1px solid var(--line);
+}
+
+.brand{
+  text-align:center;
+  padding:12px 0 25px;
+  border-bottom:1px solid var(--line);
+  margin-bottom:18px;
+}
+
+.brand strong{
+  font-size:33px;
+  letter-spacing:7px;
+}
+
+.brand small{
+  display:block;
+  color:#777;
+  letter-spacing:3px;
+  font-size:9px;
+  margin-top:7px;
+}
+
+.nav button{
+  display:block;
+  width:100%;
+  padding:13px;
+  margin:5px 0;
+  text-align:right;
+  background:transparent;
+  color:#aaa;
+  border:0;
+  border-radius:12px;
+}
+
+.nav button:hover,
+.nav button.active{
+  color:#fff;
+  background:#181818;
+}
+
+.sidebarBottom{
+  position:absolute;
+  left:17px;
+  right:17px;
+  bottom:20px;
+}
+
+.main{
+  padding:32px;
+  width:100%;
+  max-width:1500px;
+  margin:auto;
+}
+
+.top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  margin-bottom:25px;
+}
+
+.eyebrow{
+  color:var(--gold);
+  letter-spacing:4px;
+  font-size:10px;
+}
+
+.title{
+  font-size:34px;
+  font-weight:800;
+  margin:7px 0;
+}
+
+.muted{
+  color:var(--muted);
+  font-size:13px;
+}
+
+.cards{
+  display:grid;
+  grid-template-columns:
+    repeat(4,1fr);
+  gap:14px;
+  margin-bottom:20px;
+}
+
+.card{
+  padding:20px;
+  border-radius:18px;
+  border:1px solid var(--line);
+  background:
+    linear-gradient(
+      145deg,
+      #161616,
+      #0d0d0d
+    );
+}
+
+.cardNumber{
+  font-size:30px;
+  font-weight:900;
+  margin-top:8px;
+}
+
+.panel{
+  background:rgba(15,15,15,.95);
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:22px;
+  margin-bottom:18px;
+}
+
+.panelTitle{
+  margin:0 0 18px;
+}
+
+.grid2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+}
+
+.actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:15px;
+}
+
+.tableWrap{
+  overflow:auto;
+  border:1px solid var(--line);
+  border-radius:14px;
+}
+
+table{
+  width:100%;
+  min-width:850px;
+  border-collapse:collapse;
+}
+
+th,
+td{
+  padding:13px;
+  border-bottom:1px solid #242424;
+  text-align:right;
+  vertical-align:top;
+}
+
+th{
+  color:#999;
+  font-size:12px;
+  background:#0b0b0b;
+}
+
+.thumb{
+  width:60px;
+  height:60px;
+  border-radius:10px;
+  object-fit:cover;
+  border:1px solid #333;
+}
+
+.pill{
+  display:inline-block;
+  border:1px solid #333;
+  padding:4px 9px;
+  border-radius:30px;
+  font-size:11px;
+  color:#bbb;
+}
+
+.notice{
+  padding:12px;
+  border-radius:12px;
+  margin-top:12px;
+  background:#161616;
+  border:1px solid #2b2b2b;
+}
+
+.notice.ok{
+  color:var(--ok);
+  border-color:#23583b;
+}
+
+.notice.error{
+  color:#ffabab;
+  border-color:#552323;
+}
+
+.preview{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:12px;
+}
+
+.preview img{
+  width:80px;
+  height:80px;
+  object-fit:cover;
+  border-radius:12px;
+  border:1px solid #333;
+}
+
+.drop{
+  border:1px dashed #444;
+  padding:20px;
+  border-radius:15px;
+  text-align:center;
+  color:#888;
+}
+
+@media(max-width:1000px){
+
+  .app{
+    grid-template-columns:1fr;
+  }
+
+  .sidebar{
+    position:relative;
+    height:auto;
+    border-left:0;
+    border-bottom:1px solid var(--line);
+  }
+
+  .sidebarBottom{
+    position:static;
+    margin-top:15px;
+  }
+
+  .cards{
+    grid-template-columns:1fr 1fr;
+  }
+
+}
+
+@media(max-width:650px){
+
+  .main{
+    padding:18px 12px;
+  }
+
+  .grid2{
+    grid-template-columns:1fr;
+  }
+
+  .cards{
+    grid-template-columns:1fr;
+  }
+
+  .title{
+    font-size:27px;
+  }
+
+}
+
 </style>
+
 </head>
+
 <body>
+
 <div id="root"></div>
+
+
 <script>
-const SUPABASE_URL="https://jstcrfkjnmqegnzvwfyz.supabase.co";
-const SUPABASE_KEY="sb_publishable_A8WKnbjf_YryRDolgIr1YA_SDDQcYWf";
-const HEADERS={apikey:SUPABASE_KEY,Authorization:"Bearer "+SUPABASE_KEY,Accept:"application/json","Content-Type":"application/json"};
-const USER="1",PASS="1";
-const LOGO="/25589.jpg";
-const CITY_AR=["القاهرة","الجيزة","القليوبية","الإسكندرية","الشرقية","الدقهلية","البحيرة","الغربية","المنوفية","أسيوط","سوهاج","قنا","الأقصر","أسوان","أخرى"];
-const CITY_EN={"القاهرة":"Cairo","الجيزة":"Giza","القليوبية":"Qalyubia","الإسكندرية":"Alexandria","الشرقية":"Sharqia","الدقهلية":"Dakahlia","البحيرة":"Beheira","الغربية":"Gharbia","المنوفية":"Monufia","أسيوط":"Assiut","سوهاج":"Sohag","قنا":"Qena","الأقصر":"Luxor","أسوان":"Aswan","أخرى":"Other"};
-let lang=localStorage.getItem('vanta_admin_lang')||'ar';let tab='dashboard';let products=[];let session=null;let editId=null;
-const T={ar:{login:'دخول الإدارة',user:'اسم المستخدم',pass:'كلمة السر',enter:'دخول',bad:'اسم المستخدم أو كلمة السر غير صحيحة',dash:'لوحة المعلومات',orders:'الطلبات',products:'المنتجات',inventory:'المخزون',custom:'الطباعة المخصصة',settings:'الإعدادات',logout:'خروج',home:'المتجر',welcome:'VANTA ADMIN',overview:'إدارة المتجر بالكامل من مكان واحد',totalProducts:'المنتجات',activeProducts:'المنتجات النشطة',stock:'المخزون',ordersCount:'الطلبات',addProduct:'إضافة منتج جديد',editProduct:'تعديل المنتج',nameAr:'اسم المنتج بالعربي',nameEn:'اسم المنتج بالإنجليزي',descAr:'الوصف بالعربي',descEn:'الوصف بالإنجليزي',price:'السعر',sale:'سعر العرض',stockBase:'المخزون الأساسي',category:'الفئة',sizes:'المقاسات',colors:'الألوان',images:'صور المنتج',upload:'رفع الصور',save:'حفظ المنتج',new:'منتج جديد',delete:'حذف',active:'نشط',inactive:'مخفي',settingsSaved:'تم حفظ الإعدادات',free:'الحد الأدنى للشحن المجاني',whatsapp:'رقم واتساب',rates:'أسعار الشحن حسب المحافظة',saveSettings:'حفظ الإعدادات',choose:'اختر',ordersLoad:'تعذر تحميل الطلبات',customLoad:'تعذر تحميل طلبات الطباعة',session:'لإدارة بيانات الطلبات والمخزون، يجب أن تكون جلسة Supabase للأدمن مفعلة.',connected:'جلسة Supabase مفعلة',notConnected:'لا توجد جلسة Supabase',back:'العودة للموقع',status:'الحالة',customer:'العميل',total:'الإجمالي',date:'التاريخ',items:'الأصناف',files:'الملفات',deposit:'العربون',noData:'لا توجد بيانات',imageUrl:'رابط صورة إضافي (اختياري)',slug:'Slug (اختياري)',manual:'إضافة روابط صور يدويًا',uploading:'جاري رفع الصور...',saved:'تم حفظ المنتج بنجاح',deleted:'تم حذف المنتج',confirmDelete:'هل تريد حذف المنتج؟',lang:'EN'},en:{login:'Admin Login',user:'Username',pass:'Password',enter:'Login',bad:'Invalid username or password',dash:'Dashboard',orders:'Orders',products:'Products',inventory:'Inventory',custom:'Custom Printing',settings:'Settings',logout:'Logout',home:'Store',welcome:'VANTA ADMIN',overview:'Manage your store from one premium dashboard',totalProducts:'Products',activeProducts:'Active products',stock:'Stock',ordersCount:'Orders',addProduct:'Add New Product',editProduct:'Edit Product',nameAr:'Arabic product name',nameEn:'English product name',descAr:'Arabic description',descEn:'English description',price:'Price',sale:'Sale price',stockBase:'Base stock',category:'Category',sizes:'Sizes',colors:'Colors',images:'Product images',upload:'Upload images',save:'Save Product',new:'New Product',delete:'Delete',active:'Active',inactive:'Hidden',settingsSaved:'Settings saved',free:'Free shipping minimum',whatsapp:'WhatsApp number',rates:'Shipping rates by governorate',saveSettings:'Save Settings',choose:'Choose',ordersLoad:'Could not load orders',customLoad:'Could not load custom print requests',session:'A Supabase admin session is required to manage orders and inventory.',connected:'Supabase session connected',notConnected:'No Supabase session',back:'Back to store',status:'Status',customer:'Customer',total:'Total',date:'Date',items:'Items',files:'Files',deposit:'Deposit',noData:'No data',imageUrl:'Additional image URL (optional)',slug:'Slug (optional)',manual:'Add image URLs manually',uploading:'Uploading images...',saved:'Product saved successfully',deleted:'Product deleted',confirmDelete:'Delete this product?',lang:'AR'}};
-function t(k){return T[lang][k]||k}function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function money(n){return Number(n||0).toLocaleString(lang==='ar'?'ar-EG':'en-US',{maximumFractionDigits:2})+' EGP'}
-function getList(v){if(Array.isArray(v))return v.map(String).filter(Boolean);if(typeof v==='string'){try{let x=JSON.parse(v);if(Array.isArray(x))return x.map(String).filter(Boolean)}catch(e){}return v.split(',').map(x=>x.trim()).filter(Boolean)}return []}
-function loginView(msg=''){return `<div class="panel login"><div class="loginLogo"><b>VANTA</b><div class="eyebrow">ADMIN CONTROL</div></div><div class="field"><label>${t('user')}</label><input id="u" value=""></div><div class="field" style="margin-top:12px"><label>${t('pass')}</label><input id="p" type="password"></div><button class="btn primary wide" style="margin-top:15px" onclick="login()">${t('enter')}</button>${msg?`<div class="notice err">${msg}</div>`:''}</div>`}
-function login(){if(document.getElementById('u').value.trim()===USER&&document.getElementById('p').value===PASS){localStorage.setItem('vanta_admin_gate','1');render()}else render(loginView(t('bad')))}
-function logout(){localStorage.removeItem('vanta_admin_gate');render()}
-async function initSession(){try{const c=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);const r=await c.auth.getSession();session=r.data.session||null}catch(e){session=null}}
-function shell(){return `<div class="shell"><aside class="side"><div class="brand"><b>VANTA</b><span>MODERN UNISEX WEAR</span></div><div class="nav">${[['dashboard','◈'],['orders','▣'],['products','◆'],['inventory','▤'],['custom','✦'],['settings','⚙']].map(x=>`<button class="${tab===x[0]?'active':''}" onclick="tab='${x[0]}';render()">${x[1]} &nbsp; ${t(x[0])}</button>`).join('')}</div><div class="sideBottom"><button class="btn wide" onclick="location.href='index.html'">← ${t('back')}</button><button class="lang" onclick="lang=lang==='ar'?'en':'ar';localStorage.setItem('vanta_admin_lang',lang);render()">${t('lang')}</button><button class="btn danger wide" style="margin-top:8px" onclick="logout()">${t('logout')}</button></div></aside><main class="main"><div class="topbar"><div><div class="eyebrow">${t('welcome')}</div><div class="title">${t(tab)}</div><div class="sub">${t('overview')}</div></div><div class="pill">${session?t('connected'):t('notConnected')}</div></div><div id="content"></div></main></div>`}
-async function render(){document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr';if(localStorage.getItem('vanta_admin_gate')!=='1'){document.getElementById('root').innerHTML=loginView();return}await initSession();document.getElementById('root').innerHTML=shell();if(tab==='dashboard')dashboard();if(tab==='orders')orders();if(tab==='products')productsView();if(tab==='inventory')inventory();if(tab==='custom')custom();if(tab==='settings')settings()}
-async function api(path,opts={}){const c=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);const {data:{session:s}}=await c.auth.getSession();const h={...HEADERS,Authorization:`Bearer ${s?.access_token||SUPABASE_KEY}`};return fetch(SUPABASE_URL+'/rest/v1/'+path,{...opts,headers:{...h,...(opts.headers||{})}})}
-async function loadProducts(){try{const r=await api('products?select=*&order=created_at.desc');if(!r.ok)throw Error(await r.text());products=await r.json()}catch(e){products=[]}}
-async function dashboard(){await loadProducts();let ord=0;try{const r=await api('orders?select=id&limit=1000');if(r.ok)ord=(await r.json()).length}catch(e){}const active=products.filter(x=>x.active!==false).length;const stock=products.reduce((s,p)=>s+Number(p.stock||0),0);document.getElementById('content').innerHTML=`<div class="cards"><div class="stat"><div>${t('totalProducts')}</div><div class="n">${products.length}</div></div><div class="stat"><div>${t('activeProducts')}</div><div class="n">${active}</div></div><div class="stat"><div>${t('stock')}</div><div class="n">${stock}</div></div><div class="stat"><div>${t('ordersCount')}</div><div class="n">${ord}</div></div></div><div class="panel"><h2>VANTA</h2><p class="sub">${session?t('connected'):t('session')}</p><div class="actions"><button class="btn primary" onclick="tab='products';render()">${t('addProduct')}</button><button class="btn" onclick="tab='settings';render()">${t('settings')}</button></div></div>`}
-function productForm(p={}){editId=p.id||null;return `<div class="panel"><div style="display:flex;justify-content:space-between;align-items:center"><h2>${p.id?t('editProduct'):t('addProduct')}</h2><button class="btn" onclick="editId=null;productsView()">${t('new')}</button></div><div class="grid2"><div class="field"><label>${t('nameAr')}</label><input id="pn_ar" value="${esc(p.name_ar||p.name||'')}"></div><div class="field"><label>${t('nameEn')}</label><input id="pn_en" value="${esc(p.name_en||'')}"></div><div class="field"><label>${t('descAr')}</label><textarea id="pd_ar" rows="4">${esc(p.description_ar||p.description||'')}</textarea></div><div class="field"><label>${t('descEn')}</label><textarea id="pd_en" rows="4">${esc(p.description_en||'')}</textarea></div><div class="field"><label>${t('price')}</label><input id="pp" type="number" step="0.01" value="${Number(p.price||0)}"></div><div class="field"><label>${t('sale')}</label><input id="ps" type="number" step="0.01" value="${Number(p.sale_price||0)}"></div><div class="field"><label>${t('stockBase')}</label><input id="pst" type="number" value="${Number(p.stock||0)}"></div><div class="field"><label>${t('category')}</label><input id="pc" value="${esc(p.category||'')}"></div><div class="field"><label>${t('sizes')}</label><input id="psizes" value="${esc(getList(p.sizes).join(', '))}"></div><div class="field"><label>${t('colors')}</label><input id="pcolors" value="${esc(getList(p.colors).join(', '))}"></div><div class="field"><label>${t('slug')}</label><input id="pslug" value="${esc(p.slug||'')}"></div><div class="field"><label>${t('active')}</label><select id="pactive"><option value="true" ${p.active!==false?'selected':''}>${t('active')}</option><option value="false" ${p.active===false?'selected':''}>${t('inactive')}</option></select></div></div><div class="panel" style="margin-top:14px;background:#0b0b0b"><h3>${t('images')}</h3><div class="drop"><div>${t('upload')}</div><input id="pfiles" type="file" accept="image/*" multiple onchange="previewFiles()"><div id="preview" class="preview"></div></div><div class="field" style="margin-top:12px"><label>${t('imageUrl')}</label><input id="purl" placeholder="https://..."></div><p class="sub">${t('manual')}: يمكنك وضع رابط مباشر لصورة أو رفع عدة صور.</p></div><div class="actions"><button class="btn gold" onclick="saveProduct()">${t('save')}</button>${p.id?`<button class="btn danger" onclick="deleteProduct('${esc(p.id)}')">${t('delete')}</button>`:''}</div><div id="productMsg"></div></div>`}
-function previewFiles(){const files=[...(document.getElementById('pfiles')?.files||[])];document.getElementById('preview').innerHTML=files.map(f=>`<img src="${URL.createObjectURL(f)}">`).join('')}
-async function uploadImages(){const files=[...(document.getElementById('pfiles')?.files||[])];const urls=[];for(const f of files){const path=`products/${Date.now()}-${crypto.randomUUID()}-${f.name.replace(/[^\w.\-]+/g,'_')}`;const r=await fetch(`${SUPABASE_URL}/storage/v1/object/product-images/${path}`,{method:'POST',headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${session?.access_token||SUPABASE_KEY}`,'Content-Type':f.type||'image/jpeg'},body:f});if(!r.ok)throw Error(await r.text());urls.push(`${SUPABASE_URL}/storage/v1/object/public/product-images/${path}`)}const manual=document.getElementById('purl').value.trim();if(manual)urls.push(manual);return urls}
-async function saveProduct(){const m=document.getElementById('productMsg');try{const imgs=await uploadImages();const old=editId?products.find(x=>x.id===editId):null;const oldImgs=getList(old?.image_urls);const all=[...oldImgs,...imgs].filter((x,i,a)=>a.indexOf(x)===i);const payload={name_ar:document.getElementById('pn_ar').value.trim(),name_en:document.getElementById('pn_en').value.trim(),name:document.getElementById('pn_ar').value.trim()||document.getElementById('pn_en').value.trim(),description_ar:document.getElementById('pd_ar').value.trim(),description_en:document.getElementById('pd_en').value.trim(),price:Number(document.getElementById('pp').value||0),sale_price:Number(document.getElementById('ps').value||0),stock:Number(document.getElementById('pst').value||0),category:document.getElementById('pc').value.trim(),sizes:document.getElementById('psizes').value.split(',').map(x=>x.trim()).filter(Boolean),colors:document.getElementById('pcolors').value.split(',').map(x=>x.trim()).filter(Boolean),slug:document.getElementById('pslug').value.trim()||null,active:document.getElementById('pactive').value==='true',image_urls:all,image_url:all[0]||old?.image_url||null};if(!payload.name)throw Error('name');let r;if(editId)r=await api(`products?id=eq.${encodeURIComponent(editId)}`,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify(payload)});else r=await api('products',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify(payload)});if(!r.ok)throw Error(await r.text());m.className='notice ok';m.textContent=t('saved');await loadProducts();setTimeout(()=>{editId=null;productsView()},500)}catch(e){console.error(e);m.className='notice err';m.textContent=e.message||'Error'}}
-async function deleteProduct(id){if(!confirm(t('confirmDelete')))return;const r=await api(`products?id=eq.${encodeURIComponent(id)}`,{method:'DELETE'});if(!r.ok){alert(await r.text());return}editId=null;await loadProducts();productsView()}
-async function productsView(){await loadProducts();const c=document.getElementById('content');if(editId){c.innerHTML=productForm(products.find(x=>x.id===editId)||{});return}c.innerHTML=`<div class="panel"><div class="actions" style="justify-content:space-between;align-items:center;margin-top:0"><h2>${t('products')}</h2><button class="btn gold" onclick="editId=null;document.getElementById('content').innerHTML=productForm({})">＋ ${t('addProduct')}</button></div><div class="tableWrap"><table class="table"><thead><tr><th>${t('images')}</th><th>${t('nameEn')}</th><th>${t('price')}</th><th>${t('stock')}</th><th>${t('status')}</th><th></th></tr></thead><tbody>${products.map(p=>`<tr><td>${p.image_url?`<img class="thumb" src="${esc(p.image_url)}">`:''}</td><td><b>${esc(p.name_en||p.name||'')}</b><br><span class="sub">${esc(p.name_ar||'')}</span></td><td>${money(p.sale_price>0&&p.sale_price<p.price?p.sale_price:p.price)}</td><td>${Number(p.stock||0)}</td><td><span class="pill">${p.active!==false?t('active'):t('inactive')}</span></td><td><button class="btn" onclick="editId='${esc(p.id)}';productsView()">${t('editProduct')}</button></td></tr>`).join('')||`<tr><td colspan="6">${t('noData')}</td></tr>`}</tbody></table></div></div>`}
-async function orders(){const c=document.getElementById('content');if(!session){c.innerHTML=`<div class="panel"><h2>${t('orders')}</h2><div class="notice">${t('session')}</div></div>`;return}try{const r=await api('orders?select=*&order=created_at.desc&limit=100');if(!r.ok)throw Error();const rows=await r.json();c.innerHTML=`<div class="panel"><h2>${t('orders')}</h2><div class="tableWrap"><table class="table"><thead><tr><th>#</th><th>${t('customer')}</th><th>${t('items')}</th><th>${t('total')}</th><th>${t('status')}</th><th>${t('date')}</th></tr></thead><tbody>${rows.map(o=>`<tr><td>${esc(o.order_number||o.id)}</td><td>${esc(o.customer_name)}<br>${esc(o.phone)}<br>${esc(o.whatsapp||'')}</td><td>${(Array.isArray(o.items)?o.items:[]).map(i=>`${esc(i.name||'')} × ${i.qty||1}`).join('<br>')}</td><td>${money(o.total)}</td><td>${esc(o.status||'new')}</td><td>${new Date(o.created_at).toLocaleString()}</td></tr>`).join('')||`<tr><td colspan="6">${t('noData')}</td></tr>`}</tbody></table></div></div>`}catch(e){c.innerHTML=`<div class="panel"><div class="notice err">${t('ordersLoad')}</div></div>`}}
-async function inventory(){await loadProducts();document.getElementById('content').innerHTML=`<div class="panel"><h2>${t('inventory')}</h2><div class="tableWrap"><table class="table"><thead><tr><th>${t('nameEn')}</th><th>${t('sizes')}</th><th>${t('colors')}</th><th>${t('stock')}</th></tr></thead><tbody>${products.map(p=>`<tr><td>${esc(p.name_en||p.name||'')}</td><td>${esc(getList(p.sizes).join(', '))}</td><td>${esc(getList(p.colors).join(', '))}</td><td>${Number(p.stock||0)}</td></tr>`).join('')}</tbody></table></div></div>`}
-async function custom(){const c=document.getElementById('content');if(!session){c.innerHTML=`<div class="panel"><h2>${t('custom')}</h2><div class="notice">${t('session')}</div></div>`;return}try{const r=await api('custom_print_orders?select=*&order=created_at.desc&limit=100');if(!r.ok)throw Error();const rows=await r.json();c.innerHTML=`<div class="panel"><h2>${t('custom')}</h2><div class="tableWrap"><table class="table"><thead><tr><th>${t('customer')}</th><th>Details</th><th>${t('deposit')}</th><th>${t('files')}</th><th>${t('status')}</th></tr></thead><tbody>${rows.map(o=>`<tr><td>${esc(o.customer_name)}<br>${esc(o.phone)}<br>${esc(o.whatsapp)}</td><td>${esc(o.details)}</td><td>${money(o.deposit)}</td><td>${(Array.isArray(o.file_urls)?o.file_urls:[]).map(u=>u.startsWith('http')?`<a href="${esc(u)}" target="_blank" style="color:#fff">${t('files')}</a>`:'').join('<br>')}</td><td>${esc(o.status||'new')}</td></tr>`).join('')||`<tr><td colspan="5">${t('noData')}</td></tr>`}</tbody></table></div></div>`}catch(e){c.innerHTML=`<div class="panel"><div class="notice err">${t('customLoad')}</div></div>`}}
-async function settings(){const c=document.getElementById('content');let free=1500,wa='201000000000',rates={};try{const r=await api('site_settings?select=key,value');if(r.ok){for(const x of await r.json()){if(x.key==='free_shipping_min')free=Number(x.value)||1500;if(x.key==='whatsapp')wa=x.value||wa;if(x.key==='shipping_rates')rates=x.value||{}}}}catch(e){}c.innerHTML=`<div class="panel"><h2>${t('settings')}</h2><div class="grid2"><div class="field"><label>${t('free')}</label><input id="sf" type="number" value="${free}"></div><div class="field"><label>${t('whatsapp')}</label><input id="sw" value="${esc(wa)}"></div></div><div class="field" style="margin-top:14px"><label>${t('rates')}</label><textarea id="sr" rows="14">${esc(JSON.stringify(rates,null,2))}</textarea></div><div class="actions"><button class="btn gold" onclick="saveSettings()">${t('saveSettings')}</button><button class="btn" onclick="tab='products';render()">${t('addProduct')}</button></div><div id="sm"></div></div><div class="panel"><h2>${t('images')}</h2><p class="sub">${t('overview')}</p><button class="btn primary" onclick="tab='products';render()">${t('addProduct')}</button></div>`}
-async function saveSettings(){const m=document.getElementById('sm');try{const rates=JSON.parse(document.getElementById('sr').value);const vals={free_shipping_min:Number(document.getElementById('sf').value||1500),whatsapp:document.getElementById('sw').value.trim(),shipping_rates:rates};for(const [key,value] of Object.entries(vals)){const r=await api(`site_settings?key=eq.${encodeURIComponent(key)}`,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({value})});if(!r.ok)throw Error(await r.text())}m.className='notice ok';m.textContent=t('settingsSaved')}catch(e){m.className='notice err';m.textContent=lang==='ar'?'تعذر حفظ الإعدادات':'Could not save settings'}}
-render();
+
+/* =====================================================
+   SUPABASE
+===================================================== */
+
+const SUPABASE_URL =
+"https://jstcrfkjnmqegnzvwfyz.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_A8WKnbjf_YryRDolgIr1YA_SDDQcYWf";
+
+
+/*
+  IMPORTANT:
+
+  persistSession:false
+
+  معناها إن جلسة الأدمن لا تتحفظ
+  في localStorage.
+
+  لذلك Refresh = Login من جديد.
+*/
+
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY,
+    {
+      auth:{
+        persistSession:false,
+        autoRefreshToken:false,
+        detectSessionInUrl:false
+      }
+    }
+  );
+
+
+/* =====================================================
+   STATE
+===================================================== */
+
+let session = null;
+
+let adminUser = null;
+
+let currentTab = "dashboard";
+
+let products = [];
+
+let variants = [];
+
+let editId = null;
+
+let lang =
+  localStorage.getItem(
+    "vanta_admin_language"
+  ) || "ar";
+
+
+/* =====================================================
+   TRANSLATIONS
+===================================================== */
+
+const T = {
+
+ar:{
+
+login:"دخول الإدارة",
+
+email:"البريد الإلكتروني",
+
+password:"كلمة المرور",
+
+loginBtn:"دخول",
+
+invalid:"بيانات الدخول غير صحيحة",
+
+dashboard:"لوحة التحكم",
+
+orders:"الطلبات",
+
+products:"المنتجات",
+
+inventory:"المخزون",
+
+custom:"الطباعة المخصصة",
+
+settings:"الإعدادات",
+
+logout:"تسجيل الخروج",
+
+store:"العودة للمتجر",
+
+totalProducts:"إجمالي المنتجات",
+
+activeProducts:"المنتجات النشطة",
+
+stock:"المخزون",
+
+ordersCount:"الطلبات",
+
+addProduct:"إضافة منتج",
+
+editProduct:"تعديل المنتج",
+
+nameAr:"اسم المنتج بالعربي",
+
+nameEn:"اسم المنتج بالإنجليزي",
+
+descriptionAr:"الوصف بالعربي",
+
+descriptionEn:"الوصف بالإنجليزي",
+
+price:"السعر",
+
+salePrice:"سعر العرض",
+
+stockBase:"المخزون الأساسي",
+
+category:"الفئة",
+
+sizes:"المقاسات",
+
+colors:"الألوان",
+
+images:"صور المنتج",
+
+uploadImages:"رفع صور",
+
+save:"حفظ",
+
+delete:"حذف",
+
+active:"نشط",
+
+hidden:"مخفي",
+
+status:"الحالة",
+
+customer:"العميل",
+
+total:"الإجمالي",
+
+date:"التاريخ",
+
+items:"الأصناف",
+
+noData:"لا توجد بيانات",
+
+settingsSaved:"تم حفظ الإعدادات",
+
+freeShipping:"حد الشحن المجاني",
+
+whatsapp:"رقم واتساب",
+
+shippingRates:"أسعار الشحن",
+
+saveSettings:"حفظ الإعدادات",
+
+customOrders:"طلبات الطباعة",
+
+deposit:"العربون",
+
+files:"الملفات",
+
+language:"EN",
+
+confirmDelete:"هل تريد حذف المنتج؟",
+
+saved:"تم حفظ المنتج بنجاح",
+
+deleted:"تم حذف المنتج",
+
+error:"حدث خطأ",
+
+adminOnly:"هذا الحساب ليس لديه صلاحية الأدمن"
+
+},
+
+en:{
+
+login:"Admin Login",
+
+email:"Email",
+
+password:"Password",
+
+loginBtn:"Login",
+
+invalid:"Invalid login details",
+
+dashboard:"Dashboard",
+
+orders:"Orders",
+
+products:"Products",
+
+inventory:"Inventory",
+
+custom:"Custom Printing",
+
+settings:"Settings",
+
+logout:"Logout",
+
+store:"Back to Store",
+
+totalProducts:"Total Products",
+
+activeProducts:"Active Products",
+
+stock:"Stock",
+
+ordersCount:"Orders",
+
+addProduct:"Add Product",
+
+editProduct:"Edit Product",
+
+nameAr:"Arabic Product Name",
+
+nameEn:"English Product Name",
+
+descriptionAr:"Arabic Description",
+
+descriptionEn:"English Description",
+
+price:"Price",
+
+salePrice:"Sale Price",
+
+stockBase:"Base Stock",
+
+category:"Category",
+
+sizes:"Sizes",
+
+colors:"Colors",
+
+images:"Product Images",
+
+uploadImages:"Upload Images",
+
+save:"Save",
+
+delete:"Delete",
+
+active:"Active",
+
+hidden:"Hidden",
+
+status:"Status",
+
+customer:"Customer",
+
+total:"Total",
+
+date:"Date",
+
+items:"Items",
+
+noData:"No data",
+
+settingsSaved:"Settings saved",
+
+freeShipping:"Free Shipping Minimum",
+
+whatsapp:"WhatsApp",
+
+shippingRates:"Shipping Rates",
+
+saveSettings:"Save Settings",
+
+customOrders:"Custom Print Orders",
+
+deposit:"Deposit",
+
+files:"Files",
+
+language:"AR",
+
+confirmDelete:"Delete this product?",
+
+saved:"Product saved successfully",
+
+deleted:"Product deleted",
+
+error:"An error occurred",
+
+adminOnly:"This account is not an admin"
+
+}
+
+};
+
+
+function t(key){
+
+  return (
+    T[lang][key] ||
+    key
+  );
+
+}
+
+
+/* =====================================================
+   HELPERS
+===================================================== */
+
+function esc(value){
+
+  return String(
+    value ?? ""
+  ).replace(
+    /[&<>"']/g,
+    c => ({
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#39;"
+    }[c])
+  );
+
+}
+
+
+function money(value){
+
+  return Number(
+    value || 0
+  ).toLocaleString(
+    lang === "ar"
+    ? "ar-EG"
+    : "en-US"
+  ) + " EGP";
+
+}
+
+
+function arr(value){
+
+  if(Array.isArray(value))
+    return value;
+
+  if(typeof value === "string"){
+
+    try{
+
+      const parsed =
+        JSON.parse(value);
+
+      if(Array.isArray(parsed))
+        return parsed;
+
+    }catch(e){}
+
+    return value
+      .split(",")
+      .map(x=>x.trim())
+      .filter(Boolean);
+
+  }
+
+  return [];
+
+}
+
+
+/* =====================================================
+   LOGIN PAGE
+===================================================== */
+
+function loginPage(
+  message=""
+){
+
+  return `
+
+  <div class="loginPage">
+
+    <div class="loginBox">
+
+      <div class="logo">
+
+        <div class="logoTitle">
+          VANTA
+        </div>
+
+        <div class="logoSub">
+          ADMIN CONTROL
+        </div>
+
+      </div>
+
+
+      <div class="field">
+
+        <label>
+          ${t("email")}
+        </label>
+
+        <input
+          id="loginEmail"
+          type="email"
+          autocomplete="off"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label>
+          ${t("password")}
+        </label>
+
+        <input
+          id="loginPassword"
+          type="password"
+          autocomplete="off"
+          onkeydown="
+            if(event.key==='Enter')
+              login()
+          "
+        >
+
+      </div>
+
+
+      <button
+        class="btn btnPrimary full"
+        onclick="login()"
+      >
+
+        ${t("loginBtn")}
+
+      </button>
+
+
+      ${
+        message
+        ?
+        `
+        <div class="error">
+          ${esc(message)}
+        </div>
+        `
+        :
+        ""
+      }
+
+    </div>
+
+  </div>
+
+  `;
+
+}
+
+
+/* =====================================================
+   LOGIN
+===================================================== */
+
+async function login(){
+
+  const email =
+    document
+      .getElementById(
+        "loginEmail"
+      )
+      .value
+      .trim();
+
+
+  const password =
+    document
+      .getElementById(
+        "loginPassword"
+      )
+      .value;
+
+
+  if(!email || !password){
+
+    document
+      .getElementById("root")
+      .innerHTML =
+        loginPage(
+          t("invalid")
+        );
+
+    return;
+
+  }
+
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient.auth
+      .signInWithPassword({
+        email,
+        password
+      });
+
+
+  if(error){
+
+    document
+      .getElementById("root")
+      .innerHTML =
+        loginPage(
+          t("invalid")
+        );
+
+    return;
+
+  }
+
+
+  session =
+    data.session;
+
+
+  adminUser =
+    data.user;
+
+
+  /*
+    التأكد أن الحساب موجود
+    في جدول admins.
+  */
+
+  const {
+    data:admin,
+    error:adminError
+  } =
+    await supabaseClient
+      .from("admins")
+      .select("user_id")
+      .eq(
+        "user_id",
+        adminUser.id
+      )
+      .maybeSingle();
+
+
+  if(
+    adminError ||
+    !admin
+  ){
+
+    await supabaseClient
+      .auth
+      .signOut();
+
+
+    session = null;
+
+    adminUser = null;
+
+
+    document
+      .getElementById("root")
+      .innerHTML =
+        loginPage(
+          t("adminOnly")
+        );
+
+    return;
+
+  }
+
+
+  await render();
+
+}
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+async function logout(){
+
+  await supabaseClient
+    .auth
+    .signOut();
+
+
+  session = null;
+
+  adminUser = null;
+
+  products = [];
+
+  variants = [];
+
+  editId = null;
+
+  currentTab = "dashboard";
+
+
+  document
+    .getElementById("root")
+    .innerHTML =
+      loginPage();
+
+}
+
+
+/* =====================================================
+   CHECK SESSION
+===================================================== */
+
+async function checkSession(){
+
+  const {
+    data
+  } =
+    await supabaseClient
+      .auth
+      .getSession();
+
+
+  if(!data.session){
+
+    session = null;
+
+    adminUser = null;
+
+    document
+      .getElementById("root")
+      .innerHTML =
+        loginPage();
+
+    return false;
+
+  }
+
+
+  session =
+    data.session;
+
+  adminUser =
+    data.session.user;
+
+
+  const {
+    data:admin
+  } =
+    await supabaseClient
+      .from("admins")
+      .select("user_id")
+      .eq(
+        "user_id",
+        adminUser.id
+      )
+      .maybeSingle();
+
+
+  if(!admin){
+
+    await logout();
+
+    return false;
+
+  }
+
+
+  return true;
+
+}
+
+
+/* =====================================================
+   API
+===================================================== */
+
+async function api(
+  table,
+  options={}
+){
+
+  if(!session){
+
+    throw new Error(
+      "NO_ADMIN_SESSION"
+    );
+
+  }
+
+
+  const token =
+    session.access_token;
+
+
+  const headers = {
+
+    apikey:
+      SUPABASE_KEY,
+
+    Authorization:
+      "Bearer " + token,
+
+    "Content-Type":
+      "application/json",
+
+    Accept:
+      "application/json"
+
+  };
+
+
+  const response =
+    await fetch(
+      SUPABASE_URL +
+      "/rest/v1/" +
+      table +
+      (
+        options.query
+        ?
+        "?" + options.query
+        :
+        ""
+      ),
+      {
+        method:
+          options.method || "GET",
+
+        headers,
+
+        body:
+          options.body
+          ?
+          JSON.stringify(
+            options.body
+          )
+          :
+          undefined
+      }
+    );
+
+
+  const text =
+    await response.text();
+
+
+  if(!response.ok){
+
+    throw new Error(
+      text ||
+      "API_ERROR"
+    );
+
+  }
+
+
+  if(!text)
+    return null;
+
+
+  try{
+
+    return JSON.parse(text);
+
+  }catch(e){
+
+    return text;
+
+  }
+
+}
+
+
+/* =====================================================
+   RENDER
+===================================================== */
+
+async function render(){
+
+  document.documentElement.lang =
+    lang;
+
+  document.documentElement.dir =
+    lang === "ar"
+    ? "rtl"
+    : "ltr";
+
+
+  /*
+    مهم:
+
+    لا localStorage
+    لا sessionStorage
+    لا admin gate.
+
+    الجلسة موجودة في الذاكرة فقط.
+  */
+
+  if(!session){
+
+    document
+      .getElementById("root")
+      .innerHTML =
+        loginPage();
+
+    return;
+
+  }
+
+
+  document
+    .getElementById("root")
+    .innerHTML =
+      appShell();
+
+
+  if(
+    currentTab ===
+    "dashboard"
+  )
+    await dashboard();
+
+
+  if(
+    currentTab ===
+    "orders"
+  )
+    await orders();
+
+
+  if(
+    currentTab ===
+    "products"
+  )
+    await productsView();
+
+
+  if(
+    currentTab ===
+    "inventory"
+  )
+    await inventory();
+
+
+  if(
+    currentTab ===
+    "custom"
+  )
+    await custom();
+
+
+  if(
+    currentTab ===
+    "settings"
+  )
+    await settings();
+
+}
+
+
+/* =====================================================
+   APP SHELL
+===================================================== */
+
+function appShell(){
+
+  return `
+
+  <div class="app">
+
+
+    <aside class="sidebar">
+
+
+      <div class="brand">
+
+        <strong>
+          VANTA
+        </strong>
+
+        <small>
+          ADMIN CONTROL
+        </small>
+
+      </div>
+
+
+      <nav class="nav">
+
+
+        <button
+          class="${
+            currentTab==="dashboard"
+            ?"active"
+            :""
+          }"
+          onclick="
+            currentTab='dashboard';
+            render()
+          "
+        >
+          📊 ${t("dashboard")}
+        </button>
+
+
+        <button
+          class="${
+            currentTab==="orders"
+            ?"active"
+            :""
+          }"
+          onclick="
+            currentTab='orders';
+            render()
+          "
+        >
+          🛍️ ${t("orders")}
+        </button>
+
+
+        <button
+          class="${
+            currentTab==="products"
+            ?"active"
+            :""
+          }"
+          onclick="
+            currentTab='products';
+            render()
+          "
+        >
+          👕 ${t("products")}
+        </button>
+
+
+        <button
+          class="${
+            currentTab==="inventory"
+            ?"active"
+            :""
+          }"
+          onclick="
+            currentTab='inventory';
+            render()
+          "
+        >
+          📦 ${t("inventory")}
+        </button>
+
+
+        <button
+          class="${
+            currentTab==="custom"
+            ?"active"
+            :""
+          }"
+          onclick="
+            currentTab='custom';
+            render()
+          "
+        >
+          🎨 ${t("custom")}
+        </button>
+
+
+        <button
+          class="${
+            currentTab==="settings"
+            ?"active"
+            :""
+          }"
+          onclick="
+            currentTab='settings';
+            render()
+          "
+        >
+          ⚙️ ${t("settings")}
+        </button>
+
+
+      </nav>
+
+
+      <div class="sidebarBottom">
+
+
+        <button
+          class="btn btnPrimary full"
+          onclick="
+            location.href='/'
+          "
+        >
+          ← ${t("store")}
+        </button>
+
+
+        <button
+          class="btn btnDanger full"
+          style="margin-top:8px"
+          onclick="logout()"
+        >
+          🔒 ${t("logout")}
+        </button>
+
+
+        <button
+          class="btn full"
+          style="margin-top:8px"
+          onclick="toggleLanguage()"
+        >
+          ${t("language")}
+        </button>
+
+
+      </div>
+
+
+    </aside>
+
+
+    <main class="main">
+
+
+      <header class="top">
+
+
+        <div>
+
+          <div class="eyebrow">
+            VANTA
+          </div>
+
+          <div class="title">
+            ${t("dashboard")}
+          </div>
+
+          <div class="muted">
+            ${esc(
+              adminUser?.email || ""
+            )}
+          </div>
+
+        </div>
+
+
+        <button
+          class="btn btnDanger"
+          onclick="logout()"
+        >
+          🔒 ${t("logout")}
+        </button>
+
+
+      </header>
+
+
+      <div id="content"></div>
+
+
+    </main>
+
+
+  </div>
+
+  `;
+
+}
+
+
+/* =====================================================
+   LANGUAGE
+===================================================== */
+
+function toggleLanguage(){
+
+  lang =
+    lang === "ar"
+    ? "en"
+    : "ar";
+
+
+  localStorage.setItem(
+    "vanta_admin_language",
+    lang
+  );
+
+
+  render();
+
+}
+
+
+/* =====================================================
+   PRODUCTS
+===================================================== */
+
+async function loadProducts(){
+
+  products =
+    await api(
+      "products",
+      {
+        query:
+          "select=*&order=created_at.desc"
+      }
+    ) || [];
+
+}
+
+
+async function loadVariants(){
+
+  variants =
+    await api(
+      "product_variants",
+      {
+        query:
+          "select=*&order=created_at.desc"
+      }
+    ) || [];
+
+}
+
+
+/* =====================================================
+   DASHBOARD
+===================================================== */
+
+async function dashboard(){
+
+  const content =
+    document.getElementById(
+      "content"
+    );
+
+
+  try{
+
+    await loadProducts();
+
+
+    const orders =
+      await api(
+        "orders",
+        {
+          query:
+            "select=id"
+        }
+      ) || [];
+
+
+    const active =
+      products.filter(
+        p =>
+          p.active !== false
+      ).length;
+
+
+    const stock =
+      products.reduce(
+        (
+          sum,
+          p
+        ) =>
+          sum +
+          Number(
+            p.stock || 0
+          ),
+        0
+      );
+
+
+    content.innerHTML = `
+
+    <div class="cards">
+
+
+      <div class="card">
+
+        <div>
+          ${t("totalProducts")}
+        </div>
+
+        <div class="cardNumber">
+          ${products.length}
+        </div>
+
+      </div>
+
+
+      <div class="card">
+
+        <div>
+          ${t("activeProducts")}
+        </div>
+
+        <div class="cardNumber">
+          ${active}
+        </div>
+
+      </div>
+
+
+      <div class="card">
+
+        <div>
+          ${t("stock")}
+        </div>
+
+        <div class="cardNumber">
+          ${stock}
+        </div>
+
+      </div>
+
+
+      <div class="card">
+
+        <div>
+          ${t("ordersCount")}
+        </div>
+
+        <div class="cardNumber">
+          ${orders.length}
+        </div>
+
+      </div>
+
+
+    </div>
+
+
+    <div class="panel">
+
+      <h2 class="panelTitle">
+        VANTA
+      </h2>
+
+      <div class="muted">
+        ${esc(
+          adminUser?.email || ""
+        )}
+      </div>
+
+
+      <div class="actions">
+
+        <button
+          class="btn btnGold"
+          onclick="
+            currentTab='products';
+            editId=null;
+            render()
+          "
+        >
+          ＋ ${t("addProduct")}
+        </button>
+
+
+        <button
+          class="btn"
+          onclick="
+            currentTab='orders';
+            render()
+          "
+        >
+          🛍️ ${t("orders")}
+        </button>
+
+
+      </div>
+
+    </div>
+
+    `;
+
+
+  }catch(error){
+
+    content.innerHTML =
+      `
+      <div class="panel">
+
+        <div class="notice error">
+          ${esc(
+            error.message
+          )}
+        </div>
+
+      </div>
+      `;
+
+  }
+
+}
+
+
+/* =====================================================
+   PRODUCT FORM
+===================================================== */
+
+function productForm(
+  product={}
+){
+
+  const sizes =
+    arr(
+      product.sizes
+    ).join(", ");
+
+
+  const colors =
+    arr(
+      product.colors
+    ).join(", ");
+
+
+  return `
+
+  <div class="panel">
+
+
+    <h2 class="panelTitle">
+
+      ${
+        product.id
+        ?
+        t("editProduct")
+        :
+        t("addProduct")
+      }
+
+    </h2>
+
+
+    <div class="grid2">
+
+
+      <div class="field">
+
+        <label>
+          ${t("nameAr")}
+        </label>
+
+        <input
+          id="name_ar"
+          value="${esc(
+            product.name_ar ||
+            product.name ||
+            ""
+          )}"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label>
+          ${t("nameEn")}
+        </label>
+
+        <input
+          id="name_en"
+          value="${esc(
+            product.name_en ||
+            ""
+          )}"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label>
+          ${t("descriptionAr")}
+        </label>
+
+        <textarea
+          id="description_ar"
+          rows="5"
+        >${esc(
+          product.description_ar ||
+          product.description ||
+          ""
+        )}</textarea>
+
+      </div>
+
+
+      <div class="field">
+
+        <label>
+          ${t("descriptionEn")}
+        </label>
+
+        <textarea
+          id="description_en"
+          rows="5"
+        >${esc(
+          product.description_en ||
+          ""
+        )}</textarea>
+
+      </div>
+
+
+      <div class="field">
+
+        <label>
+          ${t("price")}
+        </label>
+
+        <input
+          id="price"
+          type="number"
+          step="0.01"
+          value="${Number(
+            product.price || 0
+          )}"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label>
+          ${t("salePrice")}
+        </label>
+
+        <input
+          id="sale_price"
+          type="number"
+          step="0.01"
+          value="${Number(
+            product.sale_price || 0
+          )}"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label>
+          ${t("stockBase")}
+        </label>
+
+        <input
+          id="stock"
+          type="number"
+          value="${Number(
+            product.stock || 0
+          )}"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label>
+          ${t("category")}
+        </label>
+
+        <input
+          id="category"
+          value="${esc(
+            product.category ||
+            ""
+          )}"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label>
+          ${t("sizes")}
+        </label>
+
+        <input
+          id="sizes"
+          value="${esc(
+            sizes
+          )}"
+          placeholder="S, M, L, XL"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label>
+          ${t("colors")}
+        </label>
+
+        <input
+          id="colors"
+          value="${esc(
+            colors
+          )}"
+          placeholder="Black, White"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label>
+          Slug
+        </label>
+
+        <input
+          id="slug"
+          value="${esc(
+            product.slug ||
+            ""
+          )}"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label>
+          ${t("status")}
+        </label>
+
+        <select id="active">
+
+          <option
+            value="true"
+            ${
+              product.active !== false
+              ?
+              "selected"
+              :
+              ""
+            }
+          >
+            ${t("active")}
+          </option>
+
+
+          <option
+            value="false"
+            ${
+              product.active === false
+              ?
+              "selected"
+              :
+              ""
+            }
+          >
+            ${t("hidden")}
+          </option>
+
+        </select>
+
+      </div>
+
+
+    </div>
+
+
+    <div class="panel">
+
+
+      <h3>
+        ${t("images")}
+      </h3>
+
+
+      <div class="drop">
+
+        ${t("uploadImages")}
+
+        <br><br>
+
+        <input
+          id="imageFiles"
+          type="file"
+          accept="image/*"
+          multiple
+          onchange="previewImages()"
+        >
+
+
+        <div
+          id="imagePreview"
+          class="preview"
+        ></div>
+
+      </div>
+
+
+      <div
+        class="field"
+        style="margin-top:15px"
+      >
+
+        <label>
+          Image URL
+        </label>
+
+        <input
+          id="imageUrl"
+          placeholder="https://..."
+        >
+
+      </div>
+
+
+    </div>
+
+
+    <div class="actions">
+
+
+      <button
+        class="btn btnGold"
+        onclick="
+          saveProduct(
+            ${product.id ? `'${product.id}'` : "null"}
+          )
+        "
+      >
+        ${t("save")}
+      </button>
+
+
+      ${
+        product.id
+        ?
+        `
+        <button
+          class="btn btnDanger"
+          onclick="
+            deleteProduct(
+              '${product.id}'
+            )
+          "
+        >
+          ${t("delete")}
+        </button>
+        `
+        :
+        ""
+      }
+
+
+      <button
+        class="btn"
+        onclick="
+          editId=null;
+          currentTab='products';
+          render()
+        "
+      >
+        ←
+      </button>
+
+
+    </div>
+
+
+    <div id="productMessage"></div>
+
+
+  </div>
+
+  `;
+
+}
+
+
+/* =====================================================
+   IMAGE PREVIEW
+===================================================== */
+
+function previewImages(){
+
+  const files =
+    [
+      ...(
+        document
+          .getElementById(
+            "imageFiles"
+          )
+          ?.files || []
+      )
+    ];
+
+
+  const box =
+    document
+      .getElementById(
+        "imagePreview"
+      );
+
+
+  box.innerHTML =
+    files
+      .map(
+        file =>
+          `
+          <img
+            src="${URL.createObjectURL(file)}"
+          >
+          `
+      )
+      .join("");
+
+}
+
+
+/* =====================================================
+   UPLOAD PRODUCT IMAGES
+===================================================== */
+
+async function uploadProductImages(){
+
+  const files =
+    [
+      ...(
+        document
+          .getElementById(
+            "imageFiles"
+          )
+          ?.files || []
+      )
+    ];
+
+
+  const urls = [];
+
+
+  for(
+    const file
+    of files
+  ){
+
+    const safe =
+      file.name.replace(
+        /[^\w.\-]+/g,
+        "_"
+      );
+
+
+    const path =
+      "products/" +
+      Date.now() +
+      "-" +
+      crypto.randomUUID() +
+      "-" +
+      safe;
+
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient
+        .storage
+        .from(
+          "product-images"
+        )
+        .upload(
+          path,
+          file,
+          {
+            upsert:false,
+            contentType:
+              file.type
+          }
+        );
+
+
+    if(error)
+      throw error;
+
+
+    urls.push(
+
+      SUPABASE_URL +
+      "/storage/v1/object/public/product-images/" +
+      data.path
+
+    );
+
+  }
+
+
+  const manual =
+    document
+      .getElementById(
+        "imageUrl"
+      )
+      .value
+      .trim();
+
+
+  if(manual)
+    urls.push(manual);
+
+
+  return urls;
+
+}
+
+
+/* =====================================================
+   SAVE PRODUCT
+===================================================== */
+
+async function saveProduct(
+  id
+){
+
+  const message =
+    document
+      .getElementById(
+        "productMessage"
+      );
+
+
+  try{
+
+    const old =
+      id
+      ?
+      products.find(
+        p =>
+          String(p.id) ===
+          String(id)
+      )
+      :
+      null;
+
+
+    const newImages =
+      await uploadProductImages();
+
+
+    const oldImages =
+      arr(
+        old?.image_urls
+      );
+
+
+    const imageUrls =
+      [
+        ...oldImages,
+        ...newImages
+      ].filter(
+        (x,i,a) =>
+          a.indexOf(x) === i
+      );
+
+
+    const nameAr =
+      document
+        .getElementById(
+          "name_ar"
+        )
+        .value
+        .trim();
+
+
+    const nameEn =
+      document
+        .getElementById(
+          "name_en"
+        )
+        .value
+        .trim();
+
+
+    const payload = {
+
+      name:
+        nameAr ||
+        nameEn,
+
+      name_ar:
+        nameAr,
+
+      name_en:
+        nameEn,
+
+      description_ar:
+        document
+          .getElementById(
+            "description_ar"
+          )
+          .value
+          .trim(),
+
+      description_en:
+        document
+          .getElementById(
+            "description_en"
+          )
+          .value
+          .trim(),
+
+      price:
+        Number(
+          document
+            .getElementById(
+              "price"
+            )
+            .value || 0
+        ),
+
+      sale_price:
+        Number(
+          document
+            .getElementById(
+              "sale_price"
+            )
+            .value || 0
+        ),
+
+      stock:
+        Number(
+          document
+            .getElementById(
+              "stock"
+            )
+            .value || 0
+        ),
+
+      category:
+        document
+          .getElementById(
+            "category"
+          )
+          .value
+          .trim(),
+
+      sizes:
+        document
+          .getElementById(
+            "sizes"
+          )
+          .value
+          .split(",")
+          .map(
+            x =>
+              x.trim()
+          )
+          .filter(Boolean),
+
+      colors:
+        document
+          .getElementById(
+            "colors"
+          )
+          .value
+          .split(",")
+          .map(
+            x =>
+              x.trim()
+          )
+          .filter(Boolean),
+
+      slug:
+        document
+          .getElementById(
+            "slug"
+          )
+          .value
+          .trim() ||
+        null,
+
+      active:
+        document
+          .getElementById(
+            "active"
+          )
+          .value ===
+        "true",
+
+      image_urls:
+        imageUrls,
+
+      image_url:
+        imageUrls[0] ||
+        old?.image_url ||
+        null
+
+    };
+
+
+    if(!payload.name){
+
+      throw new Error(
+        lang === "ar"
+        ?
+        "اكتب اسم المنتج"
+        :
+        "Enter product name"
+      );
+
+    }
+
+
+    if(id){
+
+      await api(
+        "products?id=eq." +
+        encodeURIComponent(id),
+        {
+          method:"PATCH",
+          body:payload
+        }
+      );
+
+    }else{
+
+      await api(
+        "products",
+        {
+          method:"POST",
+          body:payload
+        }
+      );
+
+    }
+
+
+    message.className =
+      "notice ok";
+
+    message.textContent =
+      t("saved");
+
+
+    await loadProducts();
+
+
+    setTimeout(
+      ()=>{
+        editId = null;
+        currentTab = "products";
+        render();
+      },
+      500
+    );
+
+
+  }catch(error){
+
+    console.error(error);
+
+
+    message.className =
+      "notice error";
+
+
+    message.textContent =
+      error.message ||
+      t("error");
+
+  }
+
+}
+
+
+/* =====================================================
+   DELETE PRODUCT
+===================================================== */
+
+async function deleteProduct(
+  id
+){
+
+  if(
+    !confirm(
+      t("confirmDelete")
+    )
+  )
+    return;
+
+
+  try{
+
+    await api(
+      "products?id=eq." +
+      encodeURIComponent(id),
+      {
+        method:"DELETE"
+      }
+    );
+
+
+    await loadProducts();
+
+    editId = null;
+
+    render();
+
+
+  }catch(error){
+
+    alert(
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   PRODUCTS PAGE
+===================================================== */
+
+async function productsView(){
+
+  await loadProducts();
+
+
+  const content =
+    document.getElementById(
+      "content"
+    );
+
+
+  if(editId){
+
+    const product =
+      products.find(
+        p =>
+          String(p.id) ===
+          String(editId)
+      );
+
+
+    content.innerHTML =
+      productForm(
+        product || {}
+      );
+
+
+    return;
+
+  }
+
+
+  content.innerHTML = `
+
+  <div class="panel">
+
+
+    <div
+      style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        gap:10px;
+        margin-bottom:18px
+      "
+    >
+
+      <h2 class="panelTitle">
+        ${t("products")}
+      </h2>
+
+
+      <button
+        class="btn btnGold"
+        onclick="
+          editId=null;
+          currentTab='products';
+          document
+            .getElementById('content')
+            .innerHTML=
+              productForm({})
+        "
+      >
+        ＋ ${t("addProduct")}
+      </button>
+
+    </div>
+
+
+    <div class="tableWrap">
+
+      <table>
+
+        <thead>
+
+          <tr>
+
+            <th>
+              ${t("images")}
+            </th>
+
+            <th>
+              ${t("nameEn")}
+            </th>
+
+            <th>
+              ${t("price")}
+            </th>
+
+            <th>
+              ${t("stock")}
+            </th>
+
+            <th>
+              ${t("status")}
+            </th>
+
+            <th></th>
+
+          </tr>
+
+        </thead>
+
+
+        <tbody>
+
+          ${
+            products
+              .map(
+                p =>
+                  `
+
+                  <tr>
+
+                    <td>
+
+                      ${
+                        p.image_url
+                        ?
+                        `
+                        <img
+                          class="thumb"
+                          src="${esc(
+                            p.image_url
+                          )}"
+                        >
+                        `
+                        :
+                        "—"
+                      }
+
+                    </td>
+
+
+                    <td>
+
+                      <strong>
+                        ${esc(
+                          p.name_en ||
+                          p.name ||
+                          ""
+                        )}
+                      </strong>
+
+                      <br>
+
+                      <span class="muted">
+                        ${esc(
+                          p.name_ar ||
+                          ""
+                        )}
+                      </span>
+
+                    </td>
+
+
+                    <td>
+
+                      ${money(
+                        p.sale_price > 0 &&
+                        p.sale_price < p.price
+                        ?
+                        p.sale_price
+                        :
+                        p.price
+                      )}
+
+                    </td>
+
+
+                    <td>
+
+                      ${Number(
+                        p.stock || 0
+                      )}
+
+                    </td>
+
+
+                    <td>
+
+                      <span class="pill">
+
+                        ${
+                          p.active !== false
+                          ?
+                          t("active")
+                          :
+                          t("hidden")
+                        }
+
+                      </span>
+
+                    </td>
+
+
+                    <td>
+
+                      <button
+                        class="btn"
+                        onclick="
+                          editId='${esc(
+                            p.id
+                          )}';
+                          render()
+                        "
+                      >
+                        ${t("editProduct")}
+                      </button>
+
+                    </td>
+
+                  </tr>
+
+                  `
+              )
+              .join("")
+            ||
+            `
+            <tr>
+
+              <td colspan="6">
+                ${t("noData")}
+              </td>
+
+            </tr>
+            `
+          }
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+
+  </div>
+
+  `;
+
+}
+
+
+/* =====================================================
+   ORDERS
+===================================================== */
+
+async function orders(){
+
+  const content =
+    document.getElementById(
+      "content"
+    );
+
+
+  try{
+
+    const rows =
+      await api(
+        "orders",
+        {
+          query:
+            "select=*&order=created_at.desc"
+        }
+      ) || [];
+
+
+    content.innerHTML = `
+
+    <div class="panel">
+
+      <h2 class="panelTitle">
+        ${t("orders")}
+      </h2>
+
+
+      <div class="tableWrap">
+
+        <table>
+
+          <thead>
+
+            <tr>
+
+              <th>
+                #
+              </th>
+
+              <th>
+                ${t("customer")}
+              </th>
+
+              <th>
+                ${t("items")}
+              </th>
+
+              <th>
+                ${t("total")}
+              </th>
+
+              <th>
+                ${t("status")}
+              </th>
+
+              <th>
+                ${t("date")}
+              </th>
+
+            </tr>
+
+          </thead>
+
+
+          <tbody>
+
+          ${
+            rows
+              .map(
+                order => {
+
+                  let items =
+                    order.items;
+
+
+                  if(
+                    typeof items ===
+                    "string"
+                  ){
+
+                    try{
+                      items =
+                        JSON.parse(
+                          items
+                        );
+                    }catch(e){
+                      items=[];
+                    }
+
+                  }
+
+
+                  if(
+                    !Array.isArray(
+                      items
+                    )
+                  )
+                    items=[];
+
+
+                  return `
+
+                  <tr>
+
+                    <td>
+
+                      <strong>
+                        ${esc(
+                          order.order_number ||
+                          order.id
+                        )}
+                      </strong>
+
+                    </td>
+
+
+                    <td>
+
+                      ${esc(
+                        order.customer_name
+                      )}
+
+                      <br>
+
+                      ${esc(
+                        order.phone
+                      )}
+
+                      <br>
+
+                      ${esc(
+                        order.whatsapp ||
+                        ""
+                      )}
+
+                    </td>
+
+
+                    <td>
+
+                      ${
+                        items
+                          .map(
+                            item =>
+                              `
+                              ${esc(
+                                item.name ||
+                                ""
+                              )}
+                              ×
+                              ${Number(
+                                item.qty ||
+                                1
+                              )}
+
+                              ${
+                                item.size
+                                ?
+                                " / " +
+                                esc(
+                                  item.size
+                                )
+                                :
+                                ""
+                              }
+
+                              ${
+                                item.color
+                                ?
+                                " / " +
+                                esc(
+                                  item.color
+                                )
+                                :
+                                ""
+                              }
+                              `
+                          )
+                          .join("<br>")
+                      }
+
+                    </td>
+
+
+                    <td>
+                      ${money(
+                        order.total
+                      )}
+                    </td>
+
+
+                    <td>
+
+                      <span class="pill">
+                        ${esc(
+                          order.status ||
+                          "new"
+                        )}
+                      </span>
+
+                    </td>
+
+
+                    <td>
+
+                      ${
+                        order.created_at
+                        ?
+                        new Date(
+                          order.created_at
+                        ).toLocaleString(
+                          lang === "ar"
+                          ?
+                          "ar-EG"
+                          :
+                          "en-US"
+                        )
+                        :
+                        ""
+                      }
+
+                    </td>
+
+                  </tr>
+
+                  `;
+
+                }
+              )
+              .join("")
+            ||
+            `
+            <tr>
+              <td colspan="6">
+                ${t("noData")}
+              </td>
+            </tr>
+            `
+          }
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+    `;
+
+
+  }catch(error){
+
+    content.innerHTML = `
+
+    <div class="panel">
+
+      <div class="notice error">
+
+        ${esc(
+          error.message
+        )}
+
+      </div>
+
+    </div>
+
+    `;
+
+  }
+
+}
+
+
+/* =====================================================
+   INVENTORY
+===================================================== */
+
+async function inventory(){
+
+  await loadProducts();
+
+  await loadVariants();
+
+
+  const content =
+    document.getElementById(
+      "content"
+    );
+
+
+  content.innerHTML = `
+
+  <div class="panel">
+
+    <h2 class="panelTitle">
+      ${t("inventory")}
+    </h2>
+
+
+    <div class="tableWrap">
+
+      <table>
+
+        <thead>
+
+          <tr>
+
+            <th>
+              ${t("products")}
+            </th>
+
+            <th>
+              ${t("sizes")}
+            </th>
+
+            <th>
+              ${t("colors")}
+            </th>
+
+            <th>
+              ${t("stock")}
+            </th>
+
+          </tr>
+
+        </thead>
+
+
+        <tbody>
+
+          ${
+            products
+              .map(
+                p => {
+
+                  const pv =
+                    variants.filter(
+                      v =>
+                        String(
+                          v.product_id
+                        ) ===
+                        String(
+                          p.id
+                        )
+                    );
+
+
+                  return `
+
+                  <tr>
+
+                    <td>
+
+                      <strong>
+                        ${esc(
+                          p.name_en ||
+                          p.name ||
+                          ""
+                        )}
+                      </strong>
+
+                    </td>
+
+
+                    <td>
+                      ${esc(
+                        arr(
+                          p.sizes
+                        ).join(", ")
+                      )}
+                    </td>
+
+
+                    <td>
+                      ${esc(
+                        arr(
+                          p.colors
+                        ).join(", ")
+                      )}
+                    </td>
+
+
+                    <td>
+
+                      <strong>
+                        ${Number(
+                          p.stock || 0
+                        )}
+                      </strong>
+
+
+                      ${
+                        pv.length
+                        ?
+                        `
+                        <br><br>
+
+                        <small>
+
+                        ${
+                          pv
+                            .map(
+                              v =>
+                                `
+                                ${esc(
+                                  v.size ||
+                                  "-"
+                                )}
+                                /
+                                ${esc(
+                                  v.color ||
+                                  "-"
+                                )}
+                                :
+                                ${Number(
+                                  v.stock ||
+                                  0
+                                )}
+                                `
+                            )
+                            .join(" • ")
+                        }
+
+                        </small>
+                        `
+                        :
+                        ""
+                      }
+
+                    </td>
+
+                  </tr>
+
+                  `;
+
+                }
+              )
+              .join("")
+          }
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+  `;
+
+}
+
+
+/* =====================================================
+   CUSTOM PRINT
+===================================================== */
+
+async function custom(){
+
+  const content =
+    document.getElementById(
+      "content"
+    );
+
+
+  try{
+
+    const rows =
+      await api(
+        "custom_print_orders",
+        {
+          query:
+            "select=*&order=created_at.desc"
+        }
+      ) || [];
+
+
+    content.innerHTML = `
+
+    <div class="panel">
+
+      <h2 class="panelTitle">
+        ${t("customOrders")}
+      </h2>
+
+
+      <div class="tableWrap">
+
+        <table>
+
+          <thead>
+
+            <tr>
+
+              <th>
+                ${t("customer")}
+              </th>
+
+              <th>
+                Details
+              </th>
+
+              <th>
+                ${t("deposit")}
+              </th>
+
+              <th>
+                ${t("files")}
+              </th>
+
+              <th>
+                ${t("status")}
+              </th>
+
+            </tr>
+
+          </thead>
+
+
+          <tbody>
+
+          ${
+            rows
+              .map(
+                row =>
+                  `
+
+                  <tr>
+
+                    <td>
+
+                      ${esc(
+                        row.customer_name
+                      )}
+
+                      <br>
+
+                      ${esc(
+                        row.phone
+                      )}
+
+                      <br>
+
+                      ${esc(
+                        row.whatsapp
+                      )}
+
+                    </td>
+
+
+                    <td>
+                      ${esc(
+                        row.details
+                      )}
+                    </td>
+
+
+                    <td>
+                      ${money(
+                        row.deposit
+                      )}
+                    </td>
+
+
+                    <td>
+
+                      ${
+                        arr(
+                          row.file_urls
+                        )
+                        .map(
+                          url =>
+                            `
+                            <a
+                              href="${esc(
+                                url
+                              )}"
+                              target="_blank"
+                              style="
+                                color:#fff
+                              "
+                            >
+                              ${t("files")}
+                            </a>
+                            `
+                        )
+                        .join("<br>")
+                      }
+
+                    </td>
+
+
+                    <td>
+
+                      <span class="pill">
+                        ${esc(
+                          row.status ||
+                          "new"
+                        )}
+                      </span>
+
+                    </td>
+
+                  </tr>
+
+                  `
+              )
+              .join("")
+            ||
+            `
+            <tr>
+
+              <td colspan="5">
+                ${t("noData")}
+              </td>
+
+            </tr>
+            `
+          }
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+    `;
+
+
+  }catch(error){
+
+    content.innerHTML = `
+
+    <div class="panel">
+
+      <div class="notice error">
+        ${esc(
+          error.message
+        )}
+      </div>
+
+    </div>
+
+    `;
+
+  }
+
+}
+
+
+/* =====================================================
+   SETTINGS
+===================================================== */
+
+async function settings(){
+
+  const content =
+    document.getElementById(
+      "content"
+    );
+
+
+  try{
+
+    const rows =
+      await api(
+        "site_settings",
+        {
+          query:
+            "select=key,value"
+        }
+      ) || [];
+
+
+    let freeShipping = 1500;
+
+    let whatsapp =
+      "201000000000";
+
+    let rates = {};
+
+
+    for(
+      const row
+      of rows
+    ){
+
+      if(
+        row.key ===
+        "free_shipping_min"
+      ){
+
+        freeShipping =
+          Number(
+            row.value
+          ) || 1500;
+
+      }
+
+
+      if(
+        row.key ===
+        "whatsapp"
+      ){
+
+        whatsapp =
+          row.value ||
+          whatsapp;
+
+      }
+
+
+      if(
+        row.key ===
+        "shipping_rates"
+      ){
+
+        rates =
+          row.value ||
+          {};
+
+      }
+
+    }
+
+
+    content.innerHTML = `
+
+    <div class="panel">
+
+      <h2 class="panelTitle">
+        ${t("settings")}
+      </h2>
+
+
+      <div class="grid2">
+
+
+        <div class="field">
+
+          <label>
+            ${t("freeShipping")}
+          </label>
+
+          <input
+            id="freeShipping"
+            type="number"
+            value="${freeShipping}"
+          >
+
+        </div>
+
+
+        <div class="field">
+
+          <label>
+            ${t("whatsapp")}
+          </label>
+
+          <input
+            id="whatsapp"
+            value="${esc(
+              whatsapp
+            )}"
+          >
+
+        </div>
+
+
+      </div>
+
+
+      <div
+        class="field"
+        style="margin-top:15px"
+      >
+
+        <label>
+          ${t("shippingRates")}
+        </label>
+
+        <textarea
+          id="shippingRates"
+          rows="16"
+        >${esc(
+          JSON.stringify(
+            rates,
+            null,
+            2
+          )
+        )}</textarea>
+
+      </div>
+
+
+      <div class="actions">
+
+        <button
+          class="btn btnGold"
+          onclick="
+            saveSettings()
+          "
+        >
+          ${t("saveSettings")}
+        </button>
+
+      </div>
+
+
+      <div id="settingsMessage"></div>
+
+
+    </div>
+
+    `;
+
+
+  }catch(error){
+
+    content.innerHTML = `
+
+    <div class="panel">
+
+      <div class="notice error">
+        ${esc(
+          error.message
+        )}
+      </div>
+
+    </div>
+
+    `;
+
+  }
+
+}
+
+
+/* =====================================================
+   SAVE SETTINGS
+===================================================== */
+
+async function saveSettings(){
+
+  const message =
+    document.getElementById(
+      "settingsMessage"
+    );
+
+
+  try{
+
+    const freeShipping =
+      Number(
+        document
+          .getElementById(
+            "freeShipping"
+          )
+          .value
+      );
+
+
+    const whatsapp =
+      document
+        .getElementById(
+          "whatsapp"
+        )
+        .value
+        .trim();
+
+
+    const rates =
+      JSON.parse(
+        document
+          .getElementById(
+            "shippingRates"
+          )
+          .value
+      );
+
+
+    const values = {
+
+      free_shipping_min:
+        freeShipping,
+
+      whatsapp:
+        whatsapp,
+
+      shipping_rates:
+        rates
+
+    };
+
+
+    for(
+      const [key,value]
+      of Object.entries(
+        values
+      )
+    ){
+
+      await api(
+        "site_settings?key=eq." +
+        encodeURIComponent(
+          key
+        ),
+        {
+          method:"PATCH",
+          body:{
+            value:value,
+            updated_at:
+              new Date()
+                .toISOString()
+          }
+        }
+      );
+
+    }
+
+
+    message.className =
+      "notice ok";
+
+    message.textContent =
+      t("settingsSaved");
+
+
+  }catch(error){
+
+    message.className =
+      "notice error";
+
+    message.textContent =
+      error.message ||
+      t("error");
+
+  }
+
+}
+
+
+/* =====================================================
+   SECURITY:
+   REFRESH = LOGIN AGAIN
+===================================================== */
+
+/*
+  لا يوجد أي localStorage للجلسة.
+
+  persistSession:false
+
+  لذلك عند F5:
+
+  session = null
+
+  Supabase لن يسترجع Session.
+
+  النتيجة:
+  Login screen.
+*/
+
+
+window.addEventListener(
+  "pageshow",
+  async function(){
+
+    /*
+      لو الصفحة اتجابت من Browser Back/Forward Cache
+      نعمل Sign Out برضه.
+    */
+
+    await supabaseClient
+      .auth
+      .signOut();
+
+
+    session = null;
+
+    adminUser = null;
+
+    products = [];
+
+    variants = [];
+
+    editId = null;
+
+
+    document
+      .getElementById("root")
+      .innerHTML =
+        loginPage();
+
+  }
+);
+
+
+/* =====================================================
+   INITIAL LOAD
+===================================================== */
+
+(async function(){
+
+  /*
+    أول ما admin.html يفتح:
+    لا نعتمد على أي Login محفوظ.
+  */
+
+  await supabaseClient
+    .auth
+    .signOut();
+
+
+  session = null;
+
+  adminUser = null;
+
+
+  document
+    .getElementById("root")
+    .innerHTML =
+      loginPage();
+
+})();
+
 </script>
+
 </body>
+
 </html>
