@@ -1159,6 +1159,12 @@ function refreshTotals(){
   if(tt)tt.textContent=money(total());
 }
 
+function togglePaymentReference(){
+  const m=document.getElementById("paymentMethod")?.value||"cod";
+  const el=document.getElementById("paymentReference");
+  if(el) el.style.display=m==="cod"?"none":"block";
+}
+
 async function placeOrder(){
   const msg=document.getElementById("orderMsg");
   const btn=document.getElementById("orderBtn");
