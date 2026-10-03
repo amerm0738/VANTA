@@ -173,7 +173,7 @@ footer{grid-template-columns:1fr 1fr}
 
 <main id="app"></main>
 
-<a href="https://wa.me/201000000000" target="_blank" class="whatsappFloat" title="Contact Us" id="waTitle">💬</a>
+<a href="https://wa.me/201000000000" target="_blank" class="whatsappFloat" title="Contact Us" id="whatsappFloat">💬</a>
 
 <script>
 const SUPABASE_URL="https://jstcrfkjnmqegnzvwfyz.supabase.co";
@@ -455,13 +455,24 @@ function cityOptions(selected="",placeholder=true){
 function freeShippingText(){ return t("freeShipping"); }
 async function loadStoreSettings(){
   try{
-    const r=await fetch(SUPABASE_URL+"/rest/v1/site_settings?key=in.(free_shipping_min,shipping_rates)&select=key,value",{headers:HEADERS});
+    const r=await fetch(SUPABASE_URL+"/rest/v1/site_settings?key=in.(free_shipping_min,shipping_rates,whatsapp,payment_methods,deposit_numbers)&select=key,value",{headers:HEADERS});
     if(!r.ok)return;
     const rows=await r.json();
+    window.VANTA_PAYMENT_METHODS={cod:true,vodafone_cash:true,instapay:true};
+    window.VANTA_DEPOSIT_NUMBERS={};
     for(const row of rows){
       if(row.key==="free_shipping_min") window.VANTA_FREE_SHIPPING_MIN=Number(row.value)||1500;
-      if(row.key==="shipping_rates" && row.value && typeof row.value==="object") Object.assign(SHIPPING_RATES,row.value);
+      if(row.key==="shipping_rates" && row.value && typeof row.value==="object"){
+        Object.keys(SHIPPING_RATES).forEach(k=>delete SHIPPING_RATES[k]);
+        Object.assign(SHIPPING_RATES,row.value);
+      }
+      if(row.key==="whatsapp") window.VANTA_WHATSAPP=String(row.value||"").replace(/\D/g,"");
+      if(row.key==="payment_methods" && row.value && typeof row.value==="object") window.VANTA_PAYMENT_METHODS={...window.VANTA_PAYMENT_METHODS,...row.value};
+      if(row.key==="deposit_numbers" && row.value && typeof row.value==="object") window.VANTA_DEPOSIT_NUMBERS=row.value;
     }
+    const wa=window.VANTA_WHATSAPP||"";
+    const waEl=document.getElementById("whatsappFloat");
+    if(waEl && wa) waEl.href="https://wa.me/"+wa;
   }catch(e){ console.warn("settings",e); }
 }
 
@@ -1165,7 +1176,47 @@ function togglePaymentReference(){
   if(el) el.style.display=m==="cod"?"none":"block";
 }
 
-async function placeOrder(){
+async let customerLocation={latitude:null,longitude:null,map_url:null};
+
+function updatePaymentOptions(){
+  const sel=document.getElementById("paymentMethod");
+  if(!sel)return;
+  const pm=window.VANTA_PAYMENT_METHODS||{cod:true,vodafone_cash:true,instapay:true};
+  [...sel.options].forEach(o=>{o.hidden=pm[o.value]===false;});
+  if(sel.options[sel.selectedIndex] && sel.options[sel.selectedIndex].hidden){
+    const first=[...sel.options].find(o=>!o.hidden);
+    if(first)sel.value=first.value;
+  }
+  togglePaymentReference();
+}
+
+function togglePaymentReference(){
+  const sel=document.getElementById("paymentMethod");
+  const ref=document.getElementById("paymentReference");
+  const info=document.getElementById("paymentAccountInfo");
+  if(!sel)return;
+  const method=sel.value;
+  if(ref)ref.style.display=method==="cod"?"none":"block";
+  const d=window.VANTA_DEPOSIT_NUMBERS||{};
+  if(info){
+    if(method==="vodafone_cash") info.textContent=d.vodafone_cash?"رقم Vodafone Cash: "+d.vodafone_cash:"";
+    else if(method==="instapay") info.textContent=d.instapay?"حساب InstaPay: "+d.instapay:"";
+    else info.textContent="";
+  }
+}
+
+function getCustomerLocation(){
+  const msg=document.getElementById("locationMsg");
+  if(!navigator.geolocation){if(msg)msg.textContent="المتصفح لا يدعم تحديد الموقع";return;}
+  if(msg)msg.textContent="جاري تحديد موقعك...";
+  navigator.geolocation.getCurrentPosition(pos=>{
+    customerLocation={latitude:pos.coords.latitude,longitude:pos.coords.longitude,map_url:"https://www.google.com/maps?q="+pos.coords.latitude+","+pos.coords.longitude};
+    if(msg){msg.className="notice ok";msg.textContent="تم تحديد موقعك بنجاح 📍";}
+  },()=>{if(msg){msg.className="notice err";msg.textContent="لم نتمكن من تحديد موقعك، اكتب العنوان بالتفصيل.";}},
+  {enableHighAccuracy:true,timeout:10000,maximumAge:60000});
+}
+
+function placeOrder(){
   const msg=document.getElementById("orderMsg");
   const btn=document.getElementById("orderBtn");
 
@@ -1208,9 +1259,9 @@ async function placeOrder(){
       color:i.color||""
     })),
     p_coupon_code:appliedCoupon?.code||null,
-    p_latitude:null,
-    p_longitude:null,
-    p_map_url:null,
+    p_latitude:customerLocation.latitude,
+    p_longitude:customerLocation.longitude,
+    p_map_url:customerLocation.map_url,
     p_payment_method:paymentMethod,
     p_payment_reference:paymentReference
   };
@@ -1414,7 +1465,9 @@ async function editVariantStock(id,current){const n=prompt(t('quantityLabel')+' 
 async function loadAdminCustom(){const p=document.getElementById("adminPanel");try{const r=await adminFetch("custom_print_orders?select=*&order=created_at.desc&limit=100");const rows=await r.json();p.innerHTML=`<div class="adminCard"><h2>🖨️ ${t("customTitle")}</h2><table class="adminTable"><tr><th>${t("customer")}</th><th>${t("printDetails")}</th><th>${t("deposit")}</th><th>${t("uploadFiles")}</th><th>${t("orderStatus")}</th></tr>${rows.map(o=>`<tr><td>${esc(o.customer_name)}<br>${esc(o.phone)}<br>${esc(o.whatsapp)}</td><td>${esc(o.details)}</td><td>${money(o.deposit)}</td><td>${(Array.isArray(o.file_urls)?o.file_urls:[]).map(u=>u.startsWith('http')?`<a href="${esc(u)}" target="_blank">${t("file")}</a>`:esc(u)).join('<br>')}</td><td>${esc(o.status||'new')}</td></tr>`).join("")}</table></div>`}catch(e){p.innerHTML=`<div class="notice err">${t("customLoadError")}</div>`}}
 async function loadAdminSettings(){const p=document.getElementById("adminPanel");p.innerHTML=`<div class="adminCard"><h2>⚙️ ${t("adminSettings")}</h2><label class="fieldLabel">${language==="ar"?"حد الشحن المجاني":"Free shipping minimum"}</label><input id="setFree" type="number" value="${Number(window.VANTA_FREE_SHIPPING_MIN||1500)}"><label class="fieldLabel">${language==="ar"?"رقم واتساب":"WhatsApp number"}</label><input id="setWhats" value="201000000000"><label class="fieldLabel">${language==="ar"?"أسعار الشحن حسب المحافظة":"Shipping rates by governorate"}</label><textarea id="setRates" rows="10">${esc(JSON.stringify(SHIPPING_RATES,null,2))}</textarea><button class="wide" style="margin-top:12px" onclick="saveBasicSettings()">${t("save")}</button><div id="setMsg"></div></div>`}
 async function saveBasicSettings(){const m=document.getElementById('setMsg');try{let rates;try{rates=JSON.parse(document.getElementById('setRates').value)}catch(e){throw Error(language==="ar"?"JSON غير صحيح":"Invalid JSON")} const val={free_shipping_min:Number(document.getElementById('setFree').value||1500),whatsapp:document.getElementById('setWhats').value.trim(),shipping_rates:rates};for(const [key,value] of Object.entries(val)){const r=await adminFetch(`site_settings?key=eq.${encodeURIComponent(key)}`,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({value})});if(!r.ok)throw Error(await r.text())}window.VANTA_FREE_SHIPPING_MIN=val.free_shipping_min;Object.keys(SHIPPING_RATES).forEach(k=>delete SHIPPING_RATES[k]);Object.assign(SHIPPING_RATES,rates);m.className='notice ok';m.textContent=language==="ar"?'تم حفظ الإعدادات':'Settings saved';refreshTotals();}catch(e){console.error(e);m.className='notice err';m.textContent=language==="ar"?'تعذر حفظ الإعدادات':'Could not save settings';}}
-async function loadBestSellers(){return []}
+async function loadBestSellers(){
+  return [...products].filter(p=>p.active!==false).sort((a,b)=>Number(b.sales_count||0)-Number(a.sales_count||0)).slice(0,4);
+}
 
 function mapOrderError(m){
   const raw=String(m||"");
@@ -1488,6 +1541,7 @@ window.addEventListener("DOMContentLoaded",async()=>{
   applyLanguage();
   await Promise.all([loadVariantInventory(),loadProducts(),loadStoreSettings()]);
   render();
+  updatePaymentOptions();
 });
 </script>
 </body>
