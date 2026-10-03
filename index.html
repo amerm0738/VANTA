@@ -490,6 +490,9 @@ async function loadStoreSettings(){
       if(row.key==="deposit_numbers" && row.value && typeof row.value==="object") window.VANTA_DEPOSIT_NUMBERS=row.value;
     }
     const wa=window.VANTA_WHATSAPP||"";
+    const min=Number(window.VANTA_FREE_SHIPPING_MIN||1500);
+    const top=document.getElementById("topShippingText");
+    if(top) top.textContent=language==="ar"?`شحن مجاني للطلبات فوق ${min} جنيه 🚚`:`FREE SHIPPING FOR ORDERS OVER ${min} EGP 🚚`;
     const waEl=document.getElementById("whatsappFloat");
     if(waEl && wa) waEl.href="https://wa.me/"+wa;
   }catch(e){ console.warn("settings",e); }
