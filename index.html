@@ -1238,7 +1238,7 @@ function getCustomerLocation(){
   {enableHighAccuracy:true,timeout:10000,maximumAge:60000});
 }
 
-function placeOrder(){
+async function placeOrder(){
   const msg=document.getElementById("orderMsg");
   const btn=document.getElementById("orderBtn");
 
