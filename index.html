@@ -250,6 +250,26 @@ rating:"Rating",description:"Product Description",noDescription:"No description 
 
 function t(k){return TXT[language][k]||k}
 
+function resolveStaticTranslations(){
+  const re=/\$\{t\("([^"]+)"\)\}/g;
+  const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
+  const nodes=[];
+  let n;
+  while(n=walker.nextNode()){
+    const p=n.parentElement;
+    if(p && p.closest("script,style")) continue;
+    if(re.test(n.nodeValue)){ re.lastIndex=0; nodes.push(n); }
+  }
+  for(const node of nodes){
+    node.nodeValue=node.nodeValue.replace(re,(_,k)=>t(k));
+  }
+  document.body.querySelectorAll("*:not(script):not(style)").forEach(el=>{
+    for(const a of Array.from(el.attributes)){
+      if(re.test(a.value)){ re.lastIndex=0; a.value=a.value.replace(re,(_,k)=>t(k)); }
+    }
+  });
+}
+
 function applyLanguage(){
   document.documentElement.lang=language;
   document.documentElement.dir=language==="ar"?"rtl":"ltr";
@@ -260,14 +280,13 @@ function applyLanguage(){
   const ns=document.getElementById("navShopText"); if(ns)ns.textContent=t("shop");
   const no=document.getElementById("navOffersText"); if(no)no.textContent=t("offers");
   const top=document.getElementById("topShippingText"); if(top)top.textContent=t("freeShippingTop");
-  const wa=document.getElementById("waTitle"); if(wa)wa.title=language==="ar"?"تواصل معنا عبر واتساب":"Contact us on WhatsApp";
+  const wa=document.getElementById("whatsappFloat"); if(wa)wa.title=language==="ar"?"تواصل معنا عبر واتساب":"Contact us on WhatsApp";
 }
 
 function toggleLanguage(){
   language=language==="ar"?"en":"ar";
   localStorage.setItem("vanta_lang",language);
-  applyLanguage();
-  render();
+  location.reload();
 }
 
 function esc(v){
@@ -1538,6 +1557,7 @@ function render(){
 window.addEventListener("popstate",render);
 window.addEventListener("DOMContentLoaded",async()=>{
   activeCategory = "";
+  resolveStaticTranslations();
   applyLanguage();
   await Promise.all([loadVariantInventory(),loadProducts(),loadStoreSettings()]);
   render();
