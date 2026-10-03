@@ -1011,7 +1011,7 @@ ${t("empty")}<br><br>
 ${cityOptions()}
 </select>
 
-<textarea id="address" placeholder="${t("address")}" rows="4"></textarea>
+<textarea id="address" placeholder="${t("address")}" rows="4"></textarea>\n\n<select id="paymentMethod" onchange="togglePaymentReference()">\n<option value="cod">الدفع عند الاستلام</option>\n<option value="vodafone_cash">Vodafone Cash</option>\n<option value="instapay">InstaPay</option>\n</select>\n<input id="paymentReference" placeholder="رقم العملية / رقم التحويل (اختياري)" style="display:none">
 
 <button id="orderBtn" class="dark" onclick="placeOrder()">${t("confirm")}</button>
 <div id="orderMsg"></div>
@@ -1176,6 +1176,8 @@ async function placeOrder(){
   const whatsapp=document.getElementById("whatsapp").value.trim();
   const city=document.getElementById("city").value.trim();
   const address=document.getElementById("address").value.trim();
+  const paymentMethod=document.getElementById("paymentMethod")?.value||"cod";
+  const paymentReference=document.getElementById("paymentReference")?.value.trim()||null;
 
   if(!name||!phone||!whatsapp||!city||!address){
     msg.className="notice err";
@@ -1199,7 +1201,12 @@ async function placeOrder(){
       size:i.size||"",
       color:i.color||""
     })),
-    p_coupon_code:appliedCoupon?.code||null
+    p_coupon_code:appliedCoupon?.code||null,
+    p_latitude:null,
+    p_longitude:null,
+    p_map_url:null,
+    p_payment_method:paymentMethod,
+    p_payment_reference:paymentReference
   };
 
   try{
