@@ -1198,7 +1198,7 @@ function togglePaymentReference(){
   if(el) el.style.display=m==="cod"?"none":"block";
 }
 
-async let customerLocation={latitude:null,longitude:null,map_url:null};
+let customerLocation={latitude:null,longitude:null,map_url:null};
 
 function updatePaymentOptions(){
   const sel=document.getElementById("paymentMethod");
