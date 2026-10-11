@@ -1341,7 +1341,7 @@ async function placeOrder(){
 
 async function createNotification(){ return true; }
 
-function downloadInvoice(){
+async function downloadInvoice(){
   const order=pendingOrderInvoice||lastOrder;
   if(!order)return;
   let items=order.items;
