@@ -481,7 +481,7 @@ async function loadStoreSettings(){
     window.VANTA_DEPOSIT_NUMBERS={};
     for(const row of rows){
       if(row.key==="free_shipping_min") window.VANTA_FREE_SHIPPING_MIN=Number(row.value)||2500;
-      if(row.key==="shipping_rates" && row.value && typeof row.value==="object"){
+      if(row.key==="shipping_rates" && row.value && typeof row.value==="object" && Object.keys(row.value).length){
         Object.keys(SHIPPING_RATES).forEach(k=>delete SHIPPING_RATES[k]);
         Object.assign(SHIPPING_RATES,row.value);
       }
