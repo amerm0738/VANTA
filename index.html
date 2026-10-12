@@ -369,7 +369,7 @@ return `
 <div>
 <div class="v">V</div>
 <h1>VANTA</h1>
-<p>MODERN UNISEX WEAR</p>
+<p id="storeTaglineText">MODERN UNISEX WEAR</p>
 <button class="cta" onclick="goShop()">${t("shopNow")}</button>
 </div>
 </header>
@@ -405,7 +405,7 @@ return `
 <div class="banner">
 <div>
 <h2>${t("collection")}</h2>
-<p>FALL / WINTER 2026</p>
+<p id="storeCollectionText">FALL / WINTER 2026</p>
 <button class="cta" onclick="goShop()">${t("explore")}</button>
 </div>
 </div>
@@ -424,7 +424,7 @@ return `
 <div><div class="flogo">VANTA</div><p>Style has no gender.</p></div>
 <div><b>${t("quickLinks")}</b><p>${t("home")}</p><p>${t("shop")}</p><p>${t("offers")}</p></div>
 <div><b>${t("customerService")}</b><p>${t("trackOrder")}</p><p>${t("shipping")}</p><p>${t("returns")}</p></div>
-<div><b>${t("subscribe")}</b><p>${t("firstKnow")}</p></div>
+<div><b>${t("subscribe")}</b><p>${t("firstKnow")}</p><p><a id="supportEmailLink" style="color:inherit;text-decoration:none"></a></p><p id="returnPolicyText"></p><p><a id="instagramLink" style="color:inherit;text-decoration:none" target="_blank" rel="noopener"></a></p></div>
 </footer>`;
 }
 
@@ -474,7 +474,7 @@ function cityOptions(selected="",placeholder=true){
 function freeShippingText(){ return t("freeShipping"); }
 async function loadStoreSettings(){
   try{
-    const r=await fetch(SUPABASE_URL+"/rest/v1/site_settings?key=in.(free_shipping_min,shipping_rates,whatsapp,payment_methods,deposit_numbers)&select=key,value",{headers:HEADERS});
+    const r=await fetch(SUPABASE_URL+"/rest/v1/site_settings?key=in.(free_shipping_min,shipping_rates,whatsapp,payment_methods,deposit_numbers,store_announcement,store_tagline,store_collection_title,instagram_url,support_email,return_policy)&select=key,value",{headers:HEADERS});
     if(!r.ok)return;
     const rows=await r.json();
     window.VANTA_PAYMENT_METHODS={cod:true,vodafone_cash:true,instapay:true};
@@ -488,11 +488,22 @@ async function loadStoreSettings(){
       if(row.key==="whatsapp") window.VANTA_WHATSAPP=String(row.value||"").replace(/\D/g,"");
       if(row.key==="payment_methods" && row.value && typeof row.value==="object") window.VANTA_PAYMENT_METHODS={...window.VANTA_PAYMENT_METHODS,...row.value};
       if(row.key==="deposit_numbers" && row.value && typeof row.value==="object") window.VANTA_DEPOSIT_NUMBERS=row.value;
+      if(row.key==="store_announcement") window.VANTA_STORE_ANNOUNCEMENT=String(row.value||"");
+      if(row.key==="store_tagline") window.VANTA_STORE_TAGLINE=String(row.value||"MODERN UNISEX WEAR");
+      if(row.key==="store_collection_title") window.VANTA_STORE_COLLECTION=String(row.value||"FALL / WINTER 2026");
+      if(row.key==="instagram_url") window.VANTA_INSTAGRAM_URL=String(row.value||"");
+      if(row.key==="support_email") window.VANTA_SUPPORT_EMAIL=String(row.value||"");
+      if(row.key==="return_policy") window.VANTA_RETURN_POLICY=String(row.value||"");
     }
     const wa=window.VANTA_WHATSAPP||"";
     const min=Number(window.VANTA_FREE_SHIPPING_MIN||1500);
     const top=document.getElementById("topShippingText");
-    if(top) top.textContent=language==="ar"?`شحن مجاني للطلبات فوق ${min} جنيه 🚚`:`FREE SHIPPING FOR ORDERS OVER ${min} EGP 🚚`;
+    if(top){const ship=language==="ar"?`شحن مجاني للطلبات فوق ${min} جنيه 🚚`:`FREE SHIPPING FOR ORDERS OVER ${min} EGP 🚚`;top.textContent=[window.VANTA_STORE_ANNOUNCEMENT,ship].filter(Boolean).join(" • ");}
+    const tagline=document.getElementById("storeTaglineText");if(tagline&&window.VANTA_STORE_TAGLINE)tagline.textContent=window.VANTA_STORE_TAGLINE;
+    const collection=document.getElementById("storeCollectionText");if(collection&&window.VANTA_STORE_COLLECTION)collection.textContent=window.VANTA_STORE_COLLECTION;
+    const ret=document.getElementById("returnPolicyText");if(ret&&window.VANTA_RETURN_POLICY)ret.textContent=window.VANTA_RETURN_POLICY;
+    const email=document.getElementById("supportEmailLink");if(email&&window.VANTA_SUPPORT_EMAIL){email.href="mailto:"+window.VANTA_SUPPORT_EMAIL;email.textContent=window.VANTA_SUPPORT_EMAIL;}
+    const insta=document.getElementById("instagramLink");if(insta&&window.VANTA_INSTAGRAM_URL){insta.href=window.VANTA_INSTAGRAM_URL;insta.textContent="Instagram ↗";}
     const waEl=document.getElementById("whatsappFloat");
     if(waEl && wa) waEl.href="https://wa.me/"+wa;
   }catch(e){ console.warn("settings",e); }
