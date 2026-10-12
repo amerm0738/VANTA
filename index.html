@@ -1559,6 +1559,14 @@ function goShop(){
   if(el)el.scrollIntoView({behavior:"smooth"});
 }
 
+function applyStorefrontSettings(){
+  const tagline=document.getElementById("storeTaglineText");if(tagline&&window.VANTA_STORE_TAGLINE)tagline.textContent=window.VANTA_STORE_TAGLINE;
+  const collection=document.getElementById("storeCollectionText");if(collection&&window.VANTA_STORE_COLLECTION)collection.textContent=window.VANTA_STORE_COLLECTION;
+  const ret=document.getElementById("returnPolicyText");if(ret&&window.VANTA_RETURN_POLICY)ret.textContent=window.VANTA_RETURN_POLICY;
+  const email=document.getElementById("supportEmailLink");if(email&&window.VANTA_SUPPORT_EMAIL){email.href="mailto:"+window.VANTA_SUPPORT_EMAIL;email.textContent=window.VANTA_SUPPORT_EMAIL;}
+  const insta=document.getElementById("instagramLink");if(insta&&window.VANTA_INSTAGRAM_URL){insta.href=window.VANTA_INSTAGRAM_URL;insta.textContent="Instagram ↗";}
+}
+
 function render(){
   applyLanguage();
   updateCount();
@@ -1581,6 +1589,7 @@ function render(){
   }else{
     app.innerHTML=homeHTML();renderProducts();renderBestSelling();
   }
+  applyStorefrontSettings();
 }
 window.addEventListener("popstate",render);
 window.addEventListener("DOMContentLoaded",async()=>{
