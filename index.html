@@ -1055,7 +1055,18 @@ ${t("empty")}<br><br>
 ${cityOptions()}
 </select>
 
-<textarea id="address" placeholder="${t("address")}" rows="4"></textarea>\n\n<select id="paymentMethod" onchange="togglePaymentReference()">\n<option value="cod">الدفع عند الاستلام</option>\n<option value="vodafone_cash">Vodafone Cash</option>\n<option value="instapay">InstaPay</option>\n</select>\n<input id="paymentReference" placeholder="رقم العملية / رقم التحويل (اختياري)" style="display:none">
+<textarea id="address" placeholder="${t("address")}" rows="4"></textarea>
+<div class="field" style="margin-top:14px">
+<label for="paymentMethod">${language==="ar"?"طريقة الدفع":"Payment method"}</label>
+<select id="paymentMethod" onchange="updatePaymentOptions()">
+<option value="cod">الدفع عند الاستلام</option>
+<option value="vodafone_cash">Vodafone Cash</option>
+<option value="instapay">InstaPay</option>
+</select>
+<div id="paymentAccountInfo" class="notice" style="margin-top:10px;display:none"></div>
+<div id="paymentInstructions" class="mutedSmall" style="margin-top:8px"></div>
+<input id="paymentReference" placeholder="رقم العملية / رقم التحويل (اختياري)" style="display:none;margin-top:10px">
+</div>
 
 <button id="orderBtn" class="dark" onclick="placeOrder()">${t("confirm")}</button>
 <div id="orderMsg"></div>
@@ -1231,10 +1242,18 @@ function togglePaymentReference(){
   const method=sel.value;
   if(ref)ref.style.display=method==="cod"?"none":"block";
   const d=window.VANTA_DEPOSIT_NUMBERS||{};
+  const instructions=document.getElementById("paymentInstructions");
   if(info){
-    if(method==="vodafone_cash") info.textContent=d.vodafone_cash?"رقم Vodafone Cash: "+d.vodafone_cash:"";
-    else if(method==="instapay") info.textContent=d.instapay?"حساب InstaPay: "+d.instapay:"";
-    else info.textContent="";
+    let account="";
+    if(method==="vodafone_cash") account=d.vodafone_cash?"رقم Vodafone Cash للتحويل: "+d.vodafone_cash:"لم يضف المتجر رقم Vodafone Cash بعد.";
+    else if(method==="instapay") account=d.instapay?"حساب InstaPay للتحويل: "+d.instapay:"لم يضف المتجر بيانات InstaPay بعد.";
+    info.textContent=method==="cod"?"الدفع كاش عند استلام الطلب":account;
+    info.style.display="block";
+  }
+  if(instructions){
+    if(method==="vodafone_cash") instructions.textContent=d.instructions||"حوّل المبلغ إلى الرقم الموضح، ثم اكتب رقم العملية أدناه.";
+    else if(method==="instapay") instructions.textContent=d.instructions||"حوّل المبلغ إلى الحساب الموضح، ثم اكتب رقم العملية أدناه.";
+    else instructions.textContent="";
   }
 }
 
@@ -1590,6 +1609,7 @@ function render(){
     app.innerHTML=homeHTML();renderProducts();renderBestSelling();
   }
   applyStorefrontSettings();
+  updatePaymentOptions();
 }
 window.addEventListener("popstate",render);
 window.addEventListener("DOMContentLoaded",async()=>{
