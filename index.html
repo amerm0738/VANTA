@@ -208,6 +208,7 @@ let appliedCoupon=null;
 let activeCategory="";
 let selectedRating=5;
 let selectedShippingCost=0;
+let selectedShippingCity="";
 
 const TXT={
 ar:{
@@ -989,9 +990,8 @@ function couponDiscount(){
 
 function total(){
   const sub = subtotal();
-  if (sub >= Number(window.VANTA_FREE_SHIPPING_MIN||2500)) {
-    selectedShippingCost = 0; // شحن مجاني
-  }
+  const freeMin = Number(window.VANTA_FREE_SHIPPING_MIN || 2500);
+  selectedShippingCost = sub >= freeMin ? 0 : (selectedShippingCity ? Number(SHIPPING_RATES[selectedShippingCity] ?? 50) : 0);
   return Math.max(0, sub - couponDiscount() + selectedShippingCost);
 }
 
@@ -1077,11 +1077,9 @@ ${cityOptions()}
 }
 
 function updateShipping(city){
-  if(subtotal() >= Number(window.VANTA_FREE_SHIPPING_MIN||2500)){
-    selectedShippingCost = 0;
-  } else {
-    selectedShippingCost = Number(SHIPPING_RATES[city] ?? 50);
-  }
+  selectedShippingCity = city || "";
+  const freeMin = Number(window.VANTA_FREE_SHIPPING_MIN || 2500);
+  selectedShippingCost = subtotal() >= freeMin ? 0 : (city ? Number(SHIPPING_RATES[city] ?? 50) : 0);
   refreshTotals();
 }
 
@@ -1207,11 +1205,13 @@ function refreshTotals(){
   const d=document.getElementById("discount");
   const sh=document.getElementById("shippingRate");
   const tt=document.getElementById("total");
-
+  const freeMin = Number(window.VANTA_FREE_SHIPPING_MIN || 2500);
+  const shipping = subtotal() >= freeMin ? 0 : (selectedShippingCity ? Number(SHIPPING_RATES[selectedShippingCity] ?? 50) : 0);
+  selectedShippingCost = shipping;
   if(s)s.textContent=money(subtotal());
   if(d)d.textContent="-"+money(couponDiscount());
-  if(sh)sh.textContent=subtotal() >= Number(window.VANTA_FREE_SHIPPING_MIN||2500) ? freeShippingText() : money(selectedShippingCost);
-  if(tt)tt.textContent=money(total());
+  if(sh)sh.textContent=subtotal() >= freeMin ? freeShippingText() : money(shipping);
+  if(tt)tt.textContent=money(Math.max(0,subtotal()-couponDiscount()+shipping));
 }
 
 function togglePaymentReference(){
