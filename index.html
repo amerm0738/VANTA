@@ -485,7 +485,7 @@ async function loadStoreSettings(){
     const r=await fetch(SUPABASE_URL+"/rest/v1/site_settings?key=in.(free_shipping_min,shipping_rates,whatsapp,payment_methods,deposit_numbers,store_announcement,store_tagline,store_collection_title,instagram_url,support_email,return_policy)&select=key,value",{headers:HEADERS});
     if(!r.ok)return;
     const rows=await r.json();
-    window.VANTA_PAYMENT_METHODS={cod:true,vodafone_cash:false,instapay:false};
+    window.VANTA_PAYMENT_METHODS={cod:true,vodafone_cash:true,instapay:true};
     window.VANTA_DEPOSIT_NUMBERS={};
     for(const row of rows){
       if(row.key==="free_shipping_min") window.VANTA_FREE_SHIPPING_MIN=Number(row.value)||2500;
