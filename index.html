@@ -1664,5 +1664,5 @@ window.addEventListener("DOMContentLoaded",()=>{
   }).catch(e=>console.warn("VANTA initialization",e));
 });
 </script>
-<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("/sw.js").catch(e=>console.warn("PWA worker",e)));}</script></body>
+<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("/sw.js",{updateViaCache:"none"}).then(r=>r.update()).catch(e=>console.warn("PWA worker",e)));}</script></body>
 </html>
