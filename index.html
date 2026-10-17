@@ -1645,14 +1645,18 @@ function render(){
   updatePaymentOptions();
 }
 window.addEventListener("popstate",render);
-window.addEventListener("DOMContentLoaded",async()=>{
+window.addEventListener("DOMContentLoaded",()=>{
   activeCategory = "";
   resolveStaticTranslations();
   applyLanguage();
-  await Promise.all([loadVariantInventory(),loadProducts(),loadStoreSettings()]);
-  trackStoreVisit();
+  // Render the storefront immediately; do not leave the page blank while Supabase responds.
   render();
   updatePaymentOptions();
+  Promise.allSettled([loadVariantInventory(),loadProducts(),loadStoreSettings()]).then(()=>{
+    trackStoreVisit();
+    render();
+    updatePaymentOptions();
+  }).catch(e=>console.warn("VANTA initialization",e));
 });
 </script>
 <script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("/sw.js").catch(e=>console.warn("PWA worker",e)));}</script></body>
