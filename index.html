@@ -1268,9 +1268,9 @@ function updatePaymentOptions(){
   const pm={cod:enabled("cod",true),vodafone_cash:enabled("vodafone_cash",true),instapay:enabled("instapay",true)};
   // Keep all configured payment choices visible; only disable methods explicitly switched off.
   [...sel.options].forEach(o=>{const on=pm[o.value]!==false;o.hidden=!on;o.disabled=!on;});
-  // Mobile browsers handle hidden select options inconsistently; remove methods switched off.
-  [...sel.options].forEach(o=>{if(pm[o.value]===false)o.remove();});
-  if(![...sel.options].some(o=>o.value===sel.value)){sel.value=sel.options[0]?.value||"cod";}
+  // Keep payment choices in the select for mobile browsers; disable only methods turned off in settings.
+  [...sel.options].forEach(o=>{const on=pm[o.value]!==false;o.hidden=!on;o.disabled=!on;});
+  if(![...sel.options].some(o=>o.value===sel.value&&!o.disabled)){sel.value=[...sel.options].find(o=>!o.disabled)?.value||"cod";}
   togglePaymentReference();
 }
 
@@ -1423,7 +1423,7 @@ async function downloadInvoice(){
  let items=order.items; if(typeof items==="string")try{items=JSON.parse(items)}catch(e){}; items=Array.isArray(items)?items:[];
  const nameOf=it=>{const p=products.find(x=>String(x.id)===String(it.product_id));return p?localizedName(p):(language==="ar"?(it.name_ar||it.name||it.name_en||""):(it.name_en||it.name_ar||it.name||""));};
  const rows=items.map(it=>"<tr><td>"+esc(nameOf(it))+"</td><td>"+esc(it.size||"-")+"</td><td>"+esc(it.color||"-")+"</td><td>"+Number(it.qty||1)+"</td><td>"+money(it.price||0)+"</td><td>"+money(it.line_total??Number(it.price||0)*Number(it.qty||1))+"</td></tr>").join("");
- const el=document.createElement("div");el.dir=language==="ar"?"rtl":"ltr";el.style.cssText="position:absolute;left:0;top:0;width:794px;z-index:-1;background:#fff;color:#111;padding:32px;box-sizing:border-box;font-family:Arial,Tahoma,sans-serif";
+ const el=document.createElement("div");el.dir=language==="ar"?"rtl":"ltr";el.style.cssText="position:fixed;left:0;top:0;width:794px;min-height:1123px;z-index:2147483000;background:#fff;color:#111;padding:32px;box-sizing:border-box;font-family:Arial,Tahoma,sans-serif;overflow:visible";
  el.innerHTML="<div style=\"background:#fff;color:#111;padding:8px\"><header style=\"display:flex;justify-content:space-between;border-bottom:2px solid #111;padding-bottom:16px;margin-bottom:20px\"><div><div style=\"font-size:34px;font-weight:900;letter-spacing:7px\">VANTA</div><div>MODERN UNISEX WEAR</div></div><div><b>"+esc(t("invoice"))+"</b><br>"+esc(order.order_number||"")+"<br>"+new Date(order.created_at||Date.now()).toLocaleString(language==="ar"?"ar-EG":"en-US")+"</div></header><p>"+esc(t("name"))+": "+esc(order.customer_name||"")+" | "+esc(t("phone"))+": "+esc(order.phone||"")+"</p><p>"+esc(t("city"))+": "+esc(localizedCity(order.city||""))+" | "+esc(t("address"))+": "+esc(order.address||"")+"</p><table style=\"width:100%;border-collapse:collapse\"><thead><tr>"+[t("product"),t("size"),t("color"),t("quantity"),t("price"),t("lineTotal")].map(x=>"<th style=\"padding:8px;background:#111;color:#fff;border:1px solid #111\">"+x+"</th>").join("")+"</tr></thead><tbody>"+rows+"</tbody></table><div style=\"margin-top:24px;line-height:2\">"+t("subtotal")+": <b>"+money(order.subtotal||0)+"</b><br>"+t("discount")+": <b>"+money(order.discount||0)+"</b><br>"+t("shipping")+": <b>"+money(order.shipping_cost||0)+"</b><hr>"+t("total")+": <b style=\"font-size:22px\">"+money(order.total||0)+"</b></div><p style=\"text-align:center;margin-top:36px\">VANTA • Style has no gender.</p></div>";
  document.body.appendChild(el);
  try{
