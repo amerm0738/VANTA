@@ -1425,29 +1425,11 @@ async function downloadInvoice(){
     setTimeout(()=>{try{printWin.focus()}catch(e){}},350);
     return;
   }
-  document.body.appendChild(el);
-  try{
-    el.style.cssText+=";position:fixed;left:0;top:0;z-index:2147483647;display:block;visibility:visible;opacity:1;width:794px;min-height:1123px;background:#fff;color:#111;";
-    document.body.offsetHeight;
-    await new Promise(r=>setTimeout(r,150));
-    if(document.fonts&&document.fonts.ready)await document.fonts.ready;
-    let pdfFn=typeof html2pdf==="function"?html2pdf:null;
-    if(!pdfFn){
-      await new Promise(resolve=>{
-        const fallback=document.createElement("script");
-        fallback.src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js";
-        fallback.onload=resolve;fallback.onerror=resolve;document.head.appendChild(fallback);
-        setTimeout(resolve,5000);
-      });
-      pdfFn=typeof html2pdf==="function"?html2pdf:null;
-    }
-    if(pdfFn){
-      await pdfFn().set({margin:[8,8,8,8],filename:"VANTA-"+String(order.order_number||"invoice").replace(/[^a-zA-Z0-9_-]/g,"-")+".pdf",image:{type:"jpeg",quality:0.98},html2canvas:{scale:2,useCORS:true,backgroundColor:"#ffffff",logging:false,windowWidth:794},jsPDF:{unit:"mm",format:"a4",orientation:"portrait"},pagebreak:{mode:["css","legacy"]}}).from(el).save();
-    }else{
-      const st=document.createElement("style");st.id="vanta-print-style";st.textContent="@media print{body.vanta-printing>*:not(.vanta-invoice-print){display:none!important}.vanta-invoice-print{display:block!important;position:static!important;left:auto!important;top:auto!important;z-index:auto!important;opacity:1!important;width:100%!important;min-height:0!important;margin:0!important;box-shadow:none!important}}";document.head.appendChild(st);el.classList.add("vanta-invoice-print");document.body.classList.add("vanta-printing");window.addEventListener("afterprint",()=>{st.remove();document.body.classList.remove("vanta-printing");el.classList.remove("vanta-invoice-print");el.remove()},{once:true});window.print();return;
-    }
-  }catch(e){console.error("PDF",e);alert(language==="ar"?"تعذر تنزيل PDF. تأكد من الإنترنت والسماح بالتنزيل ثم جرّب مرة أخرى.":"PDF download failed. Check your connection and allow downloads, then try again.");}
-  finally{if(el.isConnected&&!document.body.classList.contains("vanta-printing"))el.remove()}
+  const w=window.open("","_blank");
+  if(!w){alert(language==="ar"?"اسمح بالنوافذ المنبثقة للموقع ثم اضغط تنزيل الفاتورة مرة أخرى.":"Allow pop-ups for this site, then retry the invoice.");return;}
+  const page="<!doctype html><html lang=\""+(language==="ar"?"ar":"en")+"\" dir=\""+(language==="ar"?"rtl":"ltr")+"\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>VANTA Invoice</title><style>body{font-family:Arial,Tahoma,sans-serif;margin:0;padding:18px;background:#fff;color:#111}.actions{display:flex;gap:8px;margin-bottom:18px}.actions button{padding:10px 16px}.invoice{background:#fff;color:#111}@media print{.actions{display:none}body{padding:0}}</style></head><body><div class=\"actions\"><button onclick=\"window.print()\">طباعة / حفظ PDF</button><button onclick=\"window.close()\">إغلاق</button></div><main class=\"invoice\">"+el.innerHTML+"</main></body></html>";
+  w.document.open();w.document.write(page);w.document.close();
+  setTimeout(()=>{try{w.focus();w.print();}catch(e){}},700);
 }
 
 function showCustomPrint(){
