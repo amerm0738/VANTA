@@ -515,6 +515,7 @@ async function loadStoreSettings(){
     const insta=document.getElementById("instagramLink");if(insta&&window.VANTA_INSTAGRAM_URL){insta.href=window.VANTA_INSTAGRAM_URL;insta.textContent="Instagram ↗";}
     const waEl=document.getElementById("whatsappFloat");
     if(waEl && wa) waEl.href="https://wa.me/"+wa;
+    if(document.getElementById("paymentMethod")) updatePaymentOptions();
   }catch(e){ console.warn("settings",e); }
 }
 
@@ -693,7 +694,7 @@ function productHTML(p){
 
 <div class="productGrid">
 <div>
-<div class="galleryMain">
+<div class="galleryMain" ontouchstart="galleryTouchStart(event)" ontouchend="galleryTouchEnd(event)" style="touch-action:pan-y">
 ${imgs.length
   ?`<img id="mainImage" src="${esc(imgs[0])}" alt="${esc(p.name||"")}">`
   :`<div>VANTA</div>`}
@@ -786,6 +787,9 @@ ${esc(c)}${!availableColor(p,c)?` <span class="soldBadge">(${t("out")})</span>`:
 </section>`;
 }
 
+let galleryTouchX=null;
+function galleryTouchStart(e){galleryTouchX=e.changedTouches&&e.changedTouches[0]?e.changedTouches[0].clientX:null;}
+function galleryTouchEnd(e){if(galleryTouchX===null||!selectedProduct)return;const end=e.changedTouches&&e.changedTouches[0]?e.changedTouches[0].clientX:galleryTouchX;const dx=end-galleryTouchX;galleryTouchX=null;if(Math.abs(dx)<45)return;const imgs=getImages(selectedProduct);if(imgs.length<2)return;const img=document.getElementById("mainImage");if(!img)return;let n=imgs.findIndex(u=>u===img.src);if(n<0)n=0;changeMainImage(imgs[(n+(dx<0?1:-1)+imgs.length)%imgs.length]);}
 function changeMainImage(u){
   const i=document.getElementById("mainImage");
   if(i)i.src=u;
@@ -1244,8 +1248,10 @@ function updatePaymentOptions(){
   const sel=document.getElementById("paymentMethod");
   if(!sel)return;
   const configured=window.VANTA_PAYMENT_METHODS||{};
-  const pm={cod:true,vodafone_cash:false,instapay:false,...configured};
-  [...sel.options].forEach(o=>{o.hidden=pm[o.value]===false;o.disabled=pm[o.value]===false;});
+  const enabled=(v,fallback)=>configured[v]===undefined?fallback:!(configured[v]===false||configured[v]===0||String(configured[v]).toLowerCase()==="false");
+  const pm={cod:enabled("cod",true),vodafone_cash:enabled("vodafone_cash",true),instapay:enabled("instapay",true)};
+  [...sel.options].forEach(o=>{const on=pm[o.value]!==false;o.hidden=!on;o.disabled=!on;});
+  if(![...sel.options].some(o=>!o.disabled))[...sel.options].forEach(o=>{o.hidden=false;o.disabled=false;});
   if(sel.options[sel.selectedIndex] && sel.options[sel.selectedIndex].hidden){
     const first=[...sel.options].find(o=>!o.hidden);
     if(first)sel.value=first.value;
