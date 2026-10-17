@@ -478,7 +478,7 @@ async function loadStoreSettings(){
     const r=await fetch(SUPABASE_URL+"/rest/v1/site_settings?key=in.(free_shipping_min,shipping_rates,whatsapp,payment_methods,deposit_numbers,store_announcement,store_tagline,store_collection_title,instagram_url,support_email,return_policy)&select=key,value",{headers:HEADERS});
     if(!r.ok)return;
     const rows=await r.json();
-    window.VANTA_PAYMENT_METHODS={cod:true,vodafone_cash:true,instapay:true};
+    window.VANTA_PAYMENT_METHODS={cod:true,vodafone_cash:false,instapay:false};
     window.VANTA_DEPOSIT_NUMBERS={};
     for(const row of rows){
       if(row.key==="free_shipping_min") window.VANTA_FREE_SHIPPING_MIN=Number(row.value)||2500;
@@ -1232,7 +1232,7 @@ function updatePaymentOptions(){
   const sel=document.getElementById("paymentMethod");
   if(!sel)return;
   const configured=window.VANTA_PAYMENT_METHODS||{};
-  const pm={cod:true,vodafone_cash:true,instapay:true,...configured};
+  const pm={cod:true,vodafone_cash:false,instapay:false,...configured};
   [...sel.options].forEach(o=>{o.hidden=pm[o.value]===false;o.disabled=pm[o.value]===false;});
   if(sel.options[sel.selectedIndex] && sel.options[sel.selectedIndex].hidden){
     const first=[...sel.options].find(o=>!o.hidden);
@@ -1304,6 +1304,11 @@ async function placeOrder(){
   btn.disabled = true;
   msg.className="notice";
   msg.textContent=t("placingOrder");
+
+  // Recalculate shipping immediately before submitting so the selected area is reflected in the order.
+  selectedShippingCity=city;
+  selectedShippingCost=shippingFor(city,subtotal());
+  refreshTotals();
 
   const payload={
     p_customer_name:name,
@@ -1391,7 +1396,7 @@ async function downloadInvoice(){
   };
   const rows=items.map(it=>`<tr><td>${esc(getInvoiceName(it))}</td><td>${esc(language==="ar"?(it.size||"-"):(localizedChoice(it.size)||"-"))}</td><td>${esc(language==="ar"?(it.color||"-"):(localizedChoice(it.color)||"-"))}</td><td>${Number(it.qty||1)}</td><td>${money(it.price||0)}</td><td>${money(it.line_total||0)}</td></tr>`).join("");
   const el=document.createElement("div");
-  el.style.cssText="position:absolute;left:0;top:0;width:794px;min-height:1123px;background:#fff;color:#111;padding:36px;box-sizing:border-box;font-family:Arial,sans-serif;direction:"+(language==="ar"?"rtl":"ltr")+";z-index:-1;opacity:1;";
+  el.style.cssText="position:fixed;left:0;top:0;width:794px;min-height:1123px;background:#fff;color:#111;padding:36px;box-sizing:border-box;font-family:Arial,sans-serif;direction:"+(language==="ar"?"rtl":"ltr")+";z-index:2147483647;opacity:1;visibility:visible;display:block;";
   el.innerHTML=`<div style="background:#fff;color:#111;padding:8px"><div style="display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #111;padding-bottom:18px;margin-bottom:22px"><div style="display:flex;align-items:center;gap:16px"><div><div style="font-size:34px;font-weight:900;letter-spacing:7px">VANTA</div><div style="font-size:13px;letter-spacing:3px;color:#666">MODERN UNISEX WEAR</div></div></div><div style="text-align:${language==='ar'?'left':'right'}"><div style="font-size:22px;font-weight:800">${t("invoice")}</div><div style="margin-top:6px">${esc(order.order_number||"")}</div><div style="margin-top:6px;color:#666">${new Date(order.created_at||Date.now()).toLocaleString(language==='ar'?'ar-EG':'en-US')}</div></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px;font-size:14px"><div><b>${t("name")}:</b> ${esc(order.customer_name||"")}</div><div><b>${t("phone")}:</b> ${esc(order.phone||"")}</div><div><b>WhatsApp:</b> ${esc(order.whatsapp||"")}</div><div><b>${t("city")}:</b> ${esc(localizedCity(order.city||""))}</div><div style="grid-column:1/-1"><b>${t("address")}:</b> ${esc(order.address||"")}</div></div><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr>${[t("product"),t("size"),t("color"),t("quantity"),t("price"),t("lineTotal")].map(x=>`<th style="padding:11px;background:#111;color:#fff;border:1px solid #111">${x}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table><div style="margin-top:26px;margin-left:auto;width:300px;font-size:15px;line-height:2"><div>${t("subtotal")}: <b>${money(order.subtotal||0)}</b></div><div>${t("discount")}: <b>${money(order.discount||0)}</b></div><div>${t("shipping")}: <b>${money(order.shipping_cost||0)}</b></div><div style="font-size:22px;border-top:2px solid #111;margin-top:8px;padding-top:8px">${t("total")}: <b>${money(order.total||0)}</b></div></div><div style="margin-top:55px;text-align:center;color:#777;font-size:12px">VANTA • Style has no gender.</div></div>`;
   document.body.appendChild(el);
   try{
@@ -1399,8 +1404,18 @@ async function downloadInvoice(){
     document.body.offsetHeight;
     await new Promise(r=>setTimeout(r,150));
     if(document.fonts&&document.fonts.ready)await document.fonts.ready;
-    if(typeof html2pdf==="function"){
-      await html2pdf().set({margin:[8,8,8,8],filename:"VANTA-"+String(order.order_number||"invoice").replace(/[^a-zA-Z0-9_-]/g,"-")+".pdf",image:{type:"jpeg",quality:0.98},html2canvas:{scale:2,useCORS:true,backgroundColor:"#ffffff",logging:false},jsPDF:{unit:"mm",format:"a4",orientation:"portrait"},pagebreak:{mode:["css","legacy"]}}).from(el).save();
+    let pdfFn=typeof html2pdf==="function"?html2pdf:null;
+    if(!pdfFn){
+      await new Promise(resolve=>{
+        const fallback=document.createElement("script");
+        fallback.src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js";
+        fallback.onload=resolve;fallback.onerror=resolve;document.head.appendChild(fallback);
+        setTimeout(resolve,5000);
+      });
+      pdfFn=typeof html2pdf==="function"?html2pdf:null;
+    }
+    if(pdfFn){
+      await pdfFn().set({margin:[8,8,8,8],filename:"VANTA-"+String(order.order_number||"invoice").replace(/[^a-zA-Z0-9_-]/g,"-")+".pdf",image:{type:"jpeg",quality:0.98},html2canvas:{scale:2,useCORS:true,backgroundColor:"#ffffff",logging:false,windowWidth:794},jsPDF:{unit:"mm",format:"a4",orientation:"portrait"},pagebreak:{mode:["css","legacy"]}}).from(el).save();
     }else{
       const st=document.createElement("style");st.id="vanta-print-style";st.textContent="@media print{body.vanta-printing>*:not(.vanta-invoice-print){display:none!important}.vanta-invoice-print{display:block!important;position:static!important;left:auto!important;top:auto!important;z-index:auto!important;opacity:1!important;width:100%!important;min-height:0!important;margin:0!important;box-shadow:none!important}}";document.head.appendChild(st);el.classList.add("vanta-invoice-print");document.body.classList.add("vanta-printing");window.addEventListener("afterprint",()=>{st.remove();document.body.classList.remove("vanta-printing");el.classList.remove("vanta-invoice-print");el.remove()},{once:true});window.print();return;
     }
