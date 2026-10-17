@@ -1268,9 +1268,9 @@ function updatePaymentOptions(){
   const pm={cod:enabled("cod",true),vodafone_cash:enabled("vodafone_cash",true),instapay:enabled("instapay",true)};
   // Keep all configured payment choices visible; only disable methods explicitly switched off.
   [...sel.options].forEach(o=>{const on=pm[o.value]!==false;o.hidden=!on;o.disabled=!on;});
-  const active=[...sel.options].filter(o=>!o.disabled);
-  if(!active.length){[...sel.options].forEach(o=>{o.hidden=false;o.disabled=false;});}
-  else if(sel.options[sel.selectedIndex]?.disabled){sel.value=active[0].value;}
+  // Mobile browsers handle hidden select options inconsistently; remove methods switched off.
+  [...sel.options].forEach(o=>{if(pm[o.value]===false)o.remove();});
+  if(![...sel.options].some(o=>o.value===sel.value)){sel.value=sel.options[0]?.value||"cod";}
   togglePaymentReference();
 }
 
