@@ -1399,7 +1399,7 @@ async function createNotification(){ return true; }
 async function downloadInvoice(){
   const order=pendingOrderInvoice||lastOrder;
   if(!order)return;
-  const printWin=window.open("","_blank","width=900,height=700");
+  const printWin=null;
   let items=order.items;
   if(typeof items==="string")try{items=JSON.parse(items)}catch(e){}
   items=Array.isArray(items)?items:[];
