@@ -1423,7 +1423,7 @@ async function downloadInvoice(){
       });
       pdfFn=typeof html2pdf==="function"?html2pdf:null;
     }
-    if(pdfFn){
+    if(false && pdfFn){
       await pdfFn().set({margin:[8,8,8,8],filename:"VANTA-"+String(order.order_number||"invoice").replace(/[^a-zA-Z0-9_-]/g,"-")+".pdf",image:{type:"jpeg",quality:0.98},html2canvas:{scale:2,useCORS:true,backgroundColor:"#ffffff",logging:false,windowWidth:794},jsPDF:{unit:"mm",format:"a4",orientation:"portrait"},pagebreak:{mode:["css","legacy"]}}).from(el).save();
     }else{
       const st=document.createElement("style");st.id="vanta-print-style";st.textContent="@media print{body.vanta-printing>*:not(.vanta-invoice-print){display:none!important}.vanta-invoice-print{display:block!important;position:static!important;left:auto!important;top:auto!important;z-index:auto!important;opacity:1!important;width:100%!important;min-height:0!important;margin:0!important;box-shadow:none!important}}";document.head.appendChild(st);el.classList.add("vanta-invoice-print");document.body.classList.add("vanta-printing");window.addEventListener("afterprint",()=>{st.remove();document.body.classList.remove("vanta-printing");el.classList.remove("vanta-invoice-print");el.remove()},{once:true});window.print();return;
