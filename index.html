@@ -988,10 +988,16 @@ function couponDiscount(){
   return 0;
 }
 
+function shippingFor(city, sub=subtotal()){
+  const freeMin = Number(window.VANTA_FREE_SHIPPING_MIN ?? 2500);
+  if(sub >= freeMin) return 0;
+  if(!city) return 0;
+  const rate = Number(SHIPPING_RATES[city]);
+  return Number.isFinite(rate) && rate >= 0 ? rate : 50;
+}
 function total(){
   const sub = subtotal();
-  const freeMin = Number(window.VANTA_FREE_SHIPPING_MIN || 2500);
-  selectedShippingCost = sub >= freeMin ? 0 : (selectedShippingCity ? Number(SHIPPING_RATES[selectedShippingCity] ?? 50) : 0);
+  selectedShippingCost = shippingFor(selectedShippingCity, sub);
   return Math.max(0, sub - couponDiscount() + selectedShippingCost);
 }
 
@@ -1078,8 +1084,7 @@ ${cityOptions()}
 
 function updateShipping(city){
   selectedShippingCity = city || "";
-  const freeMin = Number(window.VANTA_FREE_SHIPPING_MIN || 2500);
-  selectedShippingCost = subtotal() >= freeMin ? 0 : (city ? Number(SHIPPING_RATES[city] ?? 50) : 0);
+  selectedShippingCost = shippingFor(selectedShippingCity, subtotal());
   refreshTotals();
 }
 
@@ -1205,8 +1210,7 @@ function refreshTotals(){
   const d=document.getElementById("discount");
   const sh=document.getElementById("shippingRate");
   const tt=document.getElementById("total");
-  const freeMin = Number(window.VANTA_FREE_SHIPPING_MIN || 2500);
-  const shipping = subtotal() >= freeMin ? 0 : (selectedShippingCity ? Number(SHIPPING_RATES[selectedShippingCity] ?? 50) : 0);
+  const shipping = shippingFor(selectedShippingCity, subtotal());
   selectedShippingCost = shipping;
   if(s)s.textContent=money(subtotal());
   if(d)d.textContent="-"+money(couponDiscount());
@@ -1395,10 +1399,8 @@ async function downloadInvoice(){
     const imgs=[...el.querySelectorAll("img")];
     await Promise.all(imgs.map(img=>img.complete?Promise.resolve():new Promise(r=>{img.onload=img.onerror=r})));
     if(typeof html2pdf!=="function")throw new Error("PDF library failed to load");
-    const worker=html2pdf().set({margin:0,filename:`VANTA-${order.order_number||"order"}.pdf`,image:{type:"jpeg",quality:.98},html2canvas:{scale:2,useCORS:true,allowTaint:false,backgroundColor:"#ffffff",logging:false,windowWidth:794,windowHeight:1123,scrollX:0,scrollY:0},jsPDF:{unit:"mm",format:"a4",orientation:"portrait"}}).from(el);
-    await worker.toCanvas();
-    await worker.toPdf().save();
-  }catch(e){console.error("PDF",e);try{const st=document.createElement("style");st.id="vanta-print-style";st.textContent="@media print{body.vanta-printing>*:not(.vanta-invoice-print){display:none!important}.vanta-invoice-print{display:block!important;position:static!important;left:auto!important;top:auto!important;z-index:auto!important;opacity:1!important;width:100%!important;min-height:0!important;margin:0!important;box-shadow:none!important}}";document.head.appendChild(st);el.classList.add("vanta-invoice-print");document.body.classList.add("vanta-printing");window.print();st.remove();document.body.classList.remove("vanta-printing");el.classList.remove("vanta-invoice-print")}catch(printError){alert(language==="ar"?"تعذر إنشاء PDF. جرّب السماح بالتنزيل أو افتح الصفحة في Chrome.":"PDF failed. Allow downloads or open this page in Chrome.")}}finally{el.remove()}
+    await html2pdf().set({margin:0,filename:`VANTA-${order.order_number||"order"}.pdf`,image:{type:"jpeg",quality:.98},html2canvas:{scale:2,useCORS:true,allowTaint:false,backgroundColor:"#ffffff",logging:false,windowWidth:794,windowHeight:1123,scrollX:0,scrollY:0},jsPDF:{unit:"mm",format:"a4",orientation:"portrait"}}).from(el).save();
+  }catch(e){console.error("PDF",e);try{const st=document.createElement("style");st.id="vanta-print-style";st.textContent="@media print{body.vanta-printing>*:not(.vanta-invoice-print){display:none!important}.vanta-invoice-print{display:block!important;position:static!important;left:auto!important;top:auto!important;z-index:auto!important;opacity:1!important;width:100%!important;min-height:0!important;margin:0!important;box-shadow:none!important}}";document.head.appendChild(st);el.classList.add("vanta-invoice-print");document.body.classList.add("vanta-printing");window.addEventListener("afterprint",()=>{st.remove();document.body.classList.remove("vanta-printing");el.classList.remove("vanta-invoice-print");el.remove()},{once:true});window.print();setTimeout(()=>{if(el.isConnected){st.remove();document.body.classList.remove("vanta-printing");el.classList.remove("vanta-invoice-print");el.remove()}},60000)}catch(printError){el.remove();alert(language==="ar"?"تعذر إنشاء PDF. افتح الموقع في Chrome واسمح بالتنزيل.":"PDF failed. Open in Chrome and allow downloads.")}}finally{if(el.isConnected&&!document.body.classList.contains("vanta-printing"))el.remove()}
 }
 
 function showCustomPrint(){
