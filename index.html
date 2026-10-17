@@ -1214,7 +1214,7 @@ function refreshTotals(){
   selectedShippingCost = shipping;
   if(s)s.textContent=money(subtotal());
   if(d)d.textContent="-"+money(couponDiscount());
-  if(sh)sh.textContent=subtotal() >= freeMin ? freeShippingText() : money(shipping);
+  if(sh)sh.textContent=subtotal() >= Number(window.VANTA_FREE_SHIPPING_MIN ?? 2500) ? freeShippingText() : money(shipping);
   if(tt)tt.textContent=money(Math.max(0,subtotal()-couponDiscount()+shipping));
 }
 
