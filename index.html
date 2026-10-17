@@ -1121,6 +1121,9 @@ ${i.color?esc(t("colorLabel"))+": "+esc(localizedChoice(i.color)):""}
 function openCartPage(){
   history.pushState(null,"",location.pathname+location.search+"#cart");
   render();
+  // The payment selector is created by render(); initialize it after it exists.
+  updatePaymentOptions();
+  if(typeof refreshTotals==="function")refreshTotals();
   scrollTo(0,0);
 }
 
