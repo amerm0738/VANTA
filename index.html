@@ -1235,10 +1235,17 @@ function updatePaymentOptions(){
   const sel=document.getElementById("paymentMethod");
   if(!sel)return;
   const configured=window.VANTA_PAYMENT_METHODS||{};
-  const pm={cod:true,vodafone_cash:false,instapay:false,...configured};
-  [...sel.options].forEach(o=>{o.hidden=pm[o.value]===false;o.disabled=pm[o.value]===false;});
-  if(sel.options[sel.selectedIndex] && sel.options[sel.selectedIndex].hidden){
-    const first=[...sel.options].find(o=>!o.hidden);
+  const enabled=(v,fallback=false)=>v===true||v===1||String(v).toLowerCase()==='true'||String(v)==='1'?true:(v===false||v===0||String(v).toLowerCase()==='false'||String(v)==='0'?false:fallback);
+  const pm={cod:true,vodafone_cash:false,instapay:false};
+  Object.keys(pm).forEach(k=>pm[k]=enabled(configured[k],pm[k]));
+  [...sel.options].forEach(o=>{
+    const isEnabled=enabled(configured[o.value],o.value==='cod'?true:false);
+    o.disabled=!isEnabled;
+    o.hidden=!isEnabled;
+    o.style.display=isEnabled?'':'none';
+  });
+  if(!sel.options[sel.selectedIndex]||sel.options[sel.selectedIndex].disabled){
+    const first=[...sel.options].find(o=>!o.disabled);
     if(first)sel.value=first.value;
   }
   togglePaymentReference();
