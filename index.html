@@ -1656,5 +1656,5 @@ window.addEventListener("DOMContentLoaded",async()=>{
   updatePaymentOptions();
 });
 </script>
-</body>
+<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("/sw.js").catch(e=>console.warn("PWA worker",e)));}</script></body>
 </html>
