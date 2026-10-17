@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#070707"><link rel="manifest" href="/manifest.json">
 <title>VANTA | Modern Unisex Wear</title>
 <style>
 *{box-sizing:border-box}
@@ -483,11 +483,11 @@ function cityOptions(selected="",placeholder=true){
 function freeShippingText(){ return t("freeShipping"); }
 async function loadStoreSettings(){
   try{
-    const r=await fetch(SUPABASE_URL+"/rest/v1/site_settings?key=in.(free_shipping_min,shipping_rates,whatsapp,payment_methods,deposit_numbers,store_announcement,store_tagline,store_collection_title,instagram_url,support_email,return_policy)&select=key,value",{headers:HEADERS});
+    const r=await fetch(SUPABASE_URL+"/rest/v1/site_settings?key=in.(free_shipping_min,shipping_rates,whatsapp,payment_methods,deposit_numbers,product_print_settings,bundle_enabled,store_announcement,store_tagline,store_collection_title,instagram_url,support_email,return_policy)&select=key,value",{headers:HEADERS});
     if(!r.ok)return;
     const rows=await r.json();
     window.VANTA_PAYMENT_METHODS={cod:true,vodafone_cash:true,instapay:true};
-    window.VANTA_DEPOSIT_NUMBERS={};
+    window.VANTA_DEPOSIT_NUMBERS={};window.VANTA_PRINT_SETTINGS={};window.VANTA_BUNDLE_ENABLED=false;
     for(const row of rows){
       if(row.key==="free_shipping_min") window.VANTA_FREE_SHIPPING_MIN=Number(row.value)||2500;
       if(row.key==="shipping_rates" && row.value && typeof row.value==="object" && Object.keys(row.value).length){
@@ -497,6 +497,8 @@ async function loadStoreSettings(){
       if(row.key==="whatsapp") window.VANTA_WHATSAPP=String(row.value||"").replace(/\D/g,"");
       if(row.key==="payment_methods" && row.value && typeof row.value==="object") window.VANTA_PAYMENT_METHODS={...window.VANTA_PAYMENT_METHODS,...row.value};
       if(row.key==="deposit_numbers" && row.value && typeof row.value==="object") window.VANTA_DEPOSIT_NUMBERS=row.value;
+      if(row.key==="product_print_settings" && row.value && typeof row.value==="object") window.VANTA_PRINT_SETTINGS=row.value;
+      if(row.key==="bundle_enabled") window.VANTA_BUNDLE_ENABLED=row.value===true || String(row.value).toLowerCase()==="true";
       if(row.key==="store_announcement") window.VANTA_STORE_ANNOUNCEMENT=String(row.value||"");
       if(row.key==="store_tagline") window.VANTA_STORE_TAGLINE=String(row.value||"MODERN UNISEX WEAR");
       if(row.key==="store_collection_title") window.VANTA_STORE_COLLECTION=String(row.value||"FALL / WINTER 2026");
@@ -686,7 +688,8 @@ function productHTML(p){
   const sizes=getSizes(p);
   const colors=getColors(p);
   const d=discount(p);
-  const canOfferPrint=String(p.category||"").toLowerCase().includes("hoodie")||String(p.category||"").toLowerCase()==="plain tees"||/سادة|plain/i.test(String(p.name_ar||"")+" "+String(p.name_en||p.name||""));
+  const printSetting=(window.VANTA_PRINT_SETTINGS||{})[String(p.id)];
+  const canOfferPrint=printSetting===true?true:printSetting===false?false:(String(p.category||"").toLowerCase().includes("hoodie")||String(p.category||"").toLowerCase()==="plain tees"||/سادة|plain/i.test(String(p.name_ar||"")+" "+String(p.name_en||p.name||"")));
   const description=language==="ar" ? (p?.description_ar||p?.description||p?.details_ar||p?.details||"") : (p?.description_en||p?.description||p?.details_en||p?.details||"");
 
   return `
@@ -1421,7 +1424,7 @@ async function downloadInvoice(){
   el.style.cssText="position:fixed;left:0;top:0;width:794px;min-height:1123px;background:#fff;color:#111;padding:36px;box-sizing:border-box;font-family:Arial,sans-serif;direction:"+(language==="ar"?"rtl":"ltr")+";z-index:2147483647;opacity:1;visibility:visible;display:block;";
   el.innerHTML=`<div style="background:#fff;color:#111;padding:8px"><div style="display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #111;padding-bottom:18px;margin-bottom:22px"><div style="display:flex;align-items:center;gap:16px"><div><div style="font-size:34px;font-weight:900;letter-spacing:7px">VANTA</div><div style="font-size:13px;letter-spacing:3px;color:#666">MODERN UNISEX WEAR</div></div></div><div style="text-align:${language==='ar'?'left':'right'}"><div style="font-size:22px;font-weight:800">${t("invoice")}</div><div style="margin-top:6px">${esc(order.order_number||"")}</div><div style="margin-top:6px;color:#666">${new Date(order.created_at||Date.now()).toLocaleString(language==='ar'?'ar-EG':'en-US')}</div></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px;font-size:14px"><div><b>${t("name")}:</b> ${esc(order.customer_name||"")}</div><div><b>${t("phone")}:</b> ${esc(order.phone||"")}</div><div><b>WhatsApp:</b> ${esc(order.whatsapp||"")}</div><div><b>${t("city")}:</b> ${esc(localizedCity(order.city||""))}</div><div style="grid-column:1/-1"><b>${t("address")}:</b> ${esc(order.address||"")}</div></div><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr>${[t("product"),t("size"),t("color"),t("quantity"),t("price"),t("lineTotal")].map(x=>`<th style="padding:11px;background:#111;color:#fff;border:1px solid #111">${x}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table><div style="margin-top:26px;margin-left:auto;width:300px;font-size:15px;line-height:2"><div>${t("subtotal")}: <b>${money(order.subtotal||0)}</b></div><div>${t("discount")}: <b>${money(order.discount||0)}</b></div><div>${t("shipping")}: <b>${money(order.shipping_cost||0)}</b></div><div style="font-size:22px;border-top:2px solid #111;margin-top:8px;padding-top:8px">${t("total")}: <b>${money(order.total||0)}</b></div></div><div style="margin-top:55px;text-align:center;color:#777;font-size:12px">VANTA • Style has no gender.</div></div>`;
   if(false && printWin){
-    const html='<!doctype html><html lang="'+(language==='ar'?'ar':'en')+'" dir="'+(language==='ar'?'rtl':'ltr')+'"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>VANTA Invoice</title><style>*{box-sizing:border-box}body{font-family:Arial,Tahoma,sans-serif;margin:0;padding:18px;color:#111;background:#fff}.invoice{width:100%;max-width:900px;margin:auto;background:#fff;color:#111}.invoice table{width:100%;border-collapse:collapse}.invoice th,.invoice td{border:1px solid #ccc;padding:9px;text-align:start}.invoice th{background:#111!important;color:#fff!important;print-color-adjust:exact;-webkit-print-color-adjust:exact}@media print{body{padding:0}.no-print{display:none!important}}</style></head><body><div class="no-print" style="max-width:900px;margin:0 auto 14px;display:flex;gap:8px"><button onclick="window.print()">طباعة / حفظ PDF</button><button onclick="window.close()">إغلاق</button></div><div class="invoice">'+el.innerHTML+'</div></body></html>';
+    const html='<!doctype html><html lang="'+(language==='ar'?'ar':'en')+'" dir="'+(language==='ar'?'rtl':'ltr')+'"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>VANTA Invoice</title><style>*{box-sizing:border-box}body{font-family:Arial,Tahoma,sans-serif;margin:0;padding:18px;color:#111;background:#fff}.invoice{width:100%;max-width:900px;margin:auto;background:#fff;color:#111}.invoice table{width:100%;border-collapse:collapse}.invoice th,.invoice td{border:1px solid #ccc;padding:9px;text-align:start}.invoice th{background:#111!important;color:#fff!important;print-color-adjust:exact;-webkit-print-color-adjust:exact}@media print{body{padding:0}.no-print{display:none!important}}</style></head><body><div class="no-print" style="max-width:900px;margin:0 auto 14px;display:flex;gap:8px"><button onclick="window.print()">طباعة / حفظ PDF</button><button onclick="window.close()">إغلاق</button></div><div class="invoice">'+el.innerHTML+'</div><script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("/sw.js").catch(e=>console.warn("PWA worker",e)));}</script></body></html>';
     printWin.document.open();printWin.document.write(html);printWin.document.close();
     el.remove();
     setTimeout(()=>{try{printWin.focus()}catch(e){}},350);
