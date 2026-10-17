@@ -677,6 +677,16 @@ function openProduct(id){
   scrollTo(0,0);
 }
 
+function bundleHTML(p){
+ if(!window.VANTA_BUNDLE_ENABLED)return '';
+ const cat=String(p.category||'').toLowerCase(),h=cat.includes('hoodie')||/هودي|هوديز/i.test(String(p.name_ar||'')),pt=cat.includes('pant')||/بنطلون|بناطيل/i.test(String(p.name_ar||''));
+ if(!h&&!pt)return '';
+ const matches=products.filter(x=>String(x.id)!==String(p.id)&&((h?(String(x.category||'').toLowerCase().includes('pant')||/بنطلون|بناطيل/i.test(String(x.name_ar||''))):(String(x.category||'').toLowerCase().includes('hoodie')||/هودي|هوديز/i.test(String(x.name_ar||''))))&&totalProductStock(x)>0);
+ if(!matches.length)return '';
+ return '<div class="notice" style="margin:18px 0"><b>'+(language==='ar'?'اختار المنتج لوحده أو كطقم':'Choose single item or set')+'</b><p class="mutedSmall">'+(language==='ar'?'تقدر تشتري القطعة دي لوحدها أو تضيف الهودي والبنطلون معًا. إجمالي الطقم مجموع السعرين.':'Buy this item alone or add both hoodie and pants. Set total is both prices.')+'</p><label class="optionTitle">'+(language==='ar'?'القطعة المكملة':'Matching item')+'</label><select id="bundleProduct" onchange="renderBundleOptions()">'+matches.map(x=>'<option value="'+esc(x.id)+'">'+esc(localizedName(x))+' — '+money(salePrice(x))+'</option>').join('')+'</select><div class="grid2"><div><label>المقاس</label><select id="bundleSize"></select></div><div><label>اللون</label><select id="bundleColor"></select></div></div><button class="wide" onclick="addBundleToCart()">'+(language==='ar'?'إضافة القطعتين للسلة':'Add both items')+'</button></div>';
+}
+function renderBundleOptions(){const p=products.find(x=>String(x.id)===String(document.getElementById('bundleProduct')?.value)),s=document.getElementById('bundleSize'),c=document.getElementById('bundleColor');if(!p||!s||!c)return;const sizes=getSizes(p),colors=getColors(p);s.innerHTML=sizes.length?sizes.map(v=>'<option value="'+esc(v)+'" '+(availableSize(p,v)?'':'disabled')+'>'+esc(v)+'</option>').join(''):'<option value="">—</option>';c.innerHTML=colors.length?colors.map(v=>'<option value="'+esc(v)+'" '+(availableColor(p,v)?'':'disabled')+'>'+esc(v)+'</option>').join(''):'<option value="">—</option>';s.value=sizes.find(v=>availableSize(p,v))||'';c.value=colors.find(v=>availableColor(p,v))||'';}
+function addBundleToCart(){const p=products.find(x=>String(x.id)===String(document.getElementById('bundleProduct')?.value));if(!p)return;const size=document.getElementById('bundleSize')?.value||'',color=document.getElementById('bundleColor')?.value||'';if(getSizes(selectedProduct).length&&!selectedSize){showChoiceError('sizeError',t('selectSizeError'));return}if(getColors(selectedProduct).length&&!selectedColor){showChoiceError('colorError',t('selectColorError'));return}if(getSizes(p).length&&!size||getColors(p).length&&!color){alert(language==='ar'?'اختار مقاس ولون القطعة المكملة':'Choose the matching item size and color');return}if(variantStock(selectedProduct,selectedSize,selectedColor)<1||variantStock(p,size,color)<1){alert(language==='ar'?'المخزون غير كافٍ للمقاس واللون المختار':'Selected variant is out of stock');return}addToCart(selectedProduct,1,selectedSize,selectedColor);addToCart(p,1,size,color);openCartPage();}
 function productHTML(p){
   selectedProduct=p;
   selectedSize="";
@@ -749,6 +759,7 @@ ${esc(c)}${!availableColor(p,c)?` <span class="soldBadge">(${t("out")})</span>`:
 </button>`).join("")}
 </div><div id="colorError" class="choiceError"></div>`:""}
 
+${bundleHTML(p)}
 ${canOfferPrint?`<div class="notice" style="margin:18px 0"><b>${language==="ar"?"تحب تضيف طباعة على المنتج؟":"Want custom printing on this item?"}</b><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button class="optionBtn selected" type="button">${language==="ar"?"لا، خليه سادة":"No, keep it plain"}</button><button class="optionBtn" type="button" onclick="showCustomPrintForProduct()">${language==="ar"?"أيوه، عايز طباعة ✍️":"Yes, add printing ✍️"}</button></div><small>${language==="ar"?"اختيار الطباعة يفتح طلب الطباعة لتحديد التصميم والملفات.":"Printing opens a custom request so you can provide the design and files."}</small></div>`:""}
 <div class="productQty">
 <b>${t("quantity")}</b>
