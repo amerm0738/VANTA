@@ -610,7 +610,7 @@ function bundleBuilderHTML(){
  const pants=products.filter(p=>p.active!==false&&isPantsProduct(p)&&totalProductStock(p)>0);
  if(!hoodies.length||!pants.length)return "";
  const h=hoodies[0],pt=pants[0];
- return `<section class="bundleBuilder" id="bundleBuilder"><h2>🧥 ${language==="ar"?"اختار الطقم":"Build your set"}</h2><p>${language==="ar"?"اختار الهودي والبنطلون والمقاس واللون لكل قطعة، أو تقدر تشتري كل قطعة لوحدها من المنتجات.":"Choose a hoodie and pants, including size and color for each. You can still buy each item separately below."}</p><div class="bundleGrid"><div class="bundleField"><label>${language==="ar"?"الهودي":"Hoodie"}</label><select id="bundleHoodie" onchange="renderBundleBuilder(this.value,document.getElementById('bundlePants')?.value)">${bundleProductOptions(hoodies,h.id)}</select><div id="bundleHoodieVariants">${bundleVariantFields(h,"H")}</div></div><div class="bundleField"><label>${language==="ar"?"البنطلون":"Pants"}</label><select id="bundlePants" onchange="renderBundleBuilder(document.getElementById('bundleHoodie')?.value,this.value)">${bundleProductOptions(pants,pt.id)}</select><div id="bundlePantsVariants">${bundleVariantFields(pt,"P")}</div></div></div><div class="bundlePrice">${language==="ar"?"إجمالي الطقم: ":"Set total: "}<span id="bundleTotal">${money(salePrice(h)+salePrice(pt))}</span></div><button class="bundleButton" onclick="addBundleToCart()">${language==="ar"?"أضف الطقم للسلة":"Add set to cart"}</button><div id="bundleMsg" style="margin-top:10px"></div></section>`;
+ return `<section class="bundleBuilder" id="bundleBuilder"><h2>🧥 ${language==="ar"?"اختار الطقم":"Build your set"}</h2><p>${language==="ar"?"اختار الهودي والبنطلون والمقاس واللون لكل قطعة، أو تقدر تشتري كل قطعة لوحدها من المنتجات.":"Choose a hoodie and pants, including size and color for each. You can still buy each item separately below."}</p><div class="bundleGrid"><div class="bundleField"><label>${language==="ar"?"الهودي":"Hoodie"}</label><select id="bundleHoodie" onchange="renderBundleBuilder(this.value,document.getElementById('bundlePants')?.value)">${bundleProductOptions(hoodies,h.id)}</select><div id="bundleHoodieVariants">${bundleVariantFields(h,"H")}</div></div><div class="bundleField"><label>${language==="ar"?"البنطلون":"Pants"}</label><select id="bundlePants" onchange="renderBundleBuilder(document.getElementById('bundleHoodie')?.value,this.value)">${bundleProductOptions(pants,pt.id)}</select><div id="bundlePantsVariants">${bundleVariantFields(pt,"P")}</div></div></div><div class="bundlePrice">${language==="ar"?"سعر الهودي: ":"Hoodie: "}<b>${money(salePrice(h))}</b> · ${language==="ar"?"سعر البنطلون: ":"Pants: "}<b>${money(salePrice(pt))}</b><br>${language==="ar"?"إجمالي الطقم: ":"Set total: "}<span id="bundleTotal">${money(Number(productOptionSettings(selectedProduct||h).setPrice)>0?Number(productOptionSettings(selectedProduct||h).setPrice):salePrice(h)+salePrice(pt))}</span></div><button class="bundleButton" onclick="addBundleToCart()">${language==="ar"?"أضف الطقم للسلة":"Add set to cart"}</button><div id="bundleMsg" style="margin-top:10px"></div></section>`;
 }
 function bundleVariantFields(p,prefix){
  const sizes=getSizes(p),colors=getColors(p);
@@ -636,7 +636,7 @@ function addBundleToCart(){
  if(!h||!pt)return;
  if((getSizes(h).length&&!hs)||(getColors(h).length&&!hc)||(getSizes(pt).length&&!ps)||(getColors(pt).length&&!pc)){m.textContent=language==="ar"?"اختار المقاس واللون لكل قطعة الأول.":"Choose the size and color for each item first.";m.className="notice err";return;}
  if(variantStock(h,hs,hc)<1||variantStock(pt,ps,pc)<1){m.textContent=language==="ar"?"المقاس أو اللون المختار غير متوفر.":"One of the selected variants is out of stock.";m.className="notice err";return;}
- addToCart(h,1,hs,hc);addToCart(pt,1,ps,pc);openCartPage();
+ const mode=window.VANTA_PRODUCT_BUY_MODE||"set";if(mode==="hoodie"){const item=isHoodieProduct(selectedProduct||{})?h:(isHoodieProduct(h)?h:null);if(item)addToCart(item,1,item===h?hs:ps,item===h?hc:pc);}else if(mode==="pants"){addToCart(pt,1,ps,pc);}else{if(!addToCart(h,1,hs,hc)||!addToCart(pt,1,ps,pc))return;const cfg=productOptionSettings(selectedProduct||h),setPrice=Number(cfg.setPrice||0);if(setPrice>0){const hi=cart.find(i=>String(i.product_id)===String(h.id)&&String(i.size||"")===String(hs||"")&&String(i.color||"")===String(hc||""));const pi=cart.find(i=>String(i.product_id)===String(pt.id)&&String(i.size||"")===String(ps||"")&&String(i.color||"")===String(pc||""));if(hi&&pi){const sum=salePrice(h)+salePrice(pt);hi.price=sum?Math.round(setPrice*salePrice(h)/sum):Math.round(setPrice/2);pi.price=Math.max(0,setPrice-hi.price);saveCart();}}}openCartPage();
 }
 function productCard(p){
   const imgs=getImages(p);
@@ -807,9 +807,10 @@ ${productAllowsPrint(p)?`
 
 ${(productAllowsBundle(p)&&(isHoodieProduct(p)||isPantsProduct(p)))?`
 <div class="productBundleChoice"><h3>${language==="ar"?"هتشتري القطعة دي لوحدها ولا كطقم؟":"Buy this item alone or as a set?"}</h3>
-<div class="options"><label class="optionBtn"><input type="radio" name="productBuyMode" value="single" checked onchange="toggleProductBundle(false)"> ${language==="ar"?"القطعة دي لوحدها":"This item only"}</label>
-<label class="optionBtn"><input type="radio" name="productBuyMode" value="set" onchange="toggleProductBundle(true)"> ${language==="ar"?"طقم هودي + بنطلون":"Hoodie + pants set"}</label></div>
-<div id="productBundleWrap" hidden style="margin-top:12px">${bundleBuilderHTML()}</div></div>`:""}
+<div class="options"><label class="optionBtn"><input type="radio" name="productBuyMode" value="hoodie" ${isHoodieProduct(p)?"checked":""} onchange="toggleProductBundle('hoodie')"> ${language==="ar"?"الهودي فقط":"Hoodie only"}</label>
+<label class="optionBtn"><input type="radio" name="productBuyMode" value="pants" ${isPantsProduct(p)?"checked":""} onchange="toggleProductBundle('pants')"> ${language==="ar"?"البنطلون فقط":"Pants only"}</label>
+<label class="optionBtn"><input type="radio" name="productBuyMode" value="set" ${isHoodieProduct(p)?"":"checked"} onchange="toggleProductBundle('set')"> ${language==="ar"?"الهودي والبنطلون معًا":"Hoodie + pants set"}</label></div>
+<div id="productBundleWrap" style="margin-top:12px">${bundleBuilderHTML()}</div></div>`:""}
 
 ${sizes.length?`
 <h3 class="optionTitle">${t("size")}</h3>
