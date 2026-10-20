@@ -503,6 +503,9 @@ async function loadStoreSettings(){
     const tagline=document.getElementById("storeTaglineText");if(tagline&&window.VANTA_STORE_TAGLINE)tagline.textContent=window.VANTA_STORE_TAGLINE;
     const collection=document.getElementById("storeCollectionText");if(collection&&window.VANTA_STORE_COLLECTION)collection.textContent=window.VANTA_STORE_COLLECTION;
     const ret=document.getElementById("returnPolicyText");if(ret&&window.VANTA_RETURN_POLICY)ret.textContent=window.VANTA_RETURN_POLICY;
+    // Settings load asynchronously; refresh an already-open checkout when the real rates/payment flags arrive.
+    if(typeof updatePaymentOptions==="function") updatePaymentOptions();
+    if(typeof refreshTotals==="function") refreshTotals();
     const email=document.getElementById("supportEmailLink");if(email&&window.VANTA_SUPPORT_EMAIL){email.href="mailto:"+window.VANTA_SUPPORT_EMAIL;email.textContent=window.VANTA_SUPPORT_EMAIL;}
     const insta=document.getElementById("instagramLink");if(insta&&window.VANTA_INSTAGRAM_URL){insta.href=window.VANTA_INSTAGRAM_URL;insta.textContent="Instagram ↗";}
     const waEl=document.getElementById("whatsappFloat");
@@ -1433,7 +1436,7 @@ async function downloadInvoice(){
       });
       pdfFn=typeof html2pdf==="function"?html2pdf:null;
     }
-    if(false && pdfFn){
+    if(pdfFn){
       await pdfFn().set({margin:[8,8,8,8],filename:"VANTA-"+String(order.order_number||"invoice").replace(/[^a-zA-Z0-9_-]/g,"-")+".pdf",image:{type:"jpeg",quality:0.98},html2canvas:{scale:2,useCORS:true,backgroundColor:"#ffffff",logging:false,windowWidth:794},jsPDF:{unit:"mm",format:"a4",orientation:"portrait"},pagebreak:{mode:["css","legacy"]}}).from(el).save();
     }else{
       const st=document.createElement("style");st.id="vanta-print-style";st.textContent="@media print{body.vanta-printing>*:not(.vanta-invoice-print){display:none!important}.vanta-invoice-print{display:block!important;position:static!important;left:auto!important;top:auto!important;z-index:auto!important;opacity:1!important;width:100%!important;min-height:0!important;margin:0!important;box-shadow:none!important}}";document.head.appendChild(st);el.classList.add("vanta-invoice-print");document.body.classList.add("vanta-printing");window.addEventListener("afterprint",()=>{st.remove();document.body.classList.remove("vanta-printing");el.classList.remove("vanta-invoice-print");el.remove()},{once:true});window.print();return;
