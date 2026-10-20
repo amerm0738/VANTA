@@ -582,11 +582,11 @@ function printCardAction(p){
  return `<button class="add" data-product="${esc(p.id)}" style="margin-top:8px;background:#eee;color:#111" onclick="event.stopPropagation();showCustomPrint(this.dataset.product)">🖨️ ${language==="ar"?"اطبع على القطعة السادة":"Custom print this item"}</button>`;
 }
 function isPlainProduct(p){return /plain|ساده|سادة|basic|blank/i.test([p?.category,p?.name,p?.name_ar,p?.name_en].filter(Boolean).join(" "));}
-function productOptionSettings(p){const settings=window.VANTA_PRODUCT_PRINT_SETTINGS||{},v=settings[String(p?.id??"")];if(v&&typeof v==="object")return {print:v.print===true,bundle:v.bundle===true,setPrice:Number(v.setPrice||0)};if(typeof v==="boolean")return {print:v,bundle:false,setPrice:0};return {print:false,bundle:false,setPrice:0};}
+function productOptionSettings(p){const settings=window.VANTA_PRODUCT_PRINT_SETTINGS||{},v=settings[String(p?.id??"")];if(v&&typeof v==="object")return {print:v.print===true,bundle:v.bundle===true,setPrice:Number(v.setPrice||0),setStock:Number(v.setStock||0)};if(typeof v==="boolean")return {print:v,bundle:false,setPrice:0};return {print:false,bundle:false,setPrice:0};}
 function productAllowsPrint(p){return productOptionSettings(p).print;}
 function productAllowsBundle(p){return productOptionSettings(p).bundle&&window.VANTA_BUNDLE_ENABLED===true;}
 function chooseNoPrint(){const msg=document.getElementById("printChoiceMsg");if(msg)msg.textContent=language==="ar"?"تمام، هتشتري المنتج بدون طباعة.":"You’ll buy this item without printing.";}
-function toggleProductBundle(mode){const wrap=document.getElementById("productBundleWrap");if(!wrap)return;wrap.hidden=false;window.VANTA_PRODUCT_BUY_MODE=mode;if(selectedProduct){renderBundleBuilder(isHoodieProduct(selectedProduct)?selectedProduct.id:undefined,isPantsProduct(selectedProduct)?selectedProduct.id:undefined);const title=wrap.querySelector("h2");if(title)title.textContent=mode==="hoodie"?(language==="ar"?"اختيار الهودي":"Choose hoodie"):mode==="pants"?(language==="ar"?"اختيار البنطلون":"Choose pants"):(language==="ar"?"اختار الطقم":"Build your set");}}
+function toggleProductBundle(mode){window.VANTA_PRODUCT_BUY_MODE=mode;const wrap=document.getElementById("productBundleWrap");if(wrap)wrap.hidden=mode!=="set";if(mode==="set"&&wrap)renderBundleBuilder(isHoodieProduct(selectedProduct)?selectedProduct.id:undefined,isPantsProduct(selectedProduct)?selectedProduct.id:undefined);}
 function toggleCartBundle(){const wrap=document.getElementById("cartBundleWrap");if(!wrap)return;wrap.hidden=!wrap.hidden;if(!wrap.hidden)renderBundleBuilder();}
 function cartBundleHTML(){if(window.VANTA_BUNDLE_ENABLED!==true||!cart.some(i=>{const p=products.find(x=>String(x.id)===String(i.product_id));return p&&productAllowsBundle(p)&&(isHoodieProduct(p)||isPantsProduct(p));}))return "";const builder=bundleBuilderHTML();if(!builder)return "";return `<div class="cartBundleChoice"><button type="button" class="dark" onclick="toggleCartBundle()">🧥 ${language==="ar"?"اختيار هودي أو بنطلون أو طقم من هنا":"Choose hoodie, pants, or a set here"}</button><div id="cartBundleWrap" hidden style="margin-top:12px">${builder}</div></div>`;}
 function openBundleFromCard(productId){
@@ -634,10 +634,16 @@ function addBundleToCart(){
  const h=products.find(p=>String(p.id)===String(document.getElementById("bundleHoodie")?.value));
  const pt=products.find(p=>String(p.id)===String(document.getElementById("bundlePants")?.value));
  const hs=document.getElementById("bundleHSize")?.value||"",hc=document.getElementById("bundleHColor")?.value||"",ps=document.getElementById("bundlePSize")?.value||"",pc=document.getElementById("bundlePColor")?.value||"",m=document.getElementById("bundleMsg");
- if(!h||!pt)return;
- if((getSizes(h).length&&!hs)||(getColors(h).length&&!hc)||(getSizes(pt).length&&!ps)||(getColors(pt).length&&!pc)){m.textContent=language==="ar"?"اختار المقاس واللون لكل قطعة الأول.":"Choose the size and color for each item first.";m.className="notice err";return;}
+ const mode=window.VANTA_PRODUCT_BUY_MODE||"set";if(!h||!pt||!m)return;
+ if(mode==="hoodie"){if((getSizes(h).length&&!hs)||(getColors(h).length&&!hc)||variantStock(h,hs,hc)<1){m.textContent=language==="ar"?"اختار مقاس ولون هودي متاحين.":"Choose an available hoodie size and color.";m.className="notice err";return;}addToCart(h,1,hs,hc);openCartPage();return;}
+ if(mode==="pants"){if((getSizes(pt).length&&!ps)||(getColors(pt).length&&!pc)||variantStock(pt,ps,pc)<1){m.textContent=language==="ar"?"اختار مقاس ولون بنطلون متاحين.":"Choose an available pants size and color.";m.className="notice err";return;}addToCart(pt,1,ps,pc);openCartPage();return;}
+ const cfg=productOptionSettings(selectedProduct||h),setPrice=Number(cfg.setPrice||0),setStock=Number(cfg.setStock||0);
+ if(setStock<1){m.textContent=language==="ar"?"الطقم الكامل غير متوفر في المخزون حاليًا.":"The full set is currently out of stock.";m.className="notice err";return;}
+ if((getSizes(h).length&&!hs)||(getColors(h).length&&!hc)||(getSizes(pt).length&&!ps)||(getColors(pt).length&&!pc)){m.textContent=language==="ar"?"اختار مقاس ولون كل قطعة في الطقم.":"Choose a size and color for each set item.";m.className="notice err";return;}
  if(variantStock(h,hs,hc)<1||variantStock(pt,ps,pc)<1){m.textContent=language==="ar"?"المقاس أو اللون المختار غير متوفر.":"One of the selected variants is out of stock.";m.className="notice err";return;}
- const mode=window.VANTA_PRODUCT_BUY_MODE||"set";if(mode==="hoodie"){const item=isHoodieProduct(selectedProduct||{})?h:(isHoodieProduct(h)?h:null);if(item)addToCart(item,1,item===h?hs:ps,item===h?hc:pc);}else if(mode==="pants"){addToCart(pt,1,ps,pc);}else{if(!addToCart(h,1,hs,hc)||!addToCart(pt,1,ps,pc))return;const cfg=productOptionSettings(selectedProduct||h),setPrice=Number(cfg.setPrice||0);if(setPrice>0){const hi=cart.find(i=>String(i.product_id)===String(h.id)&&String(i.size||"")===String(hs||"")&&String(i.color||"")===String(hc||""));const pi=cart.find(i=>String(i.product_id)===String(pt.id)&&String(i.size||"")===String(ps||"")&&String(i.color||"")===String(pc||""));if(hi&&pi){const sum=salePrice(h)+salePrice(pt);hi.price=sum?Math.round(setPrice*salePrice(h)/sum):Math.round(setPrice/2);pi.price=Math.max(0,setPrice-hi.price);saveCart();}}}openCartPage();
+ const item={cart_id:crypto.randomUUID(),product_id:h.id,name:(language==="ar"?"طقم كامل: ":"Full set: ")+localizedName(h)+" + "+localizedName(pt),price:setPrice>0?setPrice:salePrice(h)+salePrice(pt),image_url:getImages(h)[0]||"",stock:setStock,qty:1,size:hs,color:hc,purchase_type:"set",pants_product_id:pt.id,pants_name:localizedName(pt),pants_size:ps,pants_color:pc};
+ const existing=cart.find(i=>i.purchase_type==="set"&&String(i.product_id)===String(h.id)&&String(i.pants_product_id)===String(pt.id)&&i.size===hs&&i.color===hc&&i.pants_size===ps&&i.pants_color===pc);
+ if(existing)existing.qty=Math.min(setStock,Number(existing.qty||1)+1);else cart.push(item);saveCart();openCartPage();
 }
 function productCard(p){
   const imgs=getImages(p);
@@ -806,12 +812,7 @@ ${productAllowsPrint(p)?`
 <button type="button" class="optionBtn" onclick="chooseNoPrint()">No — ${language==="ar"?"لأ، من غير طباعة":"No printing"}</button>
 </div><div id="printChoiceMsg" class="mutedSmall"></div></div>`:""}
 
-${(productAllowsBundle(p)&&(isHoodieProduct(p)||isPantsProduct(p)))?`
-<div class="productBundleChoice"><h3>${language==="ar"?"هتشتري القطعة دي لوحدها ولا كطقم؟":"Buy this item alone or as a set?"}</h3>
-<div class="options"><label class="optionBtn"><input type="radio" name="productBuyMode" value="hoodie" ${isHoodieProduct(p)?"checked":""} onchange="toggleProductBundle('hoodie')"> ${language==="ar"?"الهودي فقط":"Hoodie only"}</label>
-<label class="optionBtn"><input type="radio" name="productBuyMode" value="pants" ${isPantsProduct(p)?"checked":""} onchange="toggleProductBundle('pants')"> ${language==="ar"?"البنطلون فقط":"Pants only"}</label>
-<label class="optionBtn"><input type="radio" name="productBuyMode" value="set" ${isHoodieProduct(p)?"":"checked"} onchange="toggleProductBundle('set')"> ${language==="ar"?"الهودي والبنطلون معًا":"Hoodie + pants set"}</label></div>
-<div id="productBundleWrap" style="margin-top:12px">${bundleBuilderHTML()}</div></div>`:""}
+${(productAllowsBundle(p)&&(isHoodieProduct(p)||isPantsProduct(p)))?`<div class="productBundleChoice"><label for="productBuyMode">${language==="ar"?"حدد اختيارك":"Choose what to buy"}</label><select id="productBuyMode" onchange="toggleProductBundle(this.value)"><option value="hoodie" ${isHoodieProduct(p)?"selected":""}>${language==="ar"?"الهودي فقط":"Hoodie only"}</option><option value="pants" ${isPantsProduct(p)?"selected":""}>${language==="ar"?"البنطلون فقط":"Pants only"}</option><option value="set">${language==="ar"?"الهودي والبنطلون معًا — الطقم كامل":"Hoodie + pants set"}</option></select><div id="productBundleWrap" hidden style="margin-top:10px">${bundleBuilderHTML()}</div></div>`:""}
 
 ${sizes.length?`
 <h3 class="optionTitle">${t("size")}</h3>
@@ -979,7 +980,7 @@ async function submitReview(){
 
 function addProductToCart(){
   if(!selectedProduct)return;
-  const buyMode=document.querySelector('input[name="productBuyMode"]:checked')?.value;if(buyMode&&productAllowsBundle(selectedProduct)){window.VANTA_PRODUCT_BUY_MODE=buyMode;addBundleToCart();return;}
+  const buyMode=document.getElementById("productBuyMode")?.valueif(buyMode&&productAllowsBundle(selectedProduct)){window.VANTA_PRODUCT_BUY_MODE=buyMode;addBundleToCart();return;}
 
   const sizes=getSizes(selectedProduct);
   const colors=getColors(selectedProduct);
@@ -1228,7 +1229,7 @@ function changeQty(i,a){
   const x=cart[i];
   if(!x)return;
   const p=products.find(v=>String(v.id)===String(x.product_id));
-  const liveStock=p?variantStock(p,x.size||"",x.color||""):Number(x.stock||999999);
+  const liveStock=x.purchase_type==="set"?Number(x.stock||0):(p?variantStock(p,x.size||"",x.color||""):Number(x.stock||999999));
   x.stock=liveStock;
   x.qty=Math.max(1,Math.min(liveStock,Number(x.qty||1)+a));
 
@@ -1423,12 +1424,7 @@ async function placeOrder(){
     p_whatsapp:whatsapp,
     p_city:city,
     p_address:address,
-    p_items:cart.map(i=>({
-      product_id:i.product_id,
-      qty:Number(i.qty||1),
-      size:i.size||"",
-      color:i.color||""
-    })),
+    p_items:cart.map(i=>({product_id:i.product_id,qty:Number(i.qty||1),size:i.size||"",color:i.color||"",purchase_type:i.purchase_type||"single",pants_product_id:i.pants_product_id||null,pants_size:i.pants_size||"",pants_color:i.pants_color||"",pants_name:i.pants_name||""})),
     p_coupon_code:appliedCoupon?.code||null,
     p_latitude:customerLocation.latitude,
     p_longitude:customerLocation.longitude,
