@@ -512,6 +512,7 @@ async function loadStoreSettings(){
     // Settings load asynchronously; refresh an already-open checkout when the real rates/payment flags arrive.
     if(typeof updatePaymentOptions==="function") updatePaymentOptions();
     if(typeof refreshTotals==="function") refreshTotals();
+    if(typeof render==="function" && products && products.length && location.hash.includes("#product")) render();
     const email=document.getElementById("supportEmailLink");if(email&&window.VANTA_SUPPORT_EMAIL){email.href="mailto:"+window.VANTA_SUPPORT_EMAIL;email.textContent=window.VANTA_SUPPORT_EMAIL;}
     const insta=document.getElementById("instagramLink");if(insta&&window.VANTA_INSTAGRAM_URL){insta.href=window.VANTA_INSTAGRAM_URL;insta.textContent="Instagram ↗";}
     const waEl=document.getElementById("whatsappFloat");
@@ -581,11 +582,11 @@ function printCardAction(p){
  return `<button class="add" data-product="${esc(p.id)}" style="margin-top:8px;background:#eee;color:#111" onclick="event.stopPropagation();showCustomPrint(this.dataset.product)">🖨️ ${language==="ar"?"اطبع على القطعة السادة":"Custom print this item"}</button>`;
 }
 function isPlainProduct(p){return /plain|ساده|سادة|basic|blank/i.test([p?.category,p?.name,p?.name_ar,p?.name_en].filter(Boolean).join(" "));}
-function productOptionSettings(p){const settings=window.VANTA_PRODUCT_PRINT_SETTINGS||{},v=settings[String(p?.id??"")];if(v&&typeof v==="object")return {print:v.print===true,bundle:v.bundle===true};if(typeof v==="boolean")return {print:v,bundle:false};return {print:false,bundle:false};}
+function productOptionSettings(p){const settings=window.VANTA_PRODUCT_PRINT_SETTINGS||{},v=settings[String(p?.id??"")];if(v&&typeof v==="object")return {print:v.print===true,bundle:v.bundle===true,setPrice:Number(v.setPrice||0)};if(typeof v==="boolean")return {print:v,bundle:false,setPrice:0};return {print:false,bundle:false,setPrice:0};}
 function productAllowsPrint(p){return productOptionSettings(p).print;}
 function productAllowsBundle(p){return productOptionSettings(p).bundle&&window.VANTA_BUNDLE_ENABLED===true;}
 function chooseNoPrint(){const msg=document.getElementById("printChoiceMsg");if(msg)msg.textContent=language==="ar"?"تمام، هتشتري المنتج بدون طباعة.":"You’ll buy this item without printing.";}
-function toggleProductBundle(show){const wrap=document.getElementById("productBundleWrap");if(!wrap)return;wrap.hidden=!show;if(show&&selectedProduct){renderBundleBuilder(isHoodieProduct(selectedProduct)?selectedProduct.id:undefined,isPantsProduct(selectedProduct)?selectedProduct.id:undefined);wrap.scrollIntoView({behavior:"smooth",block:"nearest"});}}
+function toggleProductBundle(mode){const wrap=document.getElementById("productBundleWrap");if(!wrap)return;wrap.hidden=false;window.VANTA_PRODUCT_BUY_MODE=mode;if(selectedProduct){renderBundleBuilder(isHoodieProduct(selectedProduct)?selectedProduct.id:undefined,isPantsProduct(selectedProduct)?selectedProduct.id:undefined);const title=wrap.querySelector("h2");if(title)title.textContent=mode==="hoodie"?(language==="ar"?"اختيار الهودي":"Choose hoodie"):mode==="pants"?(language==="ar"?"اختيار البنطلون":"Choose pants"):(language==="ar"?"اختار الطقم":"Build your set");}}
 function toggleCartBundle(){const wrap=document.getElementById("cartBundleWrap");if(!wrap)return;wrap.hidden=!wrap.hidden;if(!wrap.hidden)renderBundleBuilder();}
 function cartBundleHTML(){if(window.VANTA_BUNDLE_ENABLED!==true||!cart.some(i=>{const p=products.find(x=>String(x.id)===String(i.product_id));return p&&productAllowsBundle(p)&&(isHoodieProduct(p)||isPantsProduct(p));}))return "";const builder=bundleBuilderHTML();if(!builder)return "";return `<div class="cartBundleChoice"><button type="button" class="dark" onclick="toggleCartBundle()">🧥 ${language==="ar"?"اختيار هودي أو بنطلون أو طقم من هنا":"Choose hoodie, pants, or a set here"}</button><div id="cartBundleWrap" hidden style="margin-top:12px">${builder}</div></div>`;}
 function openBundleFromCard(productId){
@@ -978,7 +979,7 @@ async function submitReview(){
 
 function addProductToCart(){
   if(!selectedProduct)return;
-  if(document.querySelector('input[name="productBuyMode"]:checked')?.value==="set"){addBundleToCart();return;}
+  const buyMode=document.querySelector('input[name="productBuyMode"]:checked')?.value;if(buyMode&&productAllowsBundle(selectedProduct)){window.VANTA_PRODUCT_BUY_MODE=buyMode;addBundleToCart();return;}
 
   const sizes=getSizes(selectedProduct);
   const colors=getColors(selectedProduct);
