@@ -605,7 +605,11 @@ ${stock<1?t("out"):t("add")}
 
 async function loadProducts(){
   try{
-    const r=await fetch(SUPABASE_URL+"/rest/v1/products?select=*",{headers:HEADERS,cache:"no-store"});
+    const controller=new AbortController();
+    const timeout=setTimeout(()=>controller.abort(),12000);
+    let r;
+    try{r=await fetch(SUPABASE_URL+"/rest/v1/products?select=*",{headers:HEADERS,cache:"no-store",signal:controller.signal});}
+    finally{clearTimeout(timeout);}
     if(!r.ok)throw Error("Products API "+r.status+": "+(await r.text()).slice(0,500));
     const data=await r.json();
     if(!Array.isArray(data))throw Error("Products API returned a non-list response");
@@ -1686,16 +1690,22 @@ function render(){
 window.addEventListener("popstate",render);
 window.addEventListener("DOMContentLoaded",()=>{
   activeCategory = "";
-  resolveStaticTranslations();
-  applyLanguage();
-  // Render the storefront immediately; do not leave the page blank while Supabase responds.
-  render();
-  updatePaymentOptions();
-  Promise.allSettled([loadVariantInventory(),loadProducts(),loadStoreSettings()]).then(()=>{
-    trackStoreVisit();
+  // Start product loading first and independently, so an unrelated storefront widget
+  // cannot prevent the products request from ever starting.
+  loadProducts();
+  loadVariantInventory().catch(e=>console.warn("VANTA inventory",e));
+  loadStoreSettings().catch(e=>console.warn("VANTA settings",e));
+  try{
+    resolveStaticTranslations();
+    applyLanguage();
     render();
     updatePaymentOptions();
-  }).catch(e=>console.warn("VANTA initialization",e));
+  }catch(e){
+    console.error("VANTA storefront initialization",e);
+    const box=document.getElementById("products");
+    if(box)box.innerHTML='<div class="notice err">تعذر تجهيز المتجر. جاري محاولة تحميل المنتجات…</div>';
+  }
+  trackStoreVisit();
 });
 </script>
 <script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("/sw.js",{updateViaCache:"none"}).then(r=>r.update()).catch(e=>console.warn("PWA worker",e)));}</script></body>
