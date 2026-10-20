@@ -1708,5 +1708,39 @@ window.addEventListener("DOMContentLoaded",()=>{
   trackStoreVisit();
 });
 </script>
+<script>
+/* Independent emergency storefront loader: keeps the catalog visible if the main shop script fails. */
+(function(){
+  const url="https://jstcrfkjnmqegnzvwfyz.supabase.co";
+  const key="sb_publishable_A8WKnbjf_YryRDolgIr1YA_SDDQcYWf";
+  const escText=v=>String(v??"").replace(/[&<>"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
+  function showProducts(rows){
+    const box=document.getElementById("products");
+    if(!box||!Array.isArray(rows))return;
+    if(box.querySelector(".card")&&!box.textContent.includes("جاري تحميل المنتجات"))return;
+    const lang=(document.documentElement.lang||"ar").toLowerCase();
+    const visible=rows.filter(p=>p.active!==false);
+    box.innerHTML=visible.length?visible.map(p=>{
+      const name=lang==="ar"?(p.name_ar||p.name||p.name_en||"VANTA"):(p.name_en||p.name||p.name_ar||"VANTA");
+      const price=Number(p.sale_price)>0&&Number(p.sale_price)<Number(p.price)?Number(p.sale_price):Number(p.price||0);
+      const image=String(p.image_url||"").replace(/["<>]/g,"");
+      const id=String(p.id||"").replace(/[^a-zA-Z0-9-]/g,"");
+      return '<article class="card"><div class="pic">'+(image?'<img loading="lazy" src="'+escText(image)+'" alt="'+escText(name)+'">':'V')+'</div><div class="info"><h3>'+escText(name)+'</h3><div class="price">'+price.toLocaleString("en-US")+' EGP</div><button class="add" onclick="if(typeof quickAddById===\'function\'){quickAddById(\''+id+'\')}else{location.reload()}">'+(lang==="ar"?"أضف للسلة":"Add to cart")+'</button></div></article>';
+    }).join(""):'<div class="empty">'+(lang==="ar"?"لا توجد منتجات متاحة حاليًا":"No products available")+'</div>';
+  }
+  function fallbackError(){
+    const box=document.getElementById("products");
+    if(box&&box.textContent.includes("جاري تحميل المنتجات"))box.innerHTML='<div class="notice err">تعذر تحميل المنتجات. اضغط إعادة تحميل المتجر أو حاول مرة أخرى بعد قليل.</div>';
+  }
+  window.addEventListener("load",function(){
+    const controller=new AbortController();
+    const timeout=setTimeout(()=>controller.abort(),10000);
+    fetch(url+"/rest/v1/products?select=*",{headers:{apikey:key,Authorization:"Bearer "+key,Accept:"application/json"},cache:"no-store",signal:controller.signal})
+      .then(r=>{if(!r.ok)throw Error("Products API "+r.status);return r.json()})
+      .then(showProducts).catch(e=>{console.error("VANTA emergency catalog loader:",e);fallbackError()})
+      .finally(()=>clearTimeout(timeout));
+  });
+})();
+</script>
 <script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("/sw.js",{updateViaCache:"none"}).then(r=>r.update()).catch(e=>console.warn("PWA worker",e)));}</script></body>
 </html>
