@@ -109,7 +109,7 @@ footer{padding:45px 5%;border-top:1px solid #222;color:#999;display:grid;grid-te
 .empty{padding:50px;text-align:center;color:#777}
 .recommended{margin-top:60px}
 
-.whatsappFloat{position:fixed;bottom:25px;right:25px;background:#25d366;color:#fff;width:55px;height:55px;border-radius:50%;display:grid;place-items:center;font-size:30px;text-decoration:none;box-shadow:0 4px 10px rgba(0,0,0,0.3);z-index:99}
+.whatsappFloat{position:fixed;bottom:25px;right:25px;background:#25d366;color:#fff;width:55px;height:55px;border-radius:50%;display:grid;place-items:center;font-size:30px;text-decoration:none;box-shadow:0 4px 10px rgba(0,0,0,0.3);z-index:99}.phoneFloat{position:fixed;bottom:91px;right:25px;background:#fff;color:#111;width:55px;height:55px;border-radius:50%;display:grid;place-items:center;font-size:25px;text-decoration:none;box-shadow:0 4px 10px #0005;z-index:99}.phoneFloat[hidden]{display:none}@media(max-width:480px){.whatsappFloat{bottom:16px;right:16px;width:50px;height:50px}.phoneFloat{bottom:76px;right:16px;width:50px;height:50px}}
 
 .offersPage{min-height:700px;padding:45px 5%}
 .offersHeader{text-align:center;margin-bottom:35px}
@@ -173,7 +173,7 @@ footer{grid-template-columns:1fr 1fr}
 
 <main id="app"></main>
 
-<a href="https://wa.me/201000000000" target="_blank" class="whatsappFloat" title="Contact Us" id="whatsappFloat">💬</a>
+<a href="https://wa.me/201000000000" target="_blank" rel="noopener" class="whatsappFloat" title="Contact Us" id="whatsappFloat">💬</a><a href="#" class="phoneFloat" title="Call VANTA" id="phoneFloat" hidden>☎</a>
 
 <script>
 const SUPABASE_URL="https://jstcrfkjnmqegnzvwfyz.supabase.co";
@@ -475,7 +475,7 @@ function cityOptions(selected="",placeholder=true){
 function freeShippingText(){ return t("freeShipping"); }
 async function loadStoreSettings(){
   try{
-    const r=await fetch(SUPABASE_URL+"/rest/v1/site_settings?key=in.(free_shipping_min,shipping_rates,whatsapp,payment_methods,deposit_numbers,store_announcement,store_tagline,store_collection_title,instagram_url,support_email,return_policy)&select=key,value",{headers:HEADERS});
+    const r=await fetch(SUPABASE_URL+"/rest/v1/site_settings?key=in.(free_shipping_min,shipping_rates,whatsapp,support_phone,payment_methods,deposit_numbers,store_announcement,store_tagline,store_collection_title,instagram_url,support_email,return_policy)&select=key,value",{headers:HEADERS});
     if(!r.ok)return;
     const rows=await r.json();
     window.VANTA_PAYMENT_METHODS={cod:true,vodafone_cash:false,instapay:false};
@@ -487,6 +487,7 @@ async function loadStoreSettings(){
         Object.assign(SHIPPING_RATES,row.value);
       }
       if(row.key==="whatsapp") window.VANTA_WHATSAPP=String(row.value||"").replace(/\D/g,"");
+      if(row.key==="support_phone") window.VANTA_SUPPORT_PHONE=String(row.value||"").replace(/[^\d+]/g,"");
       if(row.key==="payment_methods" && row.value && typeof row.value==="object") window.VANTA_PAYMENT_METHODS={...window.VANTA_PAYMENT_METHODS,...row.value};
       if(row.key==="deposit_numbers" && row.value && typeof row.value==="object") window.VANTA_DEPOSIT_NUMBERS=row.value;
       if(row.key==="store_announcement") window.VANTA_STORE_ANNOUNCEMENT=String(row.value||"");
@@ -510,6 +511,9 @@ async function loadStoreSettings(){
     const insta=document.getElementById("instagramLink");if(insta&&window.VANTA_INSTAGRAM_URL){insta.href=window.VANTA_INSTAGRAM_URL;insta.textContent="Instagram ↗";}
     const waEl=document.getElementById("whatsappFloat");
     if(waEl && wa) waEl.href="https://wa.me/"+wa;
+    const phoneEl=document.getElementById("phoneFloat");
+    const supportPhone=window.VANTA_SUPPORT_PHONE||"";
+    if(phoneEl && supportPhone){phoneEl.href="tel:"+supportPhone;phoneEl.hidden=false;}
   }catch(e){ console.warn("settings",e); }
 }
 
