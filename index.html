@@ -605,14 +605,29 @@ ${stock<1?t("out"):t("add")}
 
 async function loadProducts(){
   try{
-    const r=await fetch(SUPABASE_URL+"/rest/v1/products?select=*",{headers:HEADERS});
-    if(!r.ok)throw Error(await r.text());
-    products=await r.json();
-    render();
+    const r=await fetch(SUPABASE_URL+"/rest/v1/products?select=*",{headers:HEADERS,cache:"no-store"});
+    if(!r.ok)throw Error("Products API "+r.status+": "+(await r.text()).slice(0,500));
+    const data=await r.json();
+    if(!Array.isArray(data))throw Error("Products API returned a non-list response");
+    products=data;
+    try{
+      render();
+    }catch(renderError){
+      console.error("VANTA product rendering error",renderError);
+      // Keep the storefront usable even if another page widget fails.
+      const app=document.getElementById("app");
+      if(app && typeof homeHTML==="function")app.innerHTML=homeHTML();
+      try{renderProducts();renderBestSelling();}catch(fallbackError){console.error("VANTA fallback product render failed",fallbackError);}
+    }
+    console.info("VANTA products loaded:",products.length);
   }catch(e){
-    console.error(e);
-    const app = document.getElementById("app");
-    if(app) app.innerHTML=`<section><div class="notice err">${t("loadingError")}</div></section>`;
+    console.error("VANTA products failed to load",e);
+    const box=document.getElementById("products");
+    if(box)box.innerHTML=`<div class="notice err">${t("loadingError")} <button class="add" onclick="loadProducts()" style="margin-top:10px">${language==="ar"?"إعادة المحاولة":"Try again"}</button></div>`;
+    else{
+      const app=document.getElementById("app");
+      if(app)app.innerHTML=`<section><div class="notice err">${t("loadingError")} <button class="add" onclick="loadProducts()" style="margin-top:10px">${language==="ar"?"إعادة المحاولة":"Try again"}</button></div></section>`;
+    }
   }
 }
 
