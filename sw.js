@@ -1,4 +1,4 @@
-const CACHE="vanta-shell-v7";
+const CACHE="vanta-shell-v8";
 const CORE=["/","/index.html","/admin.html","/manifest.json","/icon.svg"];
 self.addEventListener("install",event=>{
   event.waitUntil((async()=>{
