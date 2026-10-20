@@ -614,10 +614,22 @@ async function loadProducts(){
       render();
     }catch(renderError){
       console.error("VANTA product rendering error",renderError);
-      // Keep the storefront usable even if another page widget fails.
+      // Rebuild a minimal, independent shop grid if any unrelated widget breaks.
       const app=document.getElementById("app");
-      if(app && typeof homeHTML==="function")app.innerHTML=homeHTML();
-      try{renderProducts();renderBestSelling();}catch(fallbackError){console.error("VANTA fallback product render failed",fallbackError);}
+      if(app && typeof homeHTML==="function" && !document.getElementById("products"))app.innerHTML=homeHTML();
+      const box=document.getElementById("products");
+      if(box){
+        const visible=products.filter(p=>p.active!==false);
+        box.innerHTML=visible.length?visible.map(p=>{
+          const name=String(language==="ar"?(p.name_ar||p.name||p.name_en):(p.name_en||p.name||p.name_ar)||"VANTA").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+          const price=Number(p.sale_price)>0&&Number(p.sale_price)<Number(p.price)?Number(p.sale_price):Number(p.price||0);
+          const stock=(Array.isArray(variants)?variants:[]).filter(v=>String(v.product_id)===String(p.id));
+          const qty=stock.length?stock.reduce((n,v)=>n+Number(v.stock||0),0):Number(p.stock||0);
+          const image=String(p.image_url||"").replace(/["<>]/g,"");
+          return '<article class="card"><div class="pic">'+(image?'<img loading="lazy" src="'+image+'" alt="'+name+'">':'V')+'</div><div class="info"><h3>'+name+'</h3><div class="price">'+price.toLocaleString("en-US")+' EGP</div><div class="stock">'+(qty>0?(language==="ar"?"متوفر":"In stock"):(language==="ar"?"نفد المخزون":"Out of stock"))+'</div><button class="add" '+(qty<1?"disabled":"")+' onclick="quickAddById(\''+String(p.id).replace(/[^a-zA-Z0-9-]/g,"")+'\')">'+(language==="ar"?"أضف للسلة":"Add to cart")+'</button></div></article>';
+        }).join(""):'<div class="empty">'+t("noProducts")+'</div>';
+      }
+      try{renderBestSelling();}catch(fallbackError){console.error("VANTA best-seller fallback failed",fallbackError);}
     }
     console.info("VANTA products loaded:",products.length);
   }catch(e){
