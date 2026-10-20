@@ -1708,5 +1708,34 @@ window.addEventListener("DOMContentLoaded",()=>{
   trackStoreVisit();
 });
 </script>
+<script>
+/* Independent storefront watchdog: recovers if the main storefront script fails before loading products. */
+window.setTimeout(async function(){
+  const box=document.getElementById("products");
+  if(!box || !/جاري تحميل المنتجات|Loading products/i.test(box.textContent||""))return;
+  box.innerHTML='<div class="notice">بنحاول استعادة المنتجات…</div>';
+  const key="sb_publishable_A8WKnbjf_YryRDolgIr1YA_SDDQcYWf";
+  const ctl=new AbortController();
+  const timer=setTimeout(()=>ctl.abort(),10000);
+  try{
+    const res=await fetch("https://jstcrfkjnmqegnzvwfyz.supabase.co/rest/v1/products?select=id,name,name_ar,name_en,price,sale_price,image_url,stock,active&active=eq.true",{headers:{apikey:key,Authorization:"Bearer "+key,Accept:"application/json"},cache:"no-store",signal:ctl.signal});
+    const body=await res.text();
+    if(!res.ok)throw Error("Supabase HTTP "+res.status+" — "+body.slice(0,220));
+    const rows=JSON.parse(body);
+    if(!Array.isArray(rows))throw Error("Supabase returned unexpected data");
+    if(!rows.length){box.innerHTML='<div class="notice">اتصلنا بقاعدة البيانات، لكن لم يتم إرجاع منتجات نشطة.</div>';return;}
+    box.innerHTML=rows.map(function(p){
+      const name=String(p.name_ar||p.name||p.name_en||"VANTA").replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]});
+      const image=String(p.image_url||"").replace(/["<>]/g,"");
+      const price=Number(p.sale_price)>0&&Number(p.sale_price)<Number(p.price)?Number(p.sale_price):Number(p.price||0);
+      return '<article class="card"><div class="pic">'+(image?'<img loading="lazy" src="'+image+'" alt="'+name+'">':'V')+'</div><div class="info"><h3>'+name+'</h3><div class="price">'+price.toLocaleString("en-US")+' EGP</div></div></article>';
+    }).join("");
+    console.warn("VANTA watchdog recovered product list",rows.length);
+  }catch(e){
+    box.innerHTML='<div class="notice err">تعذر تحميل المنتجات: '+String(e&&e.message||e).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})+' <button class="add" onclick="location.reload()">إعادة المحاولة</button></div>';
+    console.error("VANTA watchdog failed",e);
+  }finally{clearTimeout(timer);}
+},8000);
+</script>
 <script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("/sw.js",{updateViaCache:"none"}).then(r=>r.update()).catch(e=>console.warn("PWA worker",e)));}</script></body>
 </html>
