@@ -1,8 +1,8 @@
 {
-  "name": "VANTA | Modern Unisex Wear",
-  "short_name": "VANTA",
-  "description": "VANTA Modern Unisex Wear Store",
-  "start_url": "/",
+  "name": "VANTA Admin — Control Center",
+  "short_name": "VANTA Admin",
+  "description": "VANTA store administration dashboard",
+  "start_url": "/admin.html",
   "scope": "/",
   "display": "standalone",
   "background_color": "#070707",
@@ -34,5 +34,8 @@
         }
       ]
     }
+  ],
+  "display_override": [
+    "standalone"
   ]
 }
