@@ -1423,21 +1423,27 @@ async function createNotification(){ return true; }
 async function downloadInvoice(){
  const order=pendingOrderInvoice||lastOrder;
  if(!order){alert(language==="ar"?"لا توجد فاتورة جاهزة للتحميل.":"No invoice available.");return;}
- let items=order.items; if(typeof items==="string")try{items=JSON.parse(items)}catch(e){}; items=Array.isArray(items)?items:[];
+ let items=order.items;
+ if(typeof items==="string"){try{items=JSON.parse(items)}catch(e){items=[]}}
+ items=Array.isArray(items)?items:[];
  const nameOf=it=>{const p=products.find(x=>String(x.id)===String(it.product_id));return p?localizedName(p):(language==="ar"?(it.name_ar||it.name||it.name_en||""):(it.name_en||it.name_ar||it.name||""));};
  const rows=items.map(it=>"<tr><td>"+esc(nameOf(it))+"</td><td>"+esc(it.size||"-")+"</td><td>"+esc(it.color||"-")+"</td><td>"+Number(it.qty||1)+"</td><td>"+money(it.price||0)+"</td><td>"+money(it.line_total??Number(it.price||0)*Number(it.qty||1))+"</td></tr>").join("");
- const el=document.createElement("div");el.dir=language==="ar"?"rtl":"ltr";el.style.cssText="position:fixed;left:0;top:0;width:794px;min-height:1123px;z-index:2147483000;background:#fff;color:#111;padding:32px;box-sizing:border-box;font-family:Arial,Tahoma,sans-serif;overflow:visible";
- el.innerHTML="<div style=\"background:#fff;color:#111;padding:8px\"><header style=\"display:flex;justify-content:space-between;border-bottom:2px solid #111;padding-bottom:16px;margin-bottom:20px\"><div><div style=\"font-size:34px;font-weight:900;letter-spacing:7px\">VANTA</div><div>MODERN UNISEX WEAR</div></div><div><b>"+esc(t("invoice"))+"</b><br>"+esc(order.order_number||"")+"<br>"+new Date(order.created_at||Date.now()).toLocaleString(language==="ar"?"ar-EG":"en-US")+"</div></header><p>"+esc(t("name"))+": "+esc(order.customer_name||"")+" | "+esc(t("phone"))+": "+esc(order.phone||"")+"</p><p>"+esc(t("city"))+": "+esc(localizedCity(order.city||""))+" | "+esc(t("address"))+": "+esc(order.address||"")+"</p><table style=\"width:100%;border-collapse:collapse\"><thead><tr>"+[t("product"),t("size"),t("color"),t("quantity"),t("price"),t("lineTotal")].map(x=>"<th style=\"padding:8px;background:#111;color:#fff;border:1px solid #111\">"+x+"</th>").join("")+"</tr></thead><tbody>"+rows+"</tbody></table><div style=\"margin-top:24px;line-height:2\">"+t("subtotal")+": <b>"+money(order.subtotal||0)+"</b><br>"+t("discount")+": <b>"+money(order.discount||0)+"</b><br>"+t("shipping")+": <b>"+money(order.shipping_cost||0)+"</b><hr>"+t("total")+": <b style=\"font-size:22px\">"+money(order.total||0)+"</b></div><p style=\"text-align:center;margin-top:36px\">VANTA • Style has no gender.</p></div>";
- document.body.appendChild(el);
+ const el=document.createElement("div");
+ el.dir=language==="ar"?"rtl":"ltr";
+ el.style.cssText="width:100%;max-width:900px;margin:0 auto;background:#fff;color:#111;padding:28px;box-sizing:border-box;font-family:Arial,Tahoma,sans-serif";
+ el.innerHTML="<header style='display:flex;justify-content:space-between;gap:20px;align-items:start;border-bottom:2px solid #111;padding-bottom:16px;margin-bottom:20px'><div><div style='font-size:34px;font-weight:900;letter-spacing:7px'>VANTA</div><div>MODERN UNISEX WEAR</div></div><div><b>"+esc(t("invoice"))+"</b><br>"+esc(order.order_number||"")+"<br>"+new Date(order.created_at||Date.now()).toLocaleString(language==="ar"?"ar-EG":"en-US")+"</div></header><p>"+esc(t("name"))+": "+esc(order.customer_name||"")+" | "+esc(t("phone"))+": "+esc(order.phone||"")+"</p><p>"+esc(t("city"))+": "+esc(localizedCity(order.city||""))+" | "+esc(t("address"))+": "+esc(order.address||"")+"</p><table style='width:100%;border-collapse:collapse'><thead><tr>"+[t("product"),t("size"),t("color"),t("quantity"),t("price"),t("lineTotal")].map(x=>"<th style='padding:8px;background:#111;color:#fff;border:1px solid #111'>"+esc(x)+"</th>").join("")+"</tr></thead><tbody>"+rows+"</tbody></table><div style='margin-top:24px;line-height:2'>"+esc(t("subtotal"))+": <b>"+money(order.subtotal||0)+"</b><br>"+esc(t("discount"))+": <b>"+money(order.discount||0)+"</b><br>"+esc(t("shipping"))+": <b>"+money(order.shipping_cost||0)+"</b><hr>"+esc(t("total"))+": <b style='font-size:22px'>"+money(order.total||0)+"</b></div><p style='text-align:center;margin-top:36px'>VANTA • Style has no gender.</p>";
  try{
-  const w=window.open("","_blank");
-  if(!w)throw Error("POPUP_BLOCKED");
-  w.document.open();
-  w.document.write("<!doctype html><html lang=\\""+(language==="ar"?"ar":"en")+"\\" dir=\\""+(language==="ar"?"rtl":"ltr")+"\\"><head><meta charset=\\"utf-8\\"><meta name=\\"viewport\\" content=\\"width=device-width,initial-scale=1\\"><title>VANTA Invoice</title><style>body{font-family:Arial,Tahoma,sans-serif;padding:20px;color:#111;background:#fff}table{width:100%;border-collapse:collapse}td,th{border:1px solid #ccc;padding:8px;text-align:start}button{padding:10px 18px;margin-bottom:18px}@media print{button{display:none}body{padding:0}}</style></head><body><button onclick=\\"window.print()\\">"+(language==="ar"?"طباعة / حفظ PDF":"Print / Save PDF")+"</button>"+el.innerHTML+"</body></html>");
-  w.document.close();
- }catch(e){console.error("PDF failed",e);alert(language==="ar"?"اسمح بفتح النوافذ المنبثقة للمتجر، ثم اضغط طباعة واختر حفظ كـ PDF.":"Allow pop-ups for the store, then choose Print and Save as PDF.");}
- finally{el.remove();}
+   if(typeof window.html2pdf==="function"){
+     await window.html2pdf().set({margin:8,filename:"VANTA-"+String(order.order_number||"invoice").replace(/[^a-zA-Z0-9_-]/g,"-")+".pdf",image:{type:"jpeg",quality:0.98},html2canvas:{scale:2,useCORS:true,backgroundColor:"#ffffff",logging:false},jsPDF:{unit:"mm",format:"a4",orientation:"portrait"}}).from(el).save();
+     return;
+   }
+   const w=window.open("","_blank");
+   if(!w)throw Error("POPUP_BLOCKED");
+   const html="<!doctype html><html lang='"+(language==="ar"?"ar":"en")+"' dir='"+(language==="ar"?"rtl":"ltr")+"'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>VANTA Invoice</title><style>body{font-family:Arial,Tahoma,sans-serif;padding:20px;color:#111;background:#fff}table{width:100%;border-collapse:collapse}td,th{border:1px solid #ccc;padding:8px;text-align:start}button{padding:10px 18px;margin-bottom:18px}@media print{button{display:none}body{padding:0}}</style></head><body><button onclick='window.print()'>"+(language==="ar"?"طباعة / حفظ PDF":"Print / Save PDF")+"</button>"+el.outerHTML+"</body></html>";
+   w.document.open();w.document.write(html);w.document.close();
+ }catch(e){console.error("PDF failed",e);alert(language==="ar"?"تعذر إنشاء PDF تلقائيًا. اسمح بالتنزيل أو افتح الفاتورة ثم اختر طباعة > حفظ كـ PDF.":"PDF generation failed. Allow downloads, or open the invoice and choose Print > Save as PDF.");}
 }
+
 let customPrintContext=null;
 function showCustomPrintForProduct(){customPrintContext={name:localizedName(selectedProduct),size:selectedSize,color:selectedColor};showCustomPrint();setTimeout(()=>{const s=document.getElementById("cpSize"),c=document.getElementById("cpColor");if(s&&customPrintContext?.size&&[...s.options].some(o=>o.value===customPrintContext.size))s.value=customPrintContext.size;if(c&&customPrintContext?.color&&[...c.options].some(o=>o.value===customPrintContext.color))c.value=customPrintContext.color;},0);}
 function showCustomPrint(){
