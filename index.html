@@ -1732,6 +1732,8 @@ window.addEventListener("DOMContentLoaded",()=>{
   function showProducts(rows){
     const box=document.getElementById("products");
     if(!box||!Array.isArray(rows))return;
+    // Sync fetched products into the main storefront state so detail/cart handlers can find them.
+    try { products = rows; } catch(e) { console.error("VANTA catalog state sync failed",e); }
     if(box.querySelector(".card")&&!box.textContent.includes("جاري تحميل المنتجات"))return;
     const lang=(document.documentElement.lang||"ar").toLowerCase();
     const visible=rows.filter(p=>p.active!==false);
@@ -1740,7 +1742,7 @@ window.addEventListener("DOMContentLoaded",()=>{
       const price=Number(p.sale_price)>0&&Number(p.sale_price)<Number(p.price)?Number(p.sale_price):Number(p.price||0);
       const image=String(p.image_url||"").replace(/["<>]/g,"");
       const id=String(p.id||"").replace(/[^a-zA-Z0-9-]/g,"");
-      return '<article class="card"><div class="pic">'+(image?'<img loading="lazy" src="'+escText(image)+'" alt="'+escText(name)+'">':'V')+'</div><div class="info"><h3>'+escText(name)+'</h3><div class="price">'+price.toLocaleString("en-US")+' EGP</div><button class="add" onclick="if(typeof quickAddById===\'function\'){quickAddById(\''+id+'\')}else{location.reload()}">'+(lang==="ar"?"أضف للسلة":"Add to cart")+'</button></div></article>';
+      return '<article class="card" style="cursor:pointer" onclick="if(typeof openProduct===\'function\')openProduct(\''+id+'\')"><div class="pic">'+(image?'<img loading="lazy" src="'+escText(image)+'" alt="'+escText(name)+'">':'V')+'</div><div class="info"><h3>'+escText(name)+'</h3><div class="price">'+price.toLocaleString("en-US")+' EGP</div><button class="add" onclick="event.stopPropagation();if(typeof quickAddById===\'function\'){quickAddById(\''+id+'\')}else{alert(\'تعذر إضافة المنتج للسلة. أعد تحميل الصفحة.\')}">'+(lang==="ar"?"أضف للسلة":"Add to cart")+'</button></div></article>';
     }).join(""):'<div class="empty">'+(lang==="ar"?"لا توجد منتجات متاحة حاليًا":"No products available")+'</div>';
   }
   function fallbackError(){
