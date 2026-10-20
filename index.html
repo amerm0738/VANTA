@@ -112,6 +112,7 @@ footer{padding:45px 5%;border-top:1px solid #222;color:#999;display:grid;grid-te
 .whatsappFloat{position:fixed;bottom:25px;right:25px;background:#25d366;color:#fff;width:55px;height:55px;border-radius:50%;display:grid;place-items:center;font-size:30px;text-decoration:none;box-shadow:0 4px 10px rgba(0,0,0,0.3);z-index:99}.phoneFloat{position:fixed;bottom:91px;right:25px;background:#fff;color:#111;width:55px;height:55px;border-radius:50%;display:grid;place-items:center;font-size:25px;text-decoration:none;box-shadow:0 4px 10px #0005;z-index:99}.phoneFloat[hidden]{display:none}@media(max-width:480px){.whatsappFloat{bottom:16px;right:16px;width:50px;height:50px}.phoneFloat{bottom:76px;right:16px;width:50px;height:50px}}
 
 .offersPage{min-height:700px;padding:45px 5%}
+.bundleBuilder{margin:0 5% 28px;padding:22px;background:linear-gradient(135deg,#171717,#292929);border:1px solid #444;border-radius:16px;color:#fff}.bundleBuilder h2{margin:0 0 8px;font-size:24px}.bundleBuilder p{color:#ccc;margin:0 0 18px}.bundleGrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.bundleField label{display:block;font-size:13px;margin:0 0 7px;color:#ddd}.bundleField select{width:100%;background:#080808;color:#fff;border:1px solid #555;border-radius:8px;padding:12px;margin-bottom:10px}.bundlePrice{font-size:20px;font-weight:800;margin:8px 0 14px}.bundleButton{width:100%;background:#fff;color:#111;border:0;border-radius:9px;padding:14px;font-weight:800}.bundleBuilder[hidden]{display:none}@media(max-width:600px){.bundleBuilder{margin:0 4% 22px;padding:16px}.bundleGrid{grid-template-columns:1fr;gap:6px}}
 .offersHeader{text-align:center;margin-bottom:35px}
 .offersHeader h1{font-size:42px;margin:0 0 10px}
 .offersHeader p{color:#777}
@@ -387,6 +388,7 @@ return `
 <button class="offersBtn" onclick="showOffers()">${t("offers")}</button>
 </section>
 
+${bundleBuilderHTML()}
 <section id="shop">
 <div class="toolbar">
 <div>
@@ -475,7 +477,7 @@ function cityOptions(selected="",placeholder=true){
 function freeShippingText(){ return t("freeShipping"); }
 async function loadStoreSettings(){
   try{
-    const r=await fetch(SUPABASE_URL+"/rest/v1/site_settings?key=in.(free_shipping_min,shipping_rates,whatsapp,support_phone,payment_methods,deposit_numbers,store_announcement,store_tagline,store_collection_title,instagram_url,support_email,return_policy)&select=key,value",{headers:HEADERS});
+    const r=await fetch(SUPABASE_URL+"/rest/v1/site_settings?key=in.(free_shipping_min,shipping_rates,whatsapp,support_phone,payment_methods,deposit_numbers,store_announcement,store_tagline,store_collection_title,instagram_url,support_email,return_policy,bundle_enabled)&select=key,value",{headers:HEADERS});
     if(!r.ok)return;
     const rows=await r.json();
     window.VANTA_PAYMENT_METHODS={cod:true,vodafone_cash:false,instapay:false};
@@ -496,6 +498,7 @@ async function loadStoreSettings(){
       if(row.key==="instagram_url") window.VANTA_INSTAGRAM_URL=String(row.value||"");
       if(row.key==="support_email") window.VANTA_SUPPORT_EMAIL=String(row.value||"");
       if(row.key==="return_policy") window.VANTA_RETURN_POLICY=String(row.value||"");
+      if(row.key==="bundle_enabled") window.VANTA_BUNDLE_ENABLED=row.value===true||String(row.value).toLowerCase()==="true";
     }
     const wa=window.VANTA_WHATSAPP||"";
     const min=Number(window.VANTA_FREE_SHIPPING_MIN||2500);
@@ -567,6 +570,47 @@ function totalProductStock(p){
 function showChoiceError(id,text){const e=document.getElementById(id);if(e)e.textContent=text;}
 function clearChoiceError(id){showChoiceError(id,"");}
 
+function isHoodieProduct(p){return /hoodie|هودي|هوديز/i.test([p?.category,p?.name,p?.name_ar,p?.name_en].filter(Boolean).join(" "));}
+function isPantsProduct(p){return /pants|trouser|jogger|بنطلون|بناطيل/i.test([p?.category,p?.name,p?.name_ar,p?.name_en].filter(Boolean).join(" "));}
+function bundleProductOptions(list,selected){return list.map(p=>`<option value="${esc(p.id)}" ${String(p.id)===String(selected)?"selected":""}>${esc(localizedName(p))} — ${money(salePrice(p))}</option>`).join("");}
+function bundleVariantOptions(p,kind,selected=""){
+ const vals=kind==="size"?getSizes(p):getColors(p);
+ return `<option value="">${language==="ar"?(kind==="size"?"اختار المقاس":"اختار اللون"):(kind==="size"?"Choose size":"Choose color")}</option>`+vals.map(v=>`<option value="${esc(v)}" ${v===selected?"selected":""}>${esc(localizedChoice(v))}</option>`).join("");
+}
+function bundleBuilderHTML(){
+ if(window.VANTA_BUNDLE_ENABLED!==true)return "";
+ const hoodies=products.filter(p=>p.active!==false&&isHoodieProduct(p)&&totalProductStock(p)>0);
+ const pants=products.filter(p=>p.active!==false&&isPantsProduct(p)&&totalProductStock(p)>0);
+ if(!hoodies.length||!pants.length)return "";
+ const h=hoodies[0],pt=pants[0];
+ return `<section class="bundleBuilder" id="bundleBuilder"><h2>🧥 ${language==="ar"?"اختار الطقم":"Build your set"}</h2><p>${language==="ar"?"اختار الهودي والبنطلون والمقاس واللون لكل قطعة، أو تقدر تشتري كل قطعة لوحدها من المنتجات.":"Choose a hoodie and pants, including size and color for each. You can still buy each item separately below."}</p><div class="bundleGrid"><div class="bundleField"><label>${language==="ar"?"الهودي":"Hoodie"}</label><select id="bundleHoodie" onchange="renderBundleBuilder(this.value,document.getElementById('bundlePants')?.value)">${bundleProductOptions(hoodies,h.id)}</select><div id="bundleHoodieVariants">${bundleVariantFields(h,"H")}</div></div><div class="bundleField"><label>${language==="ar"?"البنطلون":"Pants"}</label><select id="bundlePants" onchange="renderBundleBuilder(document.getElementById('bundleHoodie')?.value,this.value)">${bundleProductOptions(pants,pt.id)}</select><div id="bundlePantsVariants">${bundleVariantFields(pt,"P")}</div></div></div><div class="bundlePrice">${language==="ar"?"إجمالي الطقم: ":"Set total: "}<span id="bundleTotal">${money(salePrice(h)+salePrice(pt))}</span></div><button class="bundleButton" onclick="addBundleToCart()">${language==="ar"?"أضف الطقم للسلة":"Add set to cart"}</button><div id="bundleMsg" style="margin-top:10px"></div></section>`;
+}
+function bundleVariantFields(p,prefix){
+ const sizes=getSizes(p),colors=getColors(p);
+ return (sizes.length?`<label>${language==="ar"?"المقاس":"Size"}</label><select id="bundle${prefix}Size">${bundleVariantOptions(p,"size")}</select>`:"")+(colors.length?`<label>${language==="ar"?"اللون":"Color"}</label><select id="bundle${prefix}Color">${bundleVariantOptions(p,"color")}</select>`:"");
+}
+function renderBundleBuilder(hoodieId,pantsId){
+ const box=document.getElementById("bundleBuilder");if(!box)return;
+ const oldH=document.getElementById("bundleHoodie")?.value,oldP=document.getElementById("bundlePants")?.value;
+ const hId=hoodieId||oldH,pId=pantsId||oldP;
+ const hoodies=products.filter(p=>p.active!==false&&isHoodieProduct(p)&&totalProductStock(p)>0);
+ const pants=products.filter(p=>p.active!==false&&isPantsProduct(p)&&totalProductStock(p)>0);
+ const h=hoodies.find(p=>String(p.id)===String(hId))||hoodies[0],pt=pants.find(p=>String(p.id)===String(pId))||pants[0];
+ if(!h||!pt)return;
+ const hSize=document.getElementById("bundleHSize")?.value||"",hColor=document.getElementById("bundleHColor")?.value||"",pSize=document.getElementById("bundlePSize")?.value||"",pColor=document.getElementById("bundlePColor")?.value||"";
+ const keepH=String(h.id),keepP=String(pt.id);
+ box.innerHTML=`<h2>🧥 ${language==="ar"?"اختار الطقم":"Build your set"}</h2><p>${language==="ar"?"اختار الهودي والبنطلون والمقاس واللون لكل قطعة، أو تقدر تشتري كل قطعة لوحدها من المنتجات.":"Choose a hoodie and pants, including size and color for each. You can still buy each item separately below."}</p><div class="bundleGrid"><div class="bundleField"><label>${language==="ar"?"الهودي":"Hoodie"}</label><select id="bundleHoodie" onchange="renderBundleBuilder(this.value,document.getElementById('bundlePants')?.value)">${bundleProductOptions(hoodies,keepH)}</select><div>${bundleVariantFields(h,"H")}</div></div><div class="bundleField"><label>${language==="ar"?"البنطلون":"Pants"}</label><select id="bundlePants" onchange="renderBundleBuilder(document.getElementById('bundleHoodie')?.value,this.value)">${bundleProductOptions(pants,keepP)}</select><div>${bundleVariantFields(pt,"P")}</div></div></div><div class="bundlePrice">${language==="ar"?"إجمالي الطقم: ":"Set total: "}<span id="bundleTotal">${money(salePrice(h)+salePrice(pt))}</span></div><button class="bundleButton" onclick="addBundleToCart()">${language==="ar"?"أضف الطقم للسلة":"Add set to cart"}</button><div id="bundleMsg" style="margin-top:10px"></div>`;
+ for(const [id,val] of [["bundleHSize",hSize],["bundleHColor",hColor],["bundlePSize",pSize],["bundlePColor",pColor]]){const el=document.getElementById(id);if(el&&[...el.options].some(o=>o.value===val))el.value=val;}
+}
+function addBundleToCart(){
+ const h=products.find(p=>String(p.id)===String(document.getElementById("bundleHoodie")?.value));
+ const pt=products.find(p=>String(p.id)===String(document.getElementById("bundlePants")?.value));
+ const hs=document.getElementById("bundleHSize")?.value||"",hc=document.getElementById("bundleHColor")?.value||"",ps=document.getElementById("bundlePSize")?.value||"",pc=document.getElementById("bundlePColor")?.value||"",m=document.getElementById("bundleMsg");
+ if(!h||!pt)return;
+ if((getSizes(h).length&&!hs)||(getColors(h).length&&!hc)||(getSizes(pt).length&&!ps)||(getColors(pt).length&&!pc)){m.textContent=language==="ar"?"اختار المقاس واللون لكل قطعة الأول.":"Choose the size and color for each item first.";m.className="notice err";return;}
+ if(variantStock(h,hs,hc)<1||variantStock(pt,ps,pc)<1){m.textContent=language==="ar"?"المقاس أو اللون المختار غير متوفر.":"One of the selected variants is out of stock.";m.className="notice err";return;}
+ addToCart(h,1,hs,hc);addToCart(pt,1,ps,pc);openCartPage();
+}
 function productCard(p){
   const imgs=getImages(p);
   const d=discount(p);
