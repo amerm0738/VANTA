@@ -185,7 +185,6 @@ const SUPABASE_URL="https://jstcrfkjnmqegnzvwfyz.supabase.co";
 const SUPABASE_KEY="sb_publishable_A8WKnbjf_YryRDolgIr1YA_SDDQcYWf";
 const HEADERS={
   apikey:SUPABASE_KEY,
-  Authorization:"Bearer "+SUPABASE_KEY,
   Accept:"application/json",
   "Content-Type":"application/json"
 };
@@ -1526,7 +1525,7 @@ async function adminLogin(){
 }
 async function adminLogout(){clearInterval(adminPollTimer);localStorage.removeItem("vanta_admin_gate");const c=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);await c.auth.signOut();adminUser=null;adminInit();}
 function renderAdminDashboard(){const root=document.getElementById("adminRoot");if(!root)return;root.innerHTML=`<div class="adminTabs"><button onclick="adminTab='orders';renderAdminDashboard()">📦 ${t("adminOrders")}</button><button onclick="adminTab='products';renderAdminDashboard()">👕 ${t("adminProducts")}</button><button onclick="adminTab='inventory';renderAdminDashboard()">🏬 ${t("adminInventory")}</button><button onclick="adminTab='custom';renderAdminDashboard()">🖨️ ${t("adminPrint")}</button><button onclick="adminTab='settings';renderAdminDashboard()">⚙️ ${t("adminSettings")}</button><button onclick="adminLogout()">${t("logout")}</button></div><div id="adminPanel"><div class="notice">${t("loadingAdmin")}</div></div>`;if(adminTab==='orders')loadAdminOrders();else if(adminTab==='products')loadAdminProducts();else if(adminTab==='inventory')loadAdminInventory();else if(adminTab==='custom')loadAdminCustom();else loadAdminSettings();}
-async function adminFetch(path,opts={}){const c=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);const {data:{session}}=await c.auth.getSession();const h={...HEADERS,Authorization:`Bearer ${session?.access_token||SUPABASE_KEY}`};return fetch(SUPABASE_URL+"/rest/v1/"+path,{...opts,headers:{...h,...(opts.headers||{})}})}
+async function adminFetch(path,opts={}){const c=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);const {data:{session}}=await c.auth.getSession();const h={...HEADERS,...(session?.access_token?{Authorization:`Bearer ${session.access_token}`}:{})};return fetch(SUPABASE_URL+"/rest/v1/"+path,{...opts,headers:{...h,...(opts.headers||{})}})}
 async function loadAdminOrders(){
   const p=document.getElementById("adminPanel");
   try{
