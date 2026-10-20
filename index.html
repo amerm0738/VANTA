@@ -570,6 +570,14 @@ function totalProductStock(p){
 function showChoiceError(id,text){const e=document.getElementById(id);if(e)e.textContent=text;}
 function clearChoiceError(id){showChoiceError(id,"");}
 
+function bundleCardAction(p){
+ if(!isHoodieProduct(p)&&!isPantsProduct(p))return "";
+ return `<button class="add" data-product="${esc(p.id)}" style="margin-top:8px;background:#252525;color:#fff" onclick="event.stopPropagation();openBundleFromCard(this.dataset.product)">${language==="ar"?"اختيار كطقم":"Choose as a set"}</button>`;
+}
+function printCardAction(p){
+ if(!isPlainProduct(p))return "";
+ return `<button class="add" data-product="${esc(p.id)}" style="margin-top:8px;background:#eee;color:#111" onclick="event.stopPropagation();showCustomPrint(this.dataset.product)">🖨️ ${language==="ar"?"اطبع على القطعة السادة":"Custom print this item"}</button>`;
+}
 function isPlainProduct(p){return /plain|ساده|سادة|basic|blank/i.test([p?.category,p?.name,p?.name_ar,p?.name_en].filter(Boolean).join(" "));}
 function openBundleFromCard(productId){
  const p=products.find(x=>String(x.id)===String(productId));if(!p)return;
@@ -644,8 +652,8 @@ ${stock<1?`<div class="stock">${t("out")}</div>`:""}
 <button class="add" ${stock<1?"disabled":""} onclick="event.stopPropagation();quickAddById('${jsEsc(p.id)}')">
 ${stock<1?t("out"):t("add")}
 </button>
-${(isHoodieProduct(p)||isPantsProduct(p))?'<button class="add" style="margin-top:8px;background:#252525;color:#fff" onclick="event.stopPropagation();openBundleFromCard(\\''+jsEsc(p.id)+'\\')">'+(language==="ar"?"اختيار كطقم":"Choose as a set")+'</button>':""}
-${isPlainProduct(p)?'<button class="add" style="margin-top:8px;background:#eee;color:#111" onclick="event.stopPropagation();showCustomPrint(\\''+jsEsc(p.id)+'\\')">🖨️ '+(language==="ar"?"اطبع على القطعة السادة":"Custom print this item")+'</button>':""}
+${bundleCardAction(p)}
+${printCardAction(p)}
 </div>
 </article>`;
 }
