@@ -1,1 +1,45 @@
-const CACHE="vanta-shell-v4";const CORE=["/","/index.html","/admin.html","/manifest.json","/icon.svg"];self.addEventListener("install",e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting()))});self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});self.addEventListener("fetch",e=>{const u=new URL(e.request.url);if(e.request.method!=="GET"||u.origin!==location.origin)return;e.respondWith(fetch(e.request).then(r=>{if(r&&r.ok){const copy=r.clone();caches.open(CACHE).then(c=>c.put(e.request,copy))}return r}).catch(()=>caches.match(e.request).then(r=>r||caches.match("/index.html"))))});self.addEventListener("push",e=>{let d={title:"VANTA",body:"تم استلام إشعار جديد"};try{d={...d,...e.data.json()}}catch(_){if(e.data)d.body=e.data.text()}e.waitUntil(self.registration.showNotification(d.title||"VANTA",{body:d.body||"لديك تحديث جديد",icon:"/icon.svg",badge:"/icon.svg",data:d.url||"/admin.html",tag:d.tag||"vanta-update"}))});self.addEventListener("notificationclick",e=>{e.notification.close();const url=e.notification.data||"/admin.html";e.waitUntil(clients.matchAll({type:"window",includeUncontrolled:true}).then(list=>{for(const c of list){if("focus"in c){c.navigate(url);return c.focus()}}return clients.openWindow(url)}))});
+const CACHE="vanta-shell-v5";
+const CORE=["/","/index.html","/admin.html","/manifest.json","/icon.svg"];
+self.addEventListener("install",event=>{
+  event.waitUntil((async()=>{
+    const cache=await caches.open(CACHE);
+    await cache.addAll(CORE);
+    await self.skipWaiting();
+  })());
+});
+self.addEventListener("activate",event=>{
+  event.waitUntil((async()=>{
+    const keys=await caches.keys();
+    await Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)));
+    await self.clients.claim();
+  })());
+});
+self.addEventListener("fetch",event=>{
+  const request=event.request;
+  const url=new URL(request.url);
+  if(request.method!=="GET"||url.origin!==self.location.origin)return;
+  if(request.mode==="navigate"||request.destination==="document"){
+    event.respondWith(fetch(new Request(request,{cache:"no-store"})).then(response=>{
+      if(response&&response.ok)caches.open(CACHE).then(cache=>cache.put("/index.html",response.clone()));
+      return response;
+    }).catch(()=>caches.match(request).then(hit=>hit||caches.match("/index.html"))));
+    return;
+  }
+  event.respondWith(fetch(request).then(response=>{
+    if(response&&response.ok)caches.open(CACHE).then(cache=>cache.put(request,response.clone()));
+    return response;
+  }).catch(()=>caches.match(request)));
+});
+self.addEventListener("push",event=>{
+  let data={title:"VANTA",body:"تم استلام إشعار جديد"};
+  try{data={...data,...event.data.json()}}catch(_){if(event.data)data.body=event.data.text()}
+  event.waitUntil(self.registration.showNotification(data.title||"VANTA",{body:data.body||"لديك تحديث جديد",icon:"/icon.svg",badge:"/icon.svg",data:data.url||"/admin.html",tag:data.tag||"vanta-update"}));
+});
+self.addEventListener("notificationclick",event=>{
+  event.notification.close();
+  const url=event.notification.data||"/admin.html";
+  event.waitUntil(self.clients.matchAll({type:"window",includeUncontrolled:true}).then(list=>{
+    for(const client of list){if("focus"in client){client.navigate(url);return client.focus()}}
+    return self.clients.openWindow(url);
+  }));
+});
