@@ -389,7 +389,6 @@ return `
 <button class="offersBtn" onclick="showOffers()">${t("offers")}</button>
 </section>
 
-${bundleBuilderHTML()}
 <section id="shop">
 <div class="toolbar">
 <div>
@@ -478,11 +477,12 @@ function cityOptions(selected="",placeholder=true){
 function freeShippingText(){ return t("freeShipping"); }
 async function loadStoreSettings(){
   try{
-    const r=await fetch(SUPABASE_URL+"/rest/v1/site_settings?key=in.(free_shipping_min,shipping_rates,whatsapp,support_phone,payment_methods,deposit_numbers,store_announcement,store_tagline,store_collection_title,instagram_url,support_email,return_policy,bundle_enabled)&select=key,value",{headers:HEADERS});
+    const r=await fetch(SUPABASE_URL+"/rest/v1/site_settings?key=in.(free_shipping_min,shipping_rates,whatsapp,support_phone,payment_methods,deposit_numbers,store_announcement,store_tagline,store_collection_title,instagram_url,support_email,return_policy,bundle_enabled,product_print_settings)&select=key,value",{headers:HEADERS});
     if(!r.ok)return;
     const rows=await r.json();
     window.VANTA_PAYMENT_METHODS={cod:true,vodafone_cash:false,instapay:false};
     window.VANTA_DEPOSIT_NUMBERS={};
+    window.VANTA_PRODUCT_PRINT_SETTINGS={};
     for(const row of rows){
       if(row.key==="free_shipping_min") window.VANTA_FREE_SHIPPING_MIN=Number(row.value)||2500;
       if(row.key==="shipping_rates" && row.value && typeof row.value==="object" && Object.keys(row.value).length){
@@ -500,6 +500,7 @@ async function loadStoreSettings(){
       if(row.key==="support_email") window.VANTA_SUPPORT_EMAIL=String(row.value||"");
       if(row.key==="return_policy") window.VANTA_RETURN_POLICY=String(row.value||"");
       if(row.key==="bundle_enabled") window.VANTA_BUNDLE_ENABLED=row.value===true||String(row.value).toLowerCase()==="true";
+      if(row.key==="product_print_settings" && row.value && typeof row.value==="object") window.VANTA_PRODUCT_PRINT_SETTINGS=row.value;
     }
     const wa=window.VANTA_WHATSAPP||"";
     const min=Number(window.VANTA_FREE_SHIPPING_MIN||2500);
@@ -580,6 +581,11 @@ function printCardAction(p){
  return `<button class="add" data-product="${esc(p.id)}" style="margin-top:8px;background:#eee;color:#111" onclick="event.stopPropagation();showCustomPrint(this.dataset.product)">🖨️ ${language==="ar"?"اطبع على القطعة السادة":"Custom print this item"}</button>`;
 }
 function isPlainProduct(p){return /plain|ساده|سادة|basic|blank/i.test([p?.category,p?.name,p?.name_ar,p?.name_en].filter(Boolean).join(" "));}
+function productAllowsPrint(p){const settings=window.VANTA_PRODUCT_PRINT_SETTINGS||{},id=String(p?.id??"");if(Object.prototype.hasOwnProperty.call(settings,id))return settings[id]===true;return isPlainProduct(p);}
+function chooseNoPrint(){const msg=document.getElementById("printChoiceMsg");if(msg)msg.textContent=language==="ar"?"تمام، هتشتري المنتج بدون طباعة.":"You’ll buy this item without printing.";}
+function toggleProductBundle(show){const wrap=document.getElementById("productBundleWrap");if(!wrap)return;wrap.hidden=!show;if(show&&selectedProduct){renderBundleBuilder(isHoodieProduct(selectedProduct)?selectedProduct.id:undefined,isPantsProduct(selectedProduct)?selectedProduct.id:undefined);wrap.scrollIntoView({behavior:"smooth",block:"nearest"});}}
+function toggleCartBundle(){const wrap=document.getElementById("cartBundleWrap");if(!wrap)return;wrap.hidden=!wrap.hidden;if(!wrap.hidden)renderBundleBuilder();}
+function cartBundleHTML(){if(window.VANTA_BUNDLE_ENABLED!==true)return "";const builder=bundleBuilderHTML();if(!builder)return "";return `<div class="cartBundleChoice"><button type="button" class="dark" onclick="toggleCartBundle()">🧥 ${language==="ar"?"اختيار هودي أو بنطلون أو طقم من هنا":"Choose hoodie, pants, or a set here"}</button><div id="cartBundleWrap" hidden style="margin-top:12px">${builder}</div></div>`;}
 function openBundleFromCard(productId){
  const p=products.find(x=>String(x.id)===String(productId));if(!p)return;
  if(window.VANTA_BUNDLE_ENABLED!==true){alert(language==="ar"?"ميزة الطقم غير مفعلة من إعدادات المتجر.":"Set feature is disabled in store settings.");return;}
@@ -653,8 +659,7 @@ ${stock<1?`<div class="stock">${t("out")}</div>`:""}
 <button class="add" ${stock<1?"disabled":""} onclick="event.stopPropagation();quickAddById('${jsEsc(p.id)}')">
 ${stock<1?t("out"):t("add")}
 </button>
-${bundleCardAction(p)}
-${printCardAction(p)}
+
 </div>
 </article>`;
 }
@@ -789,6 +794,20 @@ ${d?`<div class="salePercent">🔥 ${t("sale")} ${d}%</div>`:""}
 ${description?esc(description):`<span class="noDesc">${t("noDescription")}</span>`}
 </div>
 </div>
+
+${productAllowsPrint(p)?`
+<div class="printChoiceBox" id="printPrompt">
+<h3>${language==="ar"?"عايز تطبع على المنتج ده؟":"Would you like custom printing on this item?"}</h3>
+<div class="options">
+<button type="button" class="optionBtn" onclick="showCustomPrint(selectedProduct?.id)">Yes — ${language==="ar"?"أيوه، عايز طباعة":"Custom print"}</button>
+<button type="button" class="optionBtn" onclick="chooseNoPrint()">No — ${language==="ar"?"لأ، من غير طباعة":"No printing"}</button>
+</div><div id="printChoiceMsg" class="mutedSmall"></div></div>`:""}
+
+${(window.VANTA_BUNDLE_ENABLED===true&&(isHoodieProduct(p)||isPantsProduct(p)))?`
+<div class="productBundleChoice"><h3>${language==="ar"?"هتشتري القطعة دي لوحدها ولا كطقم؟":"Buy this item alone or as a set?"}</h3>
+<div class="options"><label class="optionBtn"><input type="radio" name="productBuyMode" value="single" checked onchange="toggleProductBundle(false)"> ${language==="ar"?"القطعة دي لوحدها":"This item only"}</label>
+<label class="optionBtn"><input type="radio" name="productBuyMode" value="set" onchange="toggleProductBundle(true)"> ${language==="ar"?"طقم هودي + بنطلون":"Hoodie + pants set"}</label></div>
+<div id="productBundleWrap" hidden style="margin-top:12px">${bundleBuilderHTML()}</div></div>`:""}
 
 ${sizes.length?`
 <h3 class="optionTitle">${t("size")}</h3>
@@ -956,6 +975,7 @@ async function submitReview(){
 
 function addProductToCart(){
   if(!selectedProduct)return;
+  if(document.querySelector('input[name="productBuyMode"]:checked')?.value==="set"){addBundleToCart();return;}
 
   const sizes=getSizes(selectedProduct);
   const colors=getColors(selectedProduct);
@@ -1077,6 +1097,7 @@ function cartHTML(){
 return `
 <section class="cartPage">
 <div class="backRow"><button class="back" onclick="goHome()">${language==="ar"?"← ":"← "}${t("home")}</button><button class="back" onclick="goShop()">${t("back")}</button></div><h1>${t("cart")}</h1>
+${cartBundleHTML()}
 
 ${!cart.length
 ?`
@@ -1710,12 +1731,12 @@ function render(){
     const params=new URLSearchParams(hash.split("?")[1]);
     const id=params.get("id");
     const p=products.find(x=>String(x.id)===String(id));
-    if(p){app.innerHTML=productHTML(p);renderRecommended();loadReviews(p.id);}
+    if(p){app.innerHTML=productHTML(p);if(window.VANTA_BUNDLE_ENABLED===true&&(isHoodieProduct(p)||isPantsProduct(p)))renderBundleBuilder(isHoodieProduct(p)?p.id:undefined,isPantsProduct(p)?p.id:undefined);renderRecommended();loadReviews(p.id);}
     else {app.innerHTML=homeHTML();renderProducts();renderBestSelling();}
   }else if(hash==="#offers"){
     app.innerHTML=offersHTML();renderOffers();
   }else if(hash==="#cart"){
-    app.innerHTML=cartHTML();renderCartItems();
+    app.innerHTML=cartHTML();renderCartItems();if(window.VANTA_BUNDLE_ENABLED===true)renderBundleBuilder();
   }else if(hash==="#custom-print"){
     app.innerHTML=customPrintHTML();
   }else if(hash==="#admin"){
