@@ -19,6 +19,34 @@
 
 /* Keep the mobile navigation overlay rules last so tablet breakpoints cannot override them */
 @media(max-width:480px){.shell.menu-open .side{display:block;position:fixed;top:58px;right:0;bottom:0;width:min(86vw,320px);height:calc(100dvh - 58px);z-index:1200;overflow-y:auto;box-shadow:-10px 0 28px #0002;border-left:1px solid #ddd;border-bottom:0;padding:14px;background:#fff}.shell.menu-open .side .nav{display:flex;flex-direction:column;gap:3px}.shell.menu-open .side .nav button{width:100%;text-align:right;padding:14px 13px;font-size:15px}.shell.menu-open .side .sideBottom{position:static;margin-top:14px}}
+
+/* Final mobile layout fixes: keep navigation hidden until the menu button is tapped. */
+@media(max-width:700px){
+  .shell{display:block!important;min-width:0;width:100%;}
+  .side{display:none!important;position:fixed!important;top:58px!important;right:0!important;left:auto!important;bottom:0!important;width:min(86vw,320px)!important;height:calc(100dvh - 58px)!important;z-index:1200!important;overflow-y:auto!important;background:#fff!important;box-shadow:-10px 0 28px #0002!important;}
+  .shell.menu-open .side{display:block!important;}
+  .side .nav{display:flex!important;flex-direction:column!important;gap:3px!important;}
+  .side .nav button{width:100%;text-align:right;padding:13px!important;font-size:14px!important;}
+  .main{min-width:0;width:100%;padding:12px 10px!important;overflow-x:hidden;}
+  .settingsApp{width:100%;max-width:100%;margin:0!important;gap:10px!important;padding-bottom:24px!important;}
+  .settingsSection{min-width:0;padding:14px 10px!important;border-radius:12px!important;}
+  .settingsSectionHead{align-items:flex-start;gap:9px;margin-bottom:12px!important;}
+  .settingsSectionHead h3{font-size:15px!important;line-height:1.5;}
+  .settingsSectionHead p{font-size:11px!important;}
+  .settingsApp .grid2,.settingsApp .grid3{grid-template-columns:minmax(0,1fr)!important;gap:6px!important;}
+  .settingsApp .field{min-width:0;width:100%;}
+  .settingsApp .field input,.settingsApp .field select,.settingsApp .field textarea{width:100%;min-width:0;max-width:100%;}
+  .settingsQuickNav{position:static;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;padding:6px;}
+  .settingsQuickNav button{min-width:0;padding:10px 5px;font-size:11px;}
+  #indVariantStock,.settingsSection .tableWrap{width:100%;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  #indVariantStock table{min-width:0;width:100%;table-layout:fixed;}
+  #indVariantStock th,#indVariantStock td{padding:7px 4px!important;font-size:11px!important;overflow-wrap:anywhere;}
+  #indVariantStock input{width:68px!important;max-width:100%;padding:5px!important;font-size:14px!important;}
+  .settingsSave{width:100%;margin:8px 0 0!important;min-height:44px;}
+  .adminContactFloat{display:none!important;}
+  .top{gap:8px;margin-bottom:12px;padding-bottom:12px;}
+  .panel{padding:12px 10px;margin-bottom:10px;}
+}
 </style>
 </head>
 <body><div id="app"></div>
